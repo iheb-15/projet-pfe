@@ -2,6 +2,7 @@
 import "./Navbar.css";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import Logo from '../media/logo.png';
 
 const Navbar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
