@@ -9,12 +9,22 @@
 
 .navbar-brand {
   font-size: 20px;
-  margin-left: 10px;
+  margin-left: 40px;
+  color: #fff;
+  margin-top: 0px;
+
+  display: flex;
+  align-items:left;
+  justify-content: left;
+  font-size: 20px;
+  font-weight: bold;
+
 }
 
 .navbar-links {
   display: flex;
   align-items: center;
+  
 }
 
 .navbar-links a {
@@ -49,6 +59,10 @@
   z-index: 100;
   bottom: 250px;
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  margin-top: 60px;
+  transition: width 0.5s; 
+  overflow: hidden;
+
 }
 
 .sidebar-header {
@@ -69,6 +83,7 @@
   display: flex;
   flex-direction: column;
   margin-top: 10px;
+ 
 }
 
 .sidebar-links a {
@@ -80,8 +95,60 @@
 .sidebar-links a:hover {
   background-color: #ddd;
 }
+.collapsed {
+  width: 50px; 
+}
+.collapse-btn {
+  position: absolute;
+  top: 10px; 
+  right: -30px; 
+  cursor: pointer;
+  bottom: 10px; 
+  left: 50%; 
+  transform: translateX(-50%);
+  background: transparent; 
+  border: none; 
+  cursor: pointer;
+  padding: 10px; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center;
+ margin-bottom: 60px;
 
-/* Médias queries */
+}
+.btn{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+    width: 250px;
+    height: 50px;
+   background-color: black;
+  
+  bottom: 100px;
+
+
+  
+}
+.icon {
+  font-size: 20px; 
+  color: red; 
+  position: absolute; 
+  right: -30px; 
+  cursor: pointer;
+  bottom: 10px; 
+  left: 50%; 
+  transform: translateX(-50%);
+  background: transparent; 
+  border: none; 
+  cursor: pointer;
+  padding: 10px; 
+  display: flex; 
+  justify-content: center; 
+  align-items: center;
+
+  
+}
 
 @media (max-width: 768px) {
   .sidebar {
@@ -102,3 +169,7 @@
     display: none;
   }
 }
+
+
+
+
