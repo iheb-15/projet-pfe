@@ -7,7 +7,10 @@ function App() {
     <div className="App">
       <Navbar />
     <Sidebar/>
+    
+    
     </div>
+   
   );
 }
 

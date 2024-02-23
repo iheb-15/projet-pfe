@@ -9,6 +9,8 @@ import './index.css';
 import MotPasseOublie from './MotPasseOublie';
 import App from './app';
 import'./App.css';
+import Gest from './components/gest_utilisateur';
+
 
 
 
@@ -21,7 +23,7 @@ ReactDOM.render(
          <Route exact path="/app" element={<App />}/>
         <Route path="/login" element={<Authentification />} />
         <Route path="motPasseOublie" element={<MotPasseOublie />} />
-        
+        <Route exact path="/gest_utilisateur" element={<Gest />}/>
 
       </Routes>
      

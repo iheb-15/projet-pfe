@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useState } from "react";
 import "./Navbar.css";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaPerson } from "react-icons/fa6";
 
 
 const Sidebar = () => {
@@ -13,11 +14,12 @@ const Sidebar = () => {
     const handleCollapse = () => {
       setIsCollapsed(!isCollapsed);};//
   
-    return (
-      <div className={`sidebar-left ${isCollapsed ? 'collapsed' : ''}`}>
+    return (   
+     <div className={`sidebar-left ${isCollapsed ? 'collapsed' : ''}`}>
        
         <div className="sidebar-links">
-          <Link to="/Oo">Oo</Link>
+          <Link  to="/oo"><FaPerson />Gestion utilisateur</Link>
+          
           <Link to="/cc">Cc</Link>
           <Link to="/st">St</Link>
           
