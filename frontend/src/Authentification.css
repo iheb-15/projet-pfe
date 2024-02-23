@@ -1,17 +1,16 @@
+/* Authentification.css */
+
 .main {
   text-align: center;
-  justify-content: center;
-  display: flex;
-  padding-top: 90px;
-  padding-bottom: 90px;
   background-color: #e1e3eb;
 }
 
 .sub-main {
   display: flex;
-  justify-content: center;
-  height: 550px;
-  width: 35%;
+  flex-direction: column;
+  align-items: center;
+  height: 500px;
+  width: 80%;
   box-shadow: 11px 12px 13px 12px rgb(207, 207, 207);
   padding-top: 30px;
   border-radius: 60px;
@@ -19,35 +18,35 @@
 }
 
 .imgs {
-  padding-top: 20px;
-  justify-content: center;
   display: flex;
+  justify-content: center;
 }
 
 .container-image {
   background-color: rgb(223, 221, 221);
-  border-radius: 150px;
+  border-radius: 50%;
   align-items: center;
   display: flex;
   justify-content: center;
-  height: 115px;
-  width: 115px;
+  height: 85px;
+  width: 85px;
 }
 
 .logo {
-  height: 100px;
-  width: 100px;
-  border-radius: 130px;
+  height: 80px;
+  width: 80px;
+  border-radius: 50%;
 }
 
 h2 {
   color: #3987ee;
-  font-size: 24px;
+  font-size: 0px;
   font-weight: bold;
-  margin-bottom: 15px;
+  margin-top: 15px;
 }
 
-input {
+.email,
+.pass {
   width: 300px;
   height: 50px;
   border-radius: 60px;
@@ -57,38 +56,17 @@ input {
   background-color: #fff;
 }
 
-.email {
-  padding-left: 70px;
-  font-size: 20px;
-  margin-top: 10px;
-}
-
-.Email {
-  height: 25px;
-  width: 25px;
-  position: absolute;
-  padding: 14px 0 0 25px;
-  margin-top: 10px;
-}
-
+.Email,
 .motpass {
   height: 25px;
   width: 25px;
   position: absolute;
   padding: 14px 0 0 25px;
+  margin-top: 10px;
 }
 
-.pass {
-  padding-left: 70px;
-  font-size: 20px;
-}
-
-.second-input {
-  padding-top: 25px;
-}
-
-button {
-  width: 250px;
+.boutton button {
+  width: 100%;
   height: 50px;
   border-radius: 60px;
   background-color: #68b2e4;
@@ -97,8 +75,14 @@ button {
   border: none;
 }
 
-.boutton {
-  padding-top: 25px;
+Form.Control {
+  width: 300px;
+  height: 50px;
+  border-radius: 60px;
+  box-shadow: inset 0px 0px 25px 0px #888;
+  border: none;
+  outline: none;
+  background-color: #fff;
 }
 
 .link {
@@ -115,31 +99,12 @@ button {
 .link a:hover {
   text-decoration: underline;
 }
-.emailm {
-  padding-left: 70px;
-  font-size: 20px;
-  margin-top: 50px;
-}
-.EmailM {
-  height: 25px;
-  width: 25px;
-  position: absolute;
-  padding: 14px 0 0 25px;
-  margin-top: 50px;
-}
-.second-button {
-  width: 100px;
-  height: 40px;
-  border-radius: 50px;
-  background-color: #68b2e4;
-  color: white;
-  font-size: 20px;
-  border: none;
-  margin-right: 300px;
- 
-}
-.second-boutton {
-  padding-top: 50px;
-}
- 
 
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+  z-index: 999;
+}
