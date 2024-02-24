@@ -11,9 +11,9 @@
   align-items: center;
   height: 500px;
   width: 80%;
-  box-shadow: 11px 12px 13px 12px rgb(207, 207, 207);
-  padding-top: 30px;
-  border-radius: 60px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  border-radius: 20px;
   background-color: white;
 }
 
@@ -25,9 +25,9 @@
 .container-image {
   background-color: rgb(223, 221, 221);
   border-radius: 50%;
-  align-items: center;
   display: flex;
   justify-content: center;
+  align-items: center;
   height: 85px;
   width: 85px;
 }
@@ -38,73 +38,102 @@
   border-radius: 50%;
 }
 
-h2 {
+h4 {
   color: #3987ee;
-  font-size: 0px;
+  font-size: 20px;
   font-weight: bold;
-  margin-top: 15px;
+  margin-bottom: 15px;
 }
 
-.email,
-.pass {
-  width: 300px;
-  height: 50px;
-  border-radius: 60px;
-  box-shadow: inset 0px 0px 25px 0px #888;
-  border: none;
-  outline: none;
-  background-color: #fff;
+.title {
+  margin-top: 20px;
 }
 
-.Email,
-.motpass {
-  height: 25px;
-  width: 25px;
-  position: absolute;
-  padding: 14px 0 0 25px;
-  margin-top: 10px;
+/* Input container */
+.input-container {
+  position: relative;
+  margin: 20px;
+  margin-top: 50px;
 }
 
-.boutton button {
+/* Input field */
+.input-field {
+  display: block;
   width: 100%;
-  height: 50px;
-  border-radius: 60px;
-  background-color: #68b2e4;
-  color: white;
-  font-size: 25px;
+  padding: 10px;
+  font-size: 16px;
   border: none;
-}
-
-Form.Control {
-  width: 300px;
-  height: 50px;
-  border-radius: 60px;
-  box-shadow: inset 0px 0px 25px 0px #888;
-  border: none;
+  border-bottom: 2px solid #ccc;
   outline: none;
-  background-color: #fff;
+  background-color: transparent;
 }
 
-.link {
+/* Input label */
+.input-label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-size: 16px;
+  color: rgba(204, 204, 204, 0);
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+/* Input highlight */
+.input-highlight {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 0;
+  background-color: #3987ee;
+  transition: all 0.3s ease;
+}
+
+/* Input field:focus styles */
+.input-field:focus + .input-label {
+  top: -20px;
+  font-size: 12px;
+  color: #3987ee;
+}
+
+.input-field:focus + .input-label + .input-highlight {
+  width: 100%;
+}
+
+/* Boutons */
+.login-btn {
+  width: 120px;
+  height: 40px;
+  border-radius: 8px;
+  background-color: #3987ee;
+  color: white;
+  font-size: 16px;
+  border: none;
   text-align: center;
-  margin-top: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-.link a {
-  color: #007bff;
-  text-decoration: none;
-  font-weight: bold;
+.login-btn:hover {
+  background-color: #305f9e;
+  transform: scale(1.1);
 }
 
-.link a:hover {
-  text-decoration: underline;
+.second-boutton {
+  width: 120px;
+  height: 40px;
+  margin-top: 20px;
+  background-color: #3987ee;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease;
 }
 
-.popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 300px;
-  z-index: 999;
+.second-boutton:hover {
+  background-color: #305f9e;
+  transform: scale(1.1);
 }
