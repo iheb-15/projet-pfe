@@ -2,6 +2,8 @@
 
 .gestion {
   text-align: center;
+  width: 60px;
+
 }
 .gestion_header {
   /* background-color: #282c34; */
@@ -13,4 +15,7 @@
   font-size: calc(10px + 2vmin);
   color: white;
   
+}
+.custom-table {
+  width: 500px; /* ou une valeur spécifique en pixels, par exemple 500px */
 }

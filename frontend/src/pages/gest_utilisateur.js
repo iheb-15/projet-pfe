@@ -3,6 +3,7 @@ import { Button, Table, Modal, Input, Select } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import "./gest_utilisateur.css";
 
+
 const { Option } = Select;
 
 function Gest() {
@@ -47,11 +48,13 @@ function Gest() {
       key: '1',
       title: 'ID',
       dataIndex: 'id',
+     
     },
     {
       key: '2',
       title: 'Name',
       dataIndex: 'name',
+     
     },
     {
       key: '3',
@@ -122,9 +125,12 @@ function Gest() {
   };
 
   return (
+    
     <div className="gestion">
       <header className="gestion-header">
         <Button onClick={onAddUtilisateur}>Ajouter Utilisateur</Button>
+        {/* <Table columns={columns} dataSource={dataSource} style={{ width: '70%' }}></Table> */}
+
         <Table columns={columns} dataSource={dataSource}></Table>
         <Modal
           title="Edit Utilisateur"
@@ -197,6 +203,7 @@ function Gest() {
         </Modal>
       </header>
     </div>
+    
   );
 }
 
