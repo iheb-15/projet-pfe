@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Table, Modal, Input, Select } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import "./gest_utilisateur.css";
-
 
 const { Option } = Select;
 
@@ -16,26 +14,15 @@ function Gest() {
       id: 1,
       name: 'iheb',
       email: 'iheb@gmail.com',
-      role: 'administrateur',
+      role: 'super admin',
     },
     {
       id: 2,
       name: 'iyed',
       email: 'iyed@gmail.com',
-      role: 'candidat',
+      role: 'simple admin',
     },
-    {
-      id: 3,
-      name: 'ahmed',
-      email: 'ahmedahmed@gmail.com',
-      role: 'candidat',
-    },
-    {
-      id: 4,
-      name: 'ayhemng',
-      email: 'ayhemng@gmail.com',
-      role: 'administrateur',
-    },
+  
   ]);
 
   const handleChange = (value) => {
@@ -43,18 +30,56 @@ function Gest() {
     setEditingUtilisateur(prev => ({ ...prev, role: value }));
   };
 
+  const addUtilisateur = () => {
+    if (!newUtilisateur.name || !newUtilisateur.email || !newUtilisateur.role) {
+      alert('Veuillez remplir tous les champs');
+      return;
+    }
+    
+    if (!newUtilisateur.email.includes('@')) {
+      alert('L\'adresse e-mail doit contenir "@gmail.com" par exemple');
+      return;
+    }
+    
+    const newId = dataSource.length > 0 ? dataSource[dataSource.length - 1].id + 1 : 1;
+    const utilisateurToAdd = { ...newUtilisateur, id: newId };
+    setDataSource((prevDataSource) => [...prevDataSource, utilisateurToAdd]);
+    setIsAdding(false);
+    setNewUtilisateur({ name: '', email: '', role: '' });
+  };
+
+  const onDeleteUtilisateur = (record) => {
+    Modal.confirm({
+      title: 'Êtes-vous sûr de vouloir supprimer cet enregistrement utilisateur ?',
+      okText: 'Yes',
+      okType: 'danger',
+      onOk: () => {
+        setDataSource((prevDataSource) => prevDataSource.filter((utilisateur) => utilisateur.id !== record.id));
+      },
+    });
+  };
+
+  const onEditUtilisateur = (record) => {
+    setIsEditing(true);
+    setEditingUtilisateur({ ...record });
+  };
+
+  const resetEditing = () => {
+    setIsEditing(false);
+    setEditingUtilisateur(null);
+  };
+
   const columns = [
     {
       key: '1',
       title: 'ID',
       dataIndex: 'id',
-     
+      responsive: ['sm'],
     },
     {
       key: '2',
       title: 'Name',
       dataIndex: 'name',
-     
     },
     {
       key: '3',
@@ -91,47 +116,12 @@ function Gest() {
     setIsAdding(true);
   };
 
-  const addUtilisateur = () => {
-    if (!newUtilisateur.name || !newUtilisateur.email || !newUtilisateur.role) {
-      alert('Veuillez remplir tous les champs');
-      return;
-    }
-    const newId = dataSource.length > 0 ? dataSource[dataSource.length - 1].id + 1 : 1;
-    const utilisateurToAdd = { ...newUtilisateur, id: newId };
-    setDataSource((prevDataSource) => [...prevDataSource, utilisateurToAdd]);
-    setIsAdding(false);
-    setNewUtilisateur({ name: '', email: '', role: '' });
-  };
-
-  const onDeleteUtilisateur = (record) => {
-    Modal.confirm({
-      title: 'Êtes-vous sûr de vouloir supprimer cet enregistrement utilisateur ?',
-      okText: 'Yes',
-      okType: 'danger',
-      onOk: () => {
-        setDataSource((prevDataSource) => prevDataSource.filter((utilisateur) => utilisateur.id !== record.id));
-      },
-    });
-  };
-
-  const onEditUtilisateur = (record) => {
-    setIsEditing(true);
-    setEditingUtilisateur({ ...record });
-  };
-
-  const resetEditing = () => {
-    setIsEditing(false);
-    setEditingUtilisateur(null);
-  };
-
   return (
-    
     <div className="gestion">
       <header className="gestion-header">
         <Button onClick={onAddUtilisateur}>Ajouter Utilisateur</Button>
-        {/* <Table columns={columns} dataSource={dataSource} style={{ width: '70%' }}></Table> */}
+        <Table columns={columns} dataSource={dataSource} className="responsive-table"></Table>
 
-        <Table columns={columns} dataSource={dataSource}></Table>
         <Modal
           title="Edit Utilisateur"
           visible={isEditing}
@@ -203,7 +193,6 @@ function Gest() {
         </Modal>
       </header>
     </div>
-    
   );
 }
 
