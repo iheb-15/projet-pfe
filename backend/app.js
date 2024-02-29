@@ -1,10 +1,11 @@
-const mongose = require("mongoose")
-const express = require("express")
-const app = express()
-const bodyParser = require("body-parser")// bch n3ml analuse lil http
-const cookieParser=require("cookie-parser")
-const cors=require("cors")
+const mongose = require("mongoose");
+const express = require("express");
+const app = express();
+const bodyParser = require("body-parser");// bch n3ml analuse lil http
+const cookieParser=require("cookie-parser");
+const cors=require("cors");
 require("dotenv").config();
+
 
 // cnx bd 
 mongose.connect(process.env.DATABASE,{
@@ -29,7 +30,7 @@ const userRoutes=require("./routes/user")
 //root
 app.use('/api',userRoutes)
 
-const port = process.env.PORT || 8000
+const port = process.env.PORT || 3001
 
 //start server
 

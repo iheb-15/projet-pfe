@@ -2,6 +2,7 @@ const mongoose =require("mongoose")
 const crypto =require("crypto");    
 const uuidv1= require("uuid/v1");
 const { ObjectId } = mongoose.Schema;
+const bcrypt=require("bcryptjs");
 
 const userSchema =new mongoose.Schema({
     name:{
@@ -22,18 +23,27 @@ const userSchema =new mongoose.Schema({
         unique:true
     },
     role:{
-        type:Number,
-        trim:true,
-        required:true,
-        unique:true
+        type:String,
+        default:'user'
+       
     },
     encry_password:{
         type:String,
         required:true
     },
+    
    
     salt:String,// sécurité mot pass
+    passwordResetToken: String,
+    passwordResetExpires: Date
 },{timestamps:true});
+
+
+userSchema.pre('save', async function(next) {
+    if (!this.isModified('password')) return next();
+    this.password = await bcrypt.hash(this.password, 12);
+    next();
+});
 
 userSchema.virtual("password")
     .set(function(password){
@@ -62,4 +72,6 @@ userSchema.methods={
         }
     },
 };
+
+
 module.exports=mongoose.model("User",userSchema);
