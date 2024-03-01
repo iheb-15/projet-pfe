@@ -10,6 +10,11 @@ function MotPasseOublie() {
 
   const handleEnvoyerClick = () => {
     setShowSuccessModal(true);
+
+    // Automatically close the success modal after a delay (e.g., 2000 milliseconds or 2 seconds)
+    setTimeout(() => {
+      setShowSuccessModal(false);
+    }, 2000);
   };
 
   const handleRetourClick = () => {
@@ -56,14 +61,7 @@ function MotPasseOublie() {
             <Modal.Header closeButton>
               <Modal.Title>Envoyé avec succès</Modal.Title>
             </Modal.Header>
-            <Modal.Body>
-              Votre message de succès ici.
-            </Modal.Body>
-            <Modal.Footer>
-              <Button variant="secondary" onClick={handleSuccessModalClose}>
-                Fermer
-              </Button>
-            </Modal.Footer>
+       
           </Modal>
         </Col>
       </Row>
