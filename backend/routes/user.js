@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const express=require("express")
 const { add } = require("../controllers/user")
 const { signin} = require("../controllers/user")
@@ -13,12 +14,46 @@ router.post('/add',[
  check("email","email doit valide").isEmail(),
  check("password","le mot de passe doit devient 6 caractére ").isLength({min:6}),
 ],add);
+=======
+// routes/user.js
 
+const express = require("express");
+const { add, signin, signout, updateUser, deleteUser } = require("../controllers/user");
+const { check } = require('express-validator');
+const router = express.Router();
+>>>>>>> d04f3bda5457ee921b54420688c292dee6718a8b
 
+// Create User
+router.post('/add', [
+    // Validation checks for user creation
+    check('name').isLength({ min: 3 }).withMessage('Le nom doit contenir au moins 3 caractères.'),
+    check('lastname').optional().isLength({ max: 32 }).withMessage('Le nom de famille ne doit pas dépasser 32 caractères.'),
+    check('email').isEmail().withMessage('Veuillez entrer une adresse email valide.'),
+    check('password').isLength({ min: 6 }).withMessage('Le mot de passe doit contenir au moins 6 caractères.'),
+    check('role').isNumeric().withMessage('Le rôle doit être un nombre entier.'),
+], add);
+
+<<<<<<< HEAD
 router.post('/signin',signin);
 router.get("/signout",signout);
+=======
+// Update User
+router.put('/update/:userId', [
+    // Validation checks for user update
+    check('name').isLength({ min: 3 }).withMessage('Le nom doit contenir au moins 3 caractères.'),
+    check('lastname').optional().isLength({ max: 32 }).withMessage('Le nom de famille ne doit pas dépasser 32 caractères.'),
+    check('email').isEmail().withMessage('Veuillez entrer une adresse email valide.'),
+    check('password').isLength({ min: 6 }).withMessage('Le mot de passe doit contenir au moins 6 caractères.'),
+], updateUser);
 
+// Delete User
+router.delete('/delete/:userId', deleteUser);
+>>>>>>> d04f3bda5457ee921b54420688c292dee6718a8b
 
+// Sign In User
+router.post('/signin', signin);
+
+<<<<<<< HEAD
 
 
 router.post('/send-code', async (req, res) => {
@@ -47,3 +82,9 @@ router.post('/send-code', async (req, res) => {
 
 
 module.exports=router;
+=======
+// Sign Out User
+router.get("/signout", signout);
+
+module.exports = router;
+>>>>>>> d04f3bda5457ee921b54420688c292dee6718a8b
