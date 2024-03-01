@@ -6,8 +6,8 @@ const bcrypt = require('bcryptjs');
 require('express-async-errors');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
-// 
-exports.signup = (req, res) => {
+ 
+exports.add = (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({
@@ -15,12 +15,13 @@ exports.signup = (req, res) => {
         });
     }
 
-    const { name, email, password, role } = req.body;
+    const { name,lastname, email, password, role } = req.body;
     const user = new User({
         name,
         email,
+        lastname,
         password,
-        role // Ajout du rôle
+        role 
     });
 
     user.save((err, user) => {
@@ -70,7 +71,7 @@ exports.signout = (req, res) => {
 exports.sendCodeEmail = async (email, code) => {
     try {
       const transporter = nodemailer.createTransport({
-        host: "nguiliiheb760@gmail.com",
+        host: "smtp.gmail.com", //host pour utiliser SMTP avec Gmail
         port: 587, // Port pour TLS/StartTLS
         secure: false, // utiliser true sur le port 465
         service: 'gmail',
