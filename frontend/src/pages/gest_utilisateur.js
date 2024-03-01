@@ -82,6 +82,11 @@ function Gest() {
       dataIndex: 'name',
     },
     {
+      key:'3',
+      title:'lastname',
+      dataIndex:'lastname'
+    },
+    {
       key: '3',
       title: 'Email',
       dataIndex: 'email',
@@ -149,6 +154,12 @@ function Gest() {
             }}
           />
           <Input
+            value={editingUtilisateur?.lastname}
+            onChange={(e) => {
+              setEditingUtilisateur((prev) => ({ ...prev, lastname: e.target.value }));
+            }}
+          />
+          <Input
             value={editingUtilisateur?.email}
             onChange={(e) => {
               setEditingUtilisateur((prev) => ({ ...prev, email: e.target.value }));
@@ -174,6 +185,11 @@ function Gest() {
             placeholder="Name"
             value={newUtilisateur.name}
             onChange={(e) => setNewUtilisateur({ ...newUtilisateur, name: e.target.value })}
+          />
+          <Input
+            placeholder="lastname"
+            value={newUtilisateur.lastname}
+            onChange={(e) => setNewUtilisateur({ ...newUtilisateur, lastname: e.target.value })}
           />
           <Input
             placeholder="Email"
