@@ -1,68 +1,40 @@
-// Import les dépendances et composants nécessaires
 import React, { useState } from 'react';
-import axios from 'axios';  // Import Axios pour faire des requêtes HTTP
-import { Link, Route, BrowserRouter as Switch, useHistory } from 'react-router-dom';
-import { Container, Row, Col, Form, Button } from 'react-bootstrap';  //Import des composants Bootstrap(components)
-import { toast } from 'react-toastify';  // Import des notifications Toast
-import 'react-toastify/dist/ReactToastify.css';  // Import Toastify CSS
-import './Authentification.css';  // Import local styles
-import Logo from './media/logo.png';  // Import logo image
-import MotPasseOublie from './MotPasseOublie';  // Import le composant Mot Passe Oublie pour le routage
+import { Link, Route, BrowserRouter as Switch } from 'react-router-dom';
+import { Container, Row, Col, Form, Modal } from 'react-bootstrap';
+import './Authentification.css'; // Import local styles
+import Logo from './media/logo.png'; // Import logo image
+import MotPasseOublie from './MotPasseOublie'; // Import le composant Mot Passe Oublie pour le routage
 
 // Main Authentification Component
 function Authentification() {
-  // State variables pour contenir  email and password
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showFailureModal, setShowFailureModal] = useState(false);
 
-  // Access history object pour la navigation programmatique
-  const history = useHistory();
-
-  // Fonction pour gérer le clic sur le bouton de connexion
   const handleLogin = () => {
-    // Faire une requête POST au backend pour l'authentification de l'utilisateur
-    axios.post('api/signin', { email, password })
-      .then(response => {
-        // Afficher success toast and navigate to home page on successful login
-        toast.success('Connexion réussie!', {
-          position: 'top-center',
-          autoClose: 3000,
-          onClose: () => {
-            history.push('/');
-          },
-        });
-      })
-      .catch(error => {
-        // Afficher le toast d'erreur si la connexion échoue
-        toast.error('Erreur de connexion. Veuillez vérifier vos informations.', {
-          position: 'top-center',
-          autoClose: 3000,
-        });
-      });
+    // Your login logic here
+    // For now, let's consider it successful if both email and password are non-empty
+    if (email && password) {
+      setShowSuccessModal(true);
+    } else {
+      setShowFailureModal(true);
+    }
   };
 
-  // Fonction pour gérer " Mot de Passe oublié ?"cliquez sur le lien
-  const handleMotPasseOublieClick = () => {
-    // Naviguez vers le "MotPasseOublie"
-    history.push('/motPasseOublie');
-  };
-
-  // Structure JSX pour le composant
   return (
     <Container fluid className="main">
       <Row className="justify-content-center align-items-center vh-100">
         <Col md={3} className="sub-main">
           <div className="imgs">
             <div className="container-image">
-              <img src={Logo} alt="logo" className="logo img-fluid" />
+              <img src={Logo} alt="logo" className="logo" />
             </div>
           </div>
 
-         {/*Formulaire d'authentification*/}
           <Form>
             <h4 className="title">REC-INOV</h4>
             <Form.Group>
-              {/* Email Input */}
               <div className="input-container">
                 <input
                   placeholder="Enter Email"
@@ -77,7 +49,6 @@ function Authentification() {
                 <span className="input-highlight"></span>
               </div>
 
-              {/* Password Input */}
               <div className="input-container">
                 <input
                   placeholder="Enter Password"
@@ -93,24 +64,34 @@ function Authentification() {
               </div>
             </Form.Group>
 
-            {/* Login Button */}
             <div>
-              <Button variant="primary" className="login-btn" onClick={handleLogin}>
+              <button variant="primary" className="login-btn" onClick={handleLogin}>
                 Login
-              </Button>
+              </button>
             </div>
+            <p className="link mt-3">
+              <Link to="/motPasseOublie">Mot de Passe oublié ?</Link>
+            </p>
           </Form>
-
-          {/* "Mot de Passe oublié ?" Link */}
-          <p className="link mt-3">
-            <Link to="/motPasseOublie" onClick={handleMotPasseOublieClick}>
-              Mot de Passe oublié ?
-            </Link>
-          </p>
         </Col>
       </Row>
 
-     {/*Route pour le composant "MotPasseOublie"*/}
+      {/* Success Modal */}
+      <Modal show={showSuccessModal} onHide={() => setShowSuccessModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Login Successful</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Your login was successful!</Modal.Body>
+      </Modal>
+
+      {/* Failure Modal */}
+      <Modal show={showFailureModal} onHide={() => setShowFailureModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Login Failed</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Your login attempt failed. Please check your credentials.</Modal.Body>
+      </Modal>
+
       <Switch>
         <Route path="/motPasseOublie" component={MotPasseOublie} />
       </Switch>
@@ -118,5 +99,4 @@ function Authentification() {
   );
 }
 
-// Exporter le composant d'authentification
 export default Authentification;

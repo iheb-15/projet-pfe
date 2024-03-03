@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Container, Row, Col, Form, Button, Modal } from 'react-bootstrap';
+import { Container, Row, Col, Form, Modal } from 'react-bootstrap';
 import Logo from './media/logo.png';
 import './Authentification.css';
 
@@ -14,7 +14,7 @@ function MotPasseOublie() {
     // Automatically close the success modal after a delay (e.g., 2000 milliseconds or 2 seconds)
     setTimeout(() => {
       setShowSuccessModal(false);
-    }, 2000);
+    }, 4000);
   };
 
   const handleRetourClick = () => {
@@ -46,14 +46,14 @@ function MotPasseOublie() {
             </Form.Group>
 
             <div className='envoyer-btn'>
-              <Button variant="primary" className='login-btn' onClick={handleEnvoyerClick}>
+              <button variant="primary" className='login-btn' onClick={handleEnvoyerClick}>
                 Envoyer
-              </Button>
+              </button>
             </div>
-            <div className="second-boutton">
-              <Button variant="secondary" className='login-btn' onClick={handleRetourClick}>
+            <div >
+              <button variant="secondary"  className="second-boutton" onClick={handleRetourClick}>
                 Retour 
-              </Button>
+              </button>
             </div>
           </Form>
 

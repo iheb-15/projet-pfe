@@ -27,6 +27,7 @@
     "mongoose": "^6.12.6",
     "nodemailer": "^6.9.11",
     "package-name": "^0.1.0",
+    "package.json": "^0.0.0",
     "uuid": "^3.3.3",
     "xlsx": "^0.18.3",
     "xss": "^1.0.9"
