@@ -5,8 +5,10 @@ var expressJwt = require('express-jwt')
 const bcrypt = require('bcryptjs');
 require('express-async-errors');
 const nodemailer = require('nodemailer');
+
 require('dotenv').config();
- 
+
+
 exports.add = (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -15,13 +17,13 @@ exports.add = (req, res) => {
         });
     }
 
-    const { name,lastname, email, password, role } = req.body;
+    const { name, lastname, email, password, role } = req.body;
     const user = new User({
         name,
         email,
         lastname,
         password,
-        role 
+        role
     });
 
     user.save((err, user) => {
@@ -29,9 +31,10 @@ exports.add = (req, res) => {
             return res.status(400).json({
                 error: "Unable to add user"
             });
-        }
+            
+        }console.log(err);
         res.json({
-            message: "User created successfully",
+            message: "User créer avec succées",
             user
         });
     });
@@ -68,57 +71,120 @@ exports.signout = (req, res) => {
     });
 };
 //envoyer un e-mail contenant le code de vérification à l'utilisateur.
-exports.sendCodeEmail = async (email, code) => {
-    try {
-      const transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com", //host pour utiliser SMTP avec Gmail
-        port: 587, // Port pour TLS/StartTLS
-        secure: false, // utiliser true sur le port 465
-        service: 'gmail',
-        auth: {
-          user: process.env.EMAIL_USER,
-          pass: process.env.EMAIL_PASS
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user:process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+    }
+});
+
+exports.forgotPassword = function(req, res) {
+     User.findOne({ email: req.body.email }, function(err, user) {
+        if (err) {
+            console.error('Utilisateur ayant détecté une erreur:', err);
+            return res.status(500).send('Une erreur s\'est produite.');
         }
-      });
-  
-      const mailOptions = {
-        from: process.env.EMAIL_USER,
-        to: email,
-        subject: 'Votre code de vérification',
-        text: `Voici votre code de vérification : ${code}`,
-        html: `<p>Voici votre code de vérification : <strong>${code}</strong></p>`
-      };
-  
-      let info = await transporter.sendMail(mailOptions);
-      console.log('Message sent: %s', info.messageId);
-    } catch (error) {
-      console.error('Erreur lors de l\'envoi de l\'e-mail : ', error);
-    }
-  };
-  
-  //  réinitialiser le mot de passe
- exports.resetPassword = async (req, res) => {
-    const { token, newPassword } = req.body;
-  
-    try {
-      const user = await User.findOne({
-        resetToken: token,
-        resetTokenExpiration: { $gt: Date.now() }
-      });
-  
-      if (!user) {
-        return res.status(400).json({ message: 'Token invalide ou expiré' });
-      }
-  
-      const hashedPassword = await bcrypt.hash(newPassword, 10);
-      user.password = hashedPassword;
-      user.resetToken = null;
-      user.resetTokenExpiration = null;
-      await user.save();
-  
-      res.status(200).json({ message: 'Mot de passe réinitialisé avec succès' });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Une erreur s\'est produite' });
-    }
-  };
+
+        if (!user) {
+            return res.status(400).send('Aucun compte avec cette adresse e-mail n\’existe.');
+        }
+
+        const otp = generateOTP();
+        user.otp = otp;
+        user.otpExpires = Date.now() + 600000; // OTP expires in 10 minutes
+
+        user.save(function(err) {
+            if (err) {
+                console.error('Erreur lors de l\’enregistrement des données utilisateur :', err);
+                return res.status(500).send('Une erreur s\'est produite.');
+            }
+
+            const mailOptions = {
+                to: user.email,
+                from: 'nguiliiheb760@gmail.com',
+                subject: 'Password Reset OTP',
+                text: `Your OTP for password reset is: ${otp}`
+            };
+
+            transporter.sendMail(mailOptions, function(err) {
+                if (err) {
+                    console.error('Erreur lors de l’envoi du email:', err);
+                    return res.status(500).send('Une erreur s\'est produite.');
+                }
+                res.status(200).send('Un OTP a été envoyé à votre adresse e-mail.\n merci de vérifier votre email');
+            });
+        });
+    });
+};
+
+
+exports.resetPasswordWithOTP = function(req, res) { 
+    const { email, otp, newPassword } = req.body;
+
+    User.findOne({ email, otp, otpExpires: { $gt: Date.now() } }, function(err, user) {
+        if (err) {
+            console.error('Utilisateur ayant détecté une erreur :', err);
+            return res.status(500).send('Une erreur s\'est produite.');
+        }
+
+        if (!user) {
+            return res.status(400).send('OTP non valide ou expiré.');
+        }
+
+        // Vérifie si l'utilisateur a déjà un mot de passe
+        if (user.password) {
+            // Si l'utilisateur a déjà un mot de passe, c'est une mise à jour
+            updatePassword(user, newPassword, res);
+        } else {
+            // Si l'utilisateur n'a pas de mot de passe, c'est une création
+            createPassword(user, newPassword, res);
+        }
+    });
+};
+
+function createPassword(user, newPassword, res) {
+    // Hache le nouveau mot de passe avant de le sauvegarder
+    bcrypt.hash(newPassword, saltRounds, function(err, hashedPassword) {
+        if (err) {
+            console.error('Error hashing new password:', err);
+            return res.status(500).send('Une erreur s\’est produite lors de la mise à jour du mot de passe.');
+        }
+
+        // Sauvegarde le nouveau mot de passe haché
+        user.password = hashedPassword;
+
+        user.save(function(err) {
+            if (err) {
+                console.error('Error saving user data:', err);
+                return res.status(500).send('Une erreur s\'est produite.');
+            }
+            res.status(200).send('Le mot de passe a été créé avec succès.');
+        });
+    });
+}
+
+function updatePassword(user, newPassword, res) {
+    // Hache le nouveau mot de passe avant de le sauvegarder
+    bcrypt.hash(newPassword, saltRounds, function(err, hashedPassword) {
+        if (err) {
+            console.error('Error hashing new password:', err);
+            return res.status(500).send('Une erreur s\’est produite lors de la mise à jour du mot de passe.');
+        }
+
+        // Met à jour le mot de passe haché
+        user.password = hashedPassword;
+
+        user.save(function(err) {
+            if (err) {
+                console.error('Error saving user data:', err);
+                return res.status(500).send('Une erreur s\'est produite.');
+            }
+            res.status(200).send('Le mot de passe a été réinitialisé avec succès.');
+        });
+    });
+}
+
+function generateOTP() {
+    return Math.floor(100000 + Math.random() * 900000).toString();// pour générer code entre 0 et 899999 avec l'ajout de 100000 pour le code
+}

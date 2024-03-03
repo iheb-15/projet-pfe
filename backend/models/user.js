@@ -34,9 +34,12 @@ const userSchema =new mongoose.Schema({
     
    
     salt:String,// sécurité mot pass
-    passwordResetToken: String,
-    passwordResetExpires: Date
-},{timestamps:true});
+    resetPasswordToken: String,
+    resetPasswordExpires: Date,
+    otp: String,
+    otpExpires: Date
+}, { collection: 'user' }
+,{timestamps:true});
 
 
 userSchema.pre('save', async function(next) {
