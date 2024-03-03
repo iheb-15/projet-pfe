@@ -1,49 +1,38 @@
-const express=require("express")
-const { add } = require("../controllers/user")
-const { signin} = require("../controllers/user")
-const { signout} = require("../controllers/user")
-const {check} = require('express-validator')
-const user = require("../models/user")
-const router=express.Router()
 
-const { resetPassword,requestPasswordReset } = require('../controllers/user');
+const express = require("express"); 
+const { add } = require("../controllers/user"); 
+const { update } = require("../controllers/user"); 
+const { signin } = require("../controllers/user"); 
+const { signout } = require("../controllers/user"); 
+const { check } = require('express-validator'); 
+const user = require("../models/user"); 
+const router = express.Router(); 
 
-router.post('/add',[
- check("name","le nom doit obtenir 3 caractére").isLength({min:3}),
- check("email","email doit valide").isEmail(),
- check("password","le mot de passe doit devient 6 caractére ").isLength({min:6}),
-],add);
+const authController = require('../controllers/user'); 
+router.post('/add', [
+    check("name", "le nom doit obtenir 3 caractére").isLength({ min: 3 }), // Valider la saisie du nom
+    check("email", "email doit valide").isEmail(), // Valider la saisie de l'e-mail
+    check("password", "le mot de passe doit devient 6 caractére ").isLength({ min: 6 }), // Valider la saisie du mot de passe
+], add); // Définir  route pour ajouter un nouvel utilisateur
 
+router.put(
+    '/update/:userId',
+    [
+        check('name', 'Le nom doit avoir au moins 3 caractères.').isLength({ min: 3 }), 
+        check('lastname', 'Le prenom doit avoir au moins 3 caractères.').isLength({ min: 3 }), 
+        check('email', 'L\'email doit être valide.').isEmail(), 
+        check('password', 'Le mot de passe doit avoir au moins 6 caractères.').isLength({ min: 6 }) 
+    ],
+    update
+); // Définir route pour la mise à jour des informations utilisateur
 
-router.post('/signin',signin);
-router.get("/signout",signout);
+// Nouvelle route pour supprimer un utilisateur, en utilisant la méthode delete du contrôleur authController
+router.delete('/delete/:userId', authController.delete);
 
+router.post('/signin', signin); 
+router.get("/signout", signout); 
 
+router.post('/forgot-password', authController.forgotPassword); 
+router.post('/reset-password-with-otp', authController.resetPasswordWithOTP); 
 
-
-router.post('/send-code', async (req, res) => {
-    const { email } = req.body;
-    const code = Math.floor(100000 + Math.random() * 900000); // Génère un code à 6 chiffres
-    try {
-      await requestPasswordReset(email, code);
-      console.log(`Code envoyé avec succès à l'email : ${email}`);
-      res.status(200).json({ message: 'Code envoyé avec succès.' });
-    } catch (error) {
-      res.status(500).json({ error: 'Erreur lors de l\'envoi de l\'e-mail.' });
-      console.log(`echec à l'email : ${email}`);
-    }
-  });
-  
-  // Route pour réinitialiser le mot de passe
-  router.post('/resetPassword', async (req, res) => {
-    const { token, newPassword } = req.body;
-    try {
-      await resetPassword(req, res);
-    } catch (error) {
-      res.status(500).json({ error: 'Erreur lors de la réinitialisation du mot de passe.' });
-    }
-  });
-  
-
-
-module.exports=router;
+module.exports = router; 
