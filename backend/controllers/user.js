@@ -5,7 +5,7 @@ var expressJwt = require('express-jwt')
 const bcrypt = require('bcryptjs');
 require('express-async-errors');
 const nodemailer = require('nodemailer');
-
+const saltRounds = 10;
 require('dotenv').config();
 
 
@@ -119,71 +119,61 @@ exports.forgotPassword = function(req, res) {
 };
 
 
-exports.resetPasswordWithOTP = function(req, res) { 
+exports.resetPasswordWithOTP = (req, res) => {
     const { email, otp, newPassword } = req.body;
 
-    User.findOne({ email, otp, otpExpires: { $gt: Date.now() } }, function(err, user) {
+    // Recherche de l'utilisateur en fonction de l'e-mail, de l'OTP et de la date d'expiration de l'OTP
+    User.findOne({ email, otp, otpExpires: { $gt: Date.now() } }, (err, user) => {
         if (err) {
-            console.error('Utilisateur ayant détecté une erreur :', err);
-            return res.status(500).send('Une erreur s\'est produite.');
+            console.error('Erreur lors de la recherche de l\'utilisateur :', err);
+            return res.status(500).send('Une erreur s\'est produite lors de la recherche de l\'utilisateur.');
         }
-
         if (!user) {
+            console.log('Aucun utilisateur trouvé.');
             return res.status(400).send('OTP non valide ou expiré.');
         }
 
-        // Vérifie si l'utilisateur a déjà un mot de passe
-        if (user.password) {
-            // Si l'utilisateur a déjà un mot de passe, c'est une mise à jour
-            updatePassword(user, newPassword, res);
-        } else {
-            // Si l'utilisateur n'a pas de mot de passe, c'est une création
-            createPassword(user, newPassword, res);
-        }
+        // Hachage du nouveau mot de passe avant de le sauvegarder
+        bcrypt.hash(newPassword, saltRounds, (err, hashedPassword) => {
+            if (err) {
+                console.error('Erreur lors du hachage du nouveau mot de passe :', err);
+                return res.status(500).send('Une erreur s\'est produite lors de la mise à jour du mot de passe.');
+            }
+
+            // Mise à jour du mot de passe haché
+            user.password = hashedPassword;
+            user.otp = undefined; // Supprimer l'OTP après la réinitialisation du mot de passe
+            user.otpExpires = undefined; // Supprimer la date d'expiration de l'OTP
+
+            user.save((err) => {
+                if (err) {
+                    console.error('Erreur lors de la sauvegarde des données utilisateur :', err);
+                    return res.status(500).send('Une erreur s\'est produite lors de la sauvegarde des données utilisateur.');
+                }
+                
+
+                // Recherche de l'utilisateur avec le nouvel e-mail et le nouveau mot de passe
+                User.findOne({ email, password: hashedPassword }, (err, user) => {
+                    if (err || !user) {
+                        return res.status(400).json({
+                            error: "Erreur lors de la connexion automatique après la réinitialisation du mot de passe."
+                        });
+                    }
+                    // Création du jeton d'authentification
+                    const token = jwt.sign({ _id: user._id  }, process.env.SECRET);
+                    // Enregistrement du jeton dans les cookies
+                    res.cookie('token', token, { expires: new Date(Date.now() + 1) });
+                  
+                    const { _id, name, email } = user;
+                    return res.json({
+                        token,
+                        user: { _id, name, email }
+                    });
+                });
+            });
+        });
     });
 };
-
-function createPassword(user, newPassword, res) {
-    // Hache le nouveau mot de passe avant de le sauvegarder
-    bcrypt.hash(newPassword, saltRounds, function(err, hashedPassword) {
-        if (err) {
-            console.error('Error hashing new password:', err);
-            return res.status(500).send('Une erreur s\’est produite lors de la mise à jour du mot de passe.');
-        }
-
-        // Sauvegarde le nouveau mot de passe haché
-        user.password = hashedPassword;
-
-        user.save(function(err) {
-            if (err) {
-                console.error('Error saving user data:', err);
-                return res.status(500).send('Une erreur s\'est produite.');
-            }
-            res.status(200).send('Le mot de passe a été créé avec succès.');
-        });
-    });
-}
-
-function updatePassword(user, newPassword, res) {
-    // Hache le nouveau mot de passe avant de le sauvegarder
-    bcrypt.hash(newPassword, saltRounds, function(err, hashedPassword) {
-        if (err) {
-            console.error('Error hashing new password:', err);
-            return res.status(500).send('Une erreur s\’est produite lors de la mise à jour du mot de passe.');
-        }
-
-        // Met à jour le mot de passe haché
-        user.password = hashedPassword;
-
-        user.save(function(err) {
-            if (err) {
-                console.error('Error saving user data:', err);
-                return res.status(500).send('Une erreur s\'est produite.');
-            }
-            res.status(200).send('Le mot de passe a été réinitialisé avec succès.');
-        });
-    });
-}
 
 function generateOTP() {
     return Math.floor(100000 + Math.random() * 900000).toString();// pour générer code entre 0 et 899999 avec l'ajout de 100000 pour le code
