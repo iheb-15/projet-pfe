@@ -1,27 +1,26 @@
-const mongose = require("mongoose");
-const express = require("express");
-const app = express();
-const bodyParser = require("body-parser");// bch n3ml analuse lil http
-const cookieParser=require("cookie-parser");
-const cors=require("cors");
-require("dotenv").config();
 
+const mongoose = require("mongoose"); 
+const express = require("express"); 
+const app = express(); 
+const bodyParser = require("body-parser"); 
+const cookieParser = require("cookie-parser"); 
+const cors = require("cors"); 
+require("dotenv").config(); 
 
-// cnx bd 
-mongose.connect(process.env.DATABASE,{
-    useNewUrlParser:true,
+// Connect to the MongoDB database
+mongoose.connect(process.env.DATABASE, {
+    useNewUrlParser: true,
     useUnifiedTopology: true,
-},async(err)=>{
-    if(!err){
-        console.log("DB:" + process.env.DATABASE )
-        await console.log('succes')
+}, async (err) => {
+    if (!err) {
+        console.log("DB:" + process.env.DATABASE);
+        await console.log('Connection to the database successful.');
+    } else {
+        await console.log('Error connecting to the database:', err);
     }
-    else{
-        await console.log('erreur :'+err)
-    }
-}
-)
+});
 
+<<<<<<< HEAD
 app.use(bodyParser.json())
 app.use(cookieParser())
 app.use(cors())
@@ -32,11 +31,25 @@ app.use((req, res, next) => {
 const userRoutes=require("./routes/user")
 //root
 app.use('/api',userRoutes)
+=======
 
-const port = process.env.PORT || 3001
+app.use(bodyParser.json()); 
+app.use(cookieParser()); 
+app.use(cors()); 
+app.use((req, res, next) => {
+    console.log(req.body); 
+    next();
+});
+>>>>>>> ff9b0c63ba32292af95a13e58c616c6ec8abf049
 
-//start server
+
+const userRoutes = require("./routes/user");
+app.use('/api', userRoutes); 
+
+
+const port = process.env.PORT || 3001;
+
 
 app.listen(port, () => {
-    console.log(`app is running at ${port}`)
-})
+    console.log(`App is running at http://localhost:${port}`);
+});

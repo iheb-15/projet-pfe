@@ -1,0 +1,141 @@
+/* MotPasseOublie.css */
+
+.main {
+    text-align: center;
+    background-color: #e1e3eb;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+  }
+  
+  .sub-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    border-radius: 20px;
+    background-color: white;
+  }
+  
+  .imgs {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .container-image {
+    background-color: rgb(223, 221, 221);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 85px;
+    width: 85px;
+  }
+  
+  .logo {
+    height: 80px;
+    width: 80px;
+    border-radius: 50%;
+  }
+  
+  h4 {
+    color: #3987ee;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 15px;
+  }
+  
+  .title {
+    margin-top: 20px;
+  }
+  
+  /* Input container */
+  .input-container {
+    position: relative;
+    margin: 20px;
+  }
+  
+  /* Input field */
+  .input-field {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-bottom: 2px solid #ccc;
+    outline: none;
+    background-color: transparent;
+  }
+  
+  /* Input label */
+  .input-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 16px;
+    color: rgba(204, 204, 204, 0);
+    pointer-events: none;
+    transition: all 0.3s ease;
+  }
+  
+  /* Input highlight */
+  .input-highlight {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 0;
+    background-color: #3987ee;
+    transition: all 0.3s ease;
+  }
+  
+  /* Input field:focus styles */
+  .input-field:focus + .input-label {
+    top: -20px;
+    font-size: 12px;
+    color: #3987ee;
+  }
+  
+  .input-field:focus + .input-label + .input-highlight {
+    width: 100%;
+  }
+  
+  /* Boutons */
+  .login-btn {
+    width: 120px;
+    height: 40px;
+    border-radius: 8px;
+    background-color: #3987ee;
+    color: white;
+    font-size: 16px;
+    border: none;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .login-btn:hover {
+    background-color: #305f9e;
+    transform: scale(1.1);
+  }
+  
+  .second-boutton {
+    width: 120px;
+    height: 40px;
+    margin-top: 20px;
+    background-color: #3987ee;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  
+  .second-boutton:hover {
+    background-color: #305f9e;
+    transform: scale(1.1);
+  }
+  

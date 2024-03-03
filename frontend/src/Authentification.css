@@ -5,6 +5,7 @@
   background-color: #e1e3eb;
 }
 
+
 .sub-main {
   display: flex;
   flex-direction: column;
@@ -33,26 +34,25 @@
 }
 
 .logo {
-  height: 80px;
-  width: 80px;
+  height: 85px;
+  width: 85px;
   border-radius: 50%;
 }
 
-h4 {
+
+
+
+.title {
+  margin-top: 20px;
   color: #3987ee;
   font-size: 20px;
   font-weight: bold;
   margin-bottom: 15px;
 }
 
-.title {
-  margin-top: 20px;
-}
-
 /* Input container */
 .input-container {
   position: relative;
-  margin: 20px;
   margin-top: 50px;
 }
 
@@ -112,28 +112,34 @@ h4 {
   border: none;
   text-align: center;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease;
+ margin-top: 20px;
+
+  
+ 
+ 
 }
 
 .login-btn:hover {
   background-color: #305f9e;
-  transform: scale(1.1);
+  
+ 
 }
 
-.second-boutton {
-  width: 120px;
-  height: 40px;
+.second-boutton{
   margin-top: 20px;
-  background-color: #3987ee;
+  margin-right: 100px;
+  width: 100px;
+  height: 40px;
+  background-color: #0f0f0fa2;  
+  border-radius: 8px;
   color: white;
   font-size: 16px;
   border: none;
-  border-radius: 8px;
+  text-align: center;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease;
 }
-
 .second-boutton:hover {
-  background-color: #305f9e;
-  transform: scale(1.1);
+  background-color:#313335a2;
+  
+ 
 }
