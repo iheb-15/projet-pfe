@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors"); 
 require("dotenv").config(); 
 
+
 // Connect to the MongoDB database
 mongoose.connect(process.env.DATABASE, {
     useNewUrlParser: true,
@@ -20,7 +21,7 @@ mongoose.connect(process.env.DATABASE, {
     }
 });
 
-<<<<<<< HEAD
+
 app.use(bodyParser.json())
 app.use(cookieParser())
 app.use(cors())
@@ -31,20 +32,11 @@ app.use((req, res, next) => {
 const userRoutes=require("./routes/user")
 //root
 app.use('/api',userRoutes)
-=======
-
-app.use(bodyParser.json()); 
-app.use(cookieParser()); 
-app.use(cors()); 
-app.use((req, res, next) => {
-    console.log(req.body); 
-    next();
-});
->>>>>>> ff9b0c63ba32292af95a13e58c616c6ec8abf049
 
 
-const userRoutes = require("./routes/user");
-app.use('/api', userRoutes); 
+
+
+
 
 
 const port = process.env.PORT || 3001;

@@ -80,11 +80,11 @@ const App = () => {
               className: 'trigger',
               onClick: () => setCollapsed(!collapsed),
             })}
-            <Dropdown overlay={userMenu}>
-              <a className='ant-dropdown-link' onClick={e => e.preventDefault()} style={{ color:'white',marginLeft:'88%' }}>
+           <Dropdown overlay={userMenu} trigger={['click']}>
+              <Link to="#" className='ant-dropdown-link' onClick={e => e.preventDefault()} style={{ color: 'white', marginLeft: '88%', cursor: 'pointer' }}>
                 {user.name} <DownOutlined />
-              </a>
-            </Dropdown>
+              </Link>
+          </Dropdown>
           </Header>
           <Content
             className="site-layout-background"

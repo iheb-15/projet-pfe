@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: 'user'
     },
-<<<<<<< HEAD
+
     
    
     salt:String,// sécurité mot pass
@@ -38,18 +38,9 @@ const userSchema = new mongoose.Schema({
     otpExpires: Date
 }, { collection: 'user' }
 ,{timestamps:true});
-=======
-    encry_password: {
-        type: String,
-        required: true
-    },
-    salt: String, 
-    resetPasswordToken: String, 
-    resetPasswordExpires: Date, 
-    otp: String, // OTP for additional security
-    otpExpires: Date // Expiry date for OTP
-}, { collection: 'user' }, { timestamps: true }); 
->>>>>>> ff9b0c63ba32292af95a13e58c616c6ec8abf049
+
+
+
 
 
 userSchema.pre('save', async function (next) {

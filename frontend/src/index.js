@@ -1,4 +1,4 @@
-// Import les modules et styles nécessaires
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
