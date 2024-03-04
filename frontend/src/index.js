@@ -10,6 +10,7 @@ import MotPasseOublie from './MotPasseOublie';  // Import the MotPasseOublie com
 import App from './app';  // Import the App component
 import './App.css';  
 import 'bootstrap/dist/css/bootstrap.min.css';  // Import Bootstrap styles
+import { ToastContainer } from 'react-toastify';
 
 // Composant racine pour l'application
 const Root = () => (
@@ -25,6 +26,7 @@ const Root = () => (
       {/* Route pour la composante "MotPasseOublie"  */}
       <Route path="/motPasseOublie" component={MotPasseOublie} />
     </Switch>
+    <ToastContainer/>
   </Router>
 );
 
