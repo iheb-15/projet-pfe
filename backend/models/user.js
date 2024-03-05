@@ -28,7 +28,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: 'user'
     },
-
+    encry_password:{
+        type:String,
+        required:true
+    },
     
    
     salt:String,// sécurité mot pass
@@ -61,24 +64,20 @@ userSchema.virtual("password")
     });
 
 
-userSchema.methods = {
-    authenticate: function (plainpassword) {
-        return this.securePassword(plainpassword) === this.encry_password;
-    },
-    securePassword: function (plainpassword) {
-        if (!plainpassword) return "";
-        try {
-            // 
-            return crypto
-                .createHmac("sha256", this.salt)
-                .update(plainpassword)
-                .digest("hex");
-        } catch (err) {
-            return "";
-        }
-    },
-};
-
+    userSchema.methods = {
+        authenticate: function (plainpassword) {
+            return this.securePassword(plainpassword) === this.encry_password;
+        },
+        securePassword: function (plainpassword) {
+            if (!plainpassword) return "";
+            try {
+                // Cryptage avec base64
+                return Buffer.from(plainpassword).toString('base64');
+            } catch (err) {
+                return "";
+            }
+        },
+    };
 
 userSchema.methods.remove = async function () {
     await this.remove();

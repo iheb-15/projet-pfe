@@ -17,10 +17,13 @@ function Authentification() {
   // Configurer des variables d'état à l'aide du use State hook
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
+ 
   //Gérer la fonctionnalité de connexion
-  const handleLogin = async () => {
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
     try {
+      
       //Faites une demande POST à votre point de terminaison principal pour l'authentification
       const response = await axios.post('http://localhost:3001/api/signin', {
         email,
@@ -125,3 +128,4 @@ function Authentification() {
 
 // Exporter le composant d'authentification comme exportation par défaut
 export default Authentification;
+

@@ -32,12 +32,13 @@ router.put(
 // Nouvelle route pour supprimer un utilisateur, en utilisant la méthode delete du contrôleur authController
 router.delete('/delete/:userId', authController.delete);
 
+router.post('/singup',authController.singnup);
 router.post('/signin', signin); 
 router.get("/signout", signout); 
 
 
 router.post('/forgot-password', authController.forgotPassword);
-router.post('/reset-password-with-otp', authController.resetPasswordWithOTP);
+router.put('/reset-password-with-otp', authController.resetPasswordWithOTP);
 
 
 

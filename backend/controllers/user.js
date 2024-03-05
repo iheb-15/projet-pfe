@@ -8,9 +8,52 @@ require('express-async-errors');
 const nodemailer = require('nodemailer');
 const saltRounds = 10;
 require('dotenv').config();
+const base64 = require('base64-js');
 
 
+exports.singnup = (req, res) => {
+    // Validate user inputs
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({
+            error: errors.array()[0].msg
+        });
+    }
 
+    const { name, lastname, email, password, role } = req.body;
+
+    // Create a new user instance
+    const user = new User({
+        name,
+        email,
+        lastname,
+        password,
+        role
+    });
+
+    // Save the new user to the database
+    user.save((err, savedUser) => {
+        if (err) {
+            // Handle error if user creation fails
+            console.log(err); // Log the error for debugging purposes
+            return res.status(400).json({
+                error: "Impossible d'ajouter un utilisateur"
+            });
+        }
+        // Respond with a success message and user details
+        res.json({
+            message: "Utilisateur créé avec succès",
+            user: {
+                id: savedUser._id,
+                name: savedUser.name,
+                email: savedUser.email,
+                password:savedUser.password,
+                lastname: savedUser.lastname,
+                role: savedUser.role
+            }
+        });
+    });
+}
 
 
 // Fonction de contrôleur pour ajouter un nouvel utilisateur
@@ -51,6 +94,7 @@ exports.add = (req, res) => {
                 id: savedUser._id,
                 name: savedUser.name,
                 email: savedUser.email,
+                password:savedUser.password,
                 lastname: savedUser.lastname,
                 role: savedUser.role
             }
@@ -249,16 +293,21 @@ exports.forgotPassword = function(req, res) {
 exports.resetPasswordWithOTP = (req, res) => {
     const { email, otp, newPassword } = req.body;
 
+    // Encode l'OTP en Base64
+    const encodedOTP = Buffer.from(otp).toString('base64');
+
     // Recherche de l'utilisateur en fonction de l'e-mail, de l'OTP et de la date d'expiration de l'OTP
-    User.findOne({ email, otp, otpExpires: { $gt: Date.now() } }, (err, user) => {
+    User.findOne({ email, otp: encodedOTP, otpExpires: { $gt: Date.now() } }, (err, user) => {
         if (err) {
             console.error('Erreur lors de la recherche de l\'utilisateur :', err);
             return res.status(500).send('Une erreur s\'est produite lors de la recherche de l\'utilisateur.');
         }
+        console.log(err);
         if (!user) {
             console.log('Aucun utilisateur trouvé.');
             return res.status(400).send('OTP non valide ou expiré.');
         }
+        console.log(!user);
 
         // Hachage du nouveau mot de passe avant de le sauvegarder
         bcrypt.hash(newPassword, saltRounds, (err, hashedPassword) => {
@@ -277,7 +326,6 @@ exports.resetPasswordWithOTP = (req, res) => {
                     console.error('Erreur lors de la sauvegarde des données utilisateur :', err);
                     return res.status(500).send('Une erreur s\'est produite lors de la sauvegarde des données utilisateur.');
                 }
-                
 
                 // Recherche de l'utilisateur avec le nouvel e-mail et le nouveau mot de passe
                 User.findOne({ email, password: hashedPassword }, (err, user) => {
@@ -287,10 +335,10 @@ exports.resetPasswordWithOTP = (req, res) => {
                         });
                     }
                     // Création du jeton d'authentification
-                    const token = jwt.sign({ _id: user._id  }, process.env.SECRET);
+                    const token = jwt.sign({ _id: user._id }, process.env.SECRET);
                     // Enregistrement du jeton dans les cookies
                     res.cookie('token', token, { expires: new Date(Date.now() + 1) });
-                  
+
                     const { _id, name, email } = user;
                     return res.json({
                         token,
@@ -301,7 +349,6 @@ exports.resetPasswordWithOTP = (req, res) => {
         });
     });
 };
-
 function generateOTP() {
     return Math.floor(100000 + Math.random() * 900000).toString();// pour générer code entre 0 et 899999 avec l'ajout de 100000 pour le code
 };

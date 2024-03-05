@@ -9,12 +9,13 @@ function Gest() {
   const [isEditing, setIsEditing] = useState(false);
   const [editingUtilisateur, setEditingUtilisateur] = useState(null);
   const [isAdding, setIsAdding] = useState(false);
-  const [newUtilisateur, setNewUtilisateur] = useState({ name: '', lastname: '', email: '', role: '' });
+  const [newUtilisateur, setNewUtilisateur] = useState({ name: '', lastname: '',password:'', email: '', role: '' });
   const [dataSource, setDataSource] = useState([
     {
       id: 1,
       name: 'iheb',
       lastname: 'iheb',
+      password:'jbjbj16',
       email: 'iheb@gmail.com',
       role: 'super admin',
     },
@@ -36,7 +37,7 @@ function Gest() {
   };
 
   const addUtilisateur = async () => {
-    if (!newUtilisateur.name || !newUtilisateur.lastname || !newUtilisateur.email || !newUtilisateur.role) {
+    if (!newUtilisateur.name || !newUtilisateur.lastname || !newUtilisateur.email ||!newUtilisateur.password || !newUtilisateur.role) {
       alert('Veuillez remplir tous les champs');
       return;
     }
@@ -52,7 +53,7 @@ function Gest() {
       const updatedDataSource = [...dataSource, { ...addedUtilisateur, id: newId }];
       setDataSource(updatedDataSource);
       setIsAdding(false);
-      setNewUtilisateur({ name: '', lastname: '', email: '', role: '' });
+      setNewUtilisateur({ name: '', lastname: '', password:'', email: '', role: '' });
     } catch (error) {
       // Handle the error if needed
     }
@@ -103,11 +104,16 @@ function Gest() {
     },
     {
       key: '5',
+      title: 'password',
+      dataIndex: 'password',
+    },
+    {
+      key: '6',
       title: 'Role',
       dataIndex: 'role',
     },
     {
-      key: '6',
+      key: '7',
       title: 'Actions',
       render: (record) => (
         <>
@@ -159,6 +165,10 @@ function Gest() {
             value={editingUtilisateur?.email}
             onChange={(e) => setEditingUtilisateur(prev => ({ ...prev, email: e.target.value }))}
           />
+          <Input
+            value={editingUtilisateur?.password}
+            onChange={(e) => setEditingUtilisateur(prev => ({ ...prev, password: e.target.value }))}
+          />
           <Select
             style={{ width: '100%' }}
             value={editingUtilisateur?.role}
@@ -190,6 +200,12 @@ function Gest() {
             value={newUtilisateur.email}
             style={{ marginTop: 10 }}
             onChange={(e) => setNewUtilisateur({ ...newUtilisateur, email: e.target.value })}
+          />
+          <Input
+            placeholder="password"
+            value={newUtilisateur.password}
+            style={{ marginTop: 10 }}
+            onChange={(e) => setNewUtilisateur({ ...newUtilisateur, password: e.target.value })}
           />
           <Select
             style={{ width: '100%', marginTop: 10 }}

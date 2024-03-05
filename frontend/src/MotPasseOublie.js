@@ -1,32 +1,32 @@
-//   Import les modules et composants nécessaires
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Container, Row, Col, Form, Modal } from 'react-bootstrap';
 import Logo from './media/logo.png';
-import axios from 'axios';
+import axios from 'axios'; // Assurez-vous d'avoir installé Axios dans votre projet
 
-// MotPasseOublie Component
 function MotPasseOublie() {
-  //Configurer l'objet historique à partir du routeur React
   const history = useHistory();
 
-  // Variables d'état pour gérer le modèle de réussite et l'e-mail de l'utilisateur
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [email, setEmail] = useState('');
-
-  // Handle click on "Envoyer" button
-  const handleEnvoyerClick = async () => {
+ 
+  const handleEnvoyerClick = async (e) => {
+    e.preventDefault();
     try {
-      // Faites une demande par la POST pour envoyer un code à l'adresse e-mail fournie
-      const response = await axios.post('/api/send-code', { email });
+      
+
+      // Faites une demande par la POST pour envoyer le code et l'adresse e-mail
+      const response = await axios.post('http://localhost:3001/api/forgot-password', {
+        email,
+      });
 
       // En supposant que le serveur envoie un message de réussite
-      if (response.data.message === 'Code envoyé avec succès.') {
+      if (response.status === 200) {
         // Afficher le modèle de réussite et rediriger après un délai
         setShowSuccessModal(true);
         setTimeout(() => {
           setShowSuccessModal(false);
-          history.push('/login');
+          history.push('/login'); // Redirection vers la page de connexion après la fermeture du modal
         }, 4000);
       } else {
         // Gérer le cas où le serveur envoie un message d'erreur
@@ -38,34 +38,28 @@ function MotPasseOublie() {
     }
   };
 
-  // Handle click sur le bouton "Retour"
   const handleRetourClick = () => {
-    // Rediriger vers la page de connexion
     history.push('/login');
   };
 
-  // Gérer la fermeture du modal de réussite
   const handleSuccessModalClose = () => {
     setShowSuccessModal(false);
+    history.push('/login');
   };
 
   return (
-    // Configurer le conteneur pour le composant Mot Passe Oublie
     <Container fluid className="main">
       <Row className="justify-content-center align-items-center vh-100">
         <Col md={3} className="sub-main">
-          {/* Logo section */}
           <div className="imgs">
             <div className="container-image">
               <img src={Logo} alt="logo" className="logo img-fluid" />
             </div>
           </div>
 
-          {/* Form section */}
           <Form>
             <h4 className="title">REC-INOV</h4>
             <Form.Group>
-              {/* Email input */}
               <div className="input-container">
                 <input
                   placeholder="Enter Email"
@@ -81,14 +75,15 @@ function MotPasseOublie() {
               </div>
             </Form.Group>
 
-            {/* "Envoyer" button */}
+          
+              
+
             <div className="envoyer-btn">
               <button variant="primary" className="login-btn" onClick={handleEnvoyerClick}>
                 Envoyer
               </button>
             </div>
 
-            {/* "Retour" button */}
             <div>
               <button variant="secondary" className="second-boutton" onClick={handleRetourClick}>
                 Retour
@@ -96,7 +91,6 @@ function MotPasseOublie() {
             </div>
           </Form>
 
-          {/* Succès Modal */}
           <Modal show={showSuccessModal} onHide={handleSuccessModalClose}>
             <Modal.Header closeButton>
               <Modal.Title>Envoyé avec succès</Modal.Title>
@@ -109,5 +103,5 @@ function MotPasseOublie() {
   );
 }
 
-
 export default MotPasseOublie;
+
