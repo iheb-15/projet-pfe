@@ -110,8 +110,10 @@ exports.update = async (req, res) => {
         return res.status(400).json({ error: errors.array()[0].msg });
     }
 
-    // Extraire l'ID utilisateur et les détails de la demande
-    const userId = req.params.userId;
+    // Nettoyer l'ID utilisateur pour s'assurer qu'il est correctement formaté
+    let userId = req.params.userId;
+    userId = userId.replace(/^:/, ''); // Supprime un deux-points au début s'il existe
+
     const { name, lastname, email, password, role } = req.body;
 
     try {
@@ -123,54 +125,61 @@ exports.update = async (req, res) => {
             return res.status(404).json({ error: 'Utilisateur non trouvé.' });
         }
 
-        // Vérifiez le rôle de l'utilisateur et mettez à jour les champs en conséquence
-        if (role === 0) {
-            // Super admin peut modifier tous les champs
+        // Mise à jour des champs basée sur le rôle fourni
+        if (role === '0') {
+            // Un admin peut modifier tous les champs
             user.name = name;
             user.lastname = lastname;
             user.email = email;
-            user.password = password; // crypter le mot de passe
-        } else if (role === 1) {
-            // simple admin  ne peut modifier que le mot de passe
-            user.password = password; // crypter le mot de passere
+
+            // Hacher le nouveau mot de passe avant de le sauvegarder
+            if (password) {
+                const salt = await bcrypt.genSalt(10);
+                user.password = await bcrypt.hash(password, salt);
+            }
+        } else if (role === '1') {
+            // Un utilisateur peut uniquement modifier son mot de passe
+            if (password) {
+                const salt = await bcrypt.genSalt(10);
+                user.password = await bcrypt.hash(password, salt);
+            }
         } else {
             // Rôle non valide
-            return res.status(400).json({ error: 'Rôle non valide' });
+            return res.status(400).json({ error: 'Rôle non valide.' });
         }
 
-        // Enregistrez les détails de l'utilisateur mis à jour dans la base de données
+        // Enregistrer l'utilisateur mis à jour dans la base de données
         await user.save();
 
-        // Enregistrez les détails de l'utilisateur mis à jour dans la base de données
-        res.json({ message: 'Utilisateur mis à jour avec succès', user });
+        // Répondre avec succès
+        res.json({ message: 'Utilisateur mis à jour avec succès.', user: { id: user._id, name: user.name, lastname: user.lastname, email: user.email, role } });
     } catch (error) {
-        // Gérer les erreurs internes du serveur
         console.error(error);
-        res.status(500).json({ error: 'Erreur Interne du Serveur' });
+        res.status(500).json({ error: 'Erreur interne du serveur.' });
     }
 };
-
 // Fonction de contrôleur pour supprimer un utilisateur
-exports.delete = async (req, res) => {
-    // Extraire l'ID utilisateur des paramètres de la requête
-    const userId = req.params.userId;
+exports.deleteUser = async (req, res) => {
+    // Assurez-vous que l'ID est correctement formaté
+    let userId = req.params.userId;
+    userId = userId.replace(/^:/, ''); // Supprime un deux-points au début s'il existe
 
     try {
-        // Trouver l'utilisateur par ID dans la base de données
+        console.log(`Tentative de suppression de l'utilisateur avec l'ID : ${userId}`);
         const user = await User.findById(userId);
 
         // Vérifier si l'utilisateur existe
         if (!user) {
+            console.log('Utilisateur non trouvé avec cet ID');
             return res.status(404).json({ error: 'Utilisateur non trouvé.' });
         }
 
-        // Supprimer l'utilisateur de la base de données
-        await user.remove();
+        // Supprimer l'utilisateur
+        await User.deleteOne({ _id: userId });
 
-        // Répondez avec un message de réussite et les détails de l'utilisateur supprimés
-        res.json({ message: 'Utilisateur supprimé avec succès', user });
+        // Réponse de succès
+        res.json({ message: 'Utilisateur supprimé avec succès.' });
     } catch (error) {
-        // Gérer les erreurs internes du serveur
         console.error(error);
         res.status(500).json({ error: 'Erreur Interne du Serveur' });
     }

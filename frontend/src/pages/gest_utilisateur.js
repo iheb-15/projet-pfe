@@ -11,17 +11,18 @@ function Gest() {
   const [isAdding, setIsAdding] = useState(false);
   const [newUtilisateur, setNewUtilisateur] = useState({ name: '', lastname: '',password:'', email: '', role: '' });
   const [dataSource, setDataSource] = useState([
-    {
-      id: 1,
-      name: 'iheb',
-      lastname: 'iheb',
-      password:'jbjbj16',
-      email: 'iheb@gmail.com',
-      role: 'super admin',
-    },
+    // {
+    //   id: 1,
+    //   name: 'iheb',
+    //   lastname: 'iheb',
+    //   password:'jbjbj16',
+    //   email: 'iheb@gmail.com',
+    //   role: 'super admin',
+    // },
   ]);
 
   const handleChange = (value) => {
+    console.log(value);
     setEditingUtilisateur(prev => ({ ...prev, role: value }));
   };
 
@@ -50,8 +51,8 @@ function Gest() {
     try {
       const addedUtilisateur = await addUtilisateurToBackend(newUtilisateur);
       const newId = dataSource.length > 0 ? dataSource[dataSource.length - 1].id + 1 : 1;
-      const updatedDataSource = [...dataSource, { ...addedUtilisateur, id: newId }];
-      setDataSource(updatedDataSource);
+    const utilisateurToAdd = { ...newUtilisateur, id: newId };
+    setDataSource((prevDataSource) => [...prevDataSource, utilisateurToAdd]);
       setIsAdding(false);
       setNewUtilisateur({ name: '', lastname: '', password:'', email: '', role: '' });
     } catch (error) {
@@ -89,17 +90,17 @@ function Gest() {
     },
     {
       key: '2',
-      title: 'Name',
+      title: 'name',
       dataIndex: 'name',
     },
     {
       key: '3',
-      title: 'Lastname',
+      title: 'lastname',
       dataIndex: 'lastname',
     },
     {
       key: '4',
-      title: 'Email',
+      title: 'email',
       dataIndex: 'email',
     },
     {
@@ -109,7 +110,7 @@ function Gest() {
     },
     {
       key: '6',
-      title: 'Role',
+      title: 'role',
       dataIndex: 'role',
     },
     {
@@ -149,13 +150,23 @@ function Gest() {
           okText="Save"
           onCancel={resetEditing}
           onOk={() => {
-            setDataSource(prevDataSource => prevDataSource.map((utilisateur) => utilisateur.id === editingUtilisateur.id ? editingUtilisateur : utilisateur));
+            setDataSource((prevDataSource) => {
+              return prevDataSource.map((utilisateur) => {
+                if (utilisateur.id === editingUtilisateur.id) {
+                  return editingUtilisateur;
+                } else {
+                  return utilisateur;
+                }
+              });
+            });
             resetEditing();
           }}
         >
-          <Input
+           <Input
             value={editingUtilisateur?.name}
-            onChange={(e) => setEditingUtilisateur(prev => ({ ...prev, name: e.target.value }))}
+            onChange={(e) => {
+              setEditingUtilisateur((prev) => ({ ...prev, name: e.target.value }));
+            }}
           />
           <Input
             value={editingUtilisateur?.lastname}
@@ -174,8 +185,8 @@ function Gest() {
             value={editingUtilisateur?.role}
             onChange={handleChange}
           >
-            <Option value="super admin">super admin</Option>
-            <Option value="simple admin">simple admin</Option>
+            <Option value="0">super admin</Option>
+            <Option value="1">simple admin</Option>
           </Select>
         </Modal>
         <Modal
@@ -213,8 +224,8 @@ function Gest() {
             value={newUtilisateur.role}
             onChange={(value) => setNewUtilisateur({ ...newUtilisateur, role: value })}
           >
-            <Option value="super admin">super admin</Option>
-            <Option value="simple admin">simple admin</Option>
+            <Option value="0">super admin</Option>
+            <Option value="1">simple admin</Option>
           </Select>
         </Modal>
       </header>
