@@ -55,6 +55,10 @@
   position: relative;
   margin-top: 50px;
 }
+.input-container1 {
+  position: relative;
+  margin-top: 50px;
+}
 
 /* Input field */
 .input-field {
@@ -67,6 +71,7 @@
   outline: none;
   background-color: transparent;
 }
+
 
 /* Input label */
 .input-label {
@@ -127,7 +132,7 @@
 
 .second-boutton{
   margin-top: 20px;
-  margin-right: 100px;
+  margin-left: 90px;
   width: 100px;
   height: 40px;
   background-color: #0f0f0fa2;  
@@ -141,5 +146,4 @@
 .second-boutton:hover {
   background-color:#313335a2;
   
- 
 }

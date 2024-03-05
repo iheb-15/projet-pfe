@@ -11,6 +11,12 @@ import App from './app';  // Import the App component
 import './App.css';  
 import 'bootstrap/dist/css/bootstrap.min.css';  // Import Bootstrap styles
 import { ToastContainer } from 'react-toastify';
+<<<<<<< HEAD
+=======
+import CodeOTP from './CodeOTP';
+import NouveauxMotPasse from './NouveauxMotPasse';
+import Gest from './pages/gest_utilisateur';
+>>>>>>> 08b753684889ed20e907015000e02fc9081a0206
 
 // Composant racine pour l'application
 const Root = () => (
@@ -25,6 +31,10 @@ const Root = () => (
       
       {/* Route pour la composante "MotPasseOublie"  */}
       <Route path="/motPasseOublie" component={MotPasseOublie} />
+
+      <Route path="/codeotp" component={CodeOTP} />
+      <Route path="/nouveauMotPasse" component={NouveauxMotPasse} />
+      <Route path="/gestionUtilisateur" component={Gest} />
     </Switch>
     <ToastContainer/>
   </Router>
