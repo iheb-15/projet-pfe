@@ -1,0 +1,129 @@
+.gestion-header h1 {
+    font-size: 24px;
+    color: #333; 
+    margin-bottom: 20px; 
+    text-align: center; 
+    text-transform: uppercase; 
+  }
+  .ajouter-link {
+    color: #007bff; 
+    text-decoration: none; 
+    font-weight: bold; 
+    margin-right: 10px; 
+    
+  }
+  
+  .ajouter-link:hover {
+    color: #0056b3; 
+    
+  }
+/* Input container */
+.input-container {
+    position: relative;
+    margin-top: 30px;
+  }
+  
+  
+  /* Input field */
+  .input-field {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: none;
+    border-bottom: 2px solid #ccc;
+    outline: none;
+    background-color: transparent;
+  }
+  
+  
+  /* Input label */
+  .input-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 16px;
+    color: rgba(204, 204, 204, 0);
+    pointer-events: none;
+    transition: all 0.3s ease;
+  }
+  
+  /* Input highlight */
+  .input-highlight {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 0;
+    background-color: #3987ee;
+    transition: all 0.3s ease;
+  }
+  
+  /* Input field:focus styles */
+  .input-field:focus + .input-label {
+    top: -20px;
+    font-size: 12px;
+    color: #3987ee;
+  }
+  
+ 
+.mydict{
+    margin-top: 40px;
+}
+
+  
+  .mydict div {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+    justify-content:center;
+  }
+  
+  .mydict input[type="radio"] {
+    clip: rect(0 0 0 0);
+    clip-path: inset(100%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+  }
+  
+  .mydict input[type="radio"]:checked + span {
+    box-shadow: 0 0 0 0.0625em #0043ed;
+    background-color: #dee7ff;
+    z-index: 1;
+    color: #0043ed;
+  }
+  
+  label span {
+    display: block;
+    cursor: pointer;
+    background-color: #fff;
+    padding: 0.375em .75em;
+    position: relative;
+    margin-left: .0625em;
+    box-shadow: 0 0 0 0.0625em #b5bfd9;
+    letter-spacing: .05em;
+    color: #3e4963;
+    text-align:right;
+    transition: background-color .5s ease;
+  }
+  
+  label:first-child span {
+    border-radius: .375em 0 0 .375em;
+  }
+  
+  label:last-child span {
+    border-radius: 0 .375em .375em 0;
+  }
+  .label-role{
+   margin-top: 20px;
+   position: absolute;
+   top: 0;
+   left: 0;
+   font-size: 16px;
+   color: rgba(204, 204, 204, 0);
+   transition: all 0.3s ease;
+  }
+  

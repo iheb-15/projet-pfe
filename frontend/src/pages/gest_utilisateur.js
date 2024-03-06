@@ -1,14 +1,23 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
 import { Button, Table, Modal, Input, Select } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import axios from 'axios';
+=======
+import React, { useState } from 'react';
+import {  Table, Modal } from 'antd';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import './gest.css';
+import { Link } from 'react-router-dom/cjs/react-router-dom.min';
 
-const { Option } = Select;
+>>>>>>> e148b99a8f4d14599360c44a4142faca187086ed
+
 
 function Gest() {
   const [isEditing, setIsEditing] = useState(false);
   const [editingUtilisateur, setEditingUtilisateur] = useState(null);
   const [isAdding, setIsAdding] = useState(false);
+<<<<<<< HEAD
   const [newUtilisateur, setNewUtilisateur] = useState({ name: '', lastname: '', password: '', email: '', role: '' });
   const [dataSource, setDataSource] = useState([]);
 
@@ -43,6 +52,46 @@ function Gest() {
       alert('Failed to delete utilisateur');
       throw error;
     }
+=======
+  const [newUtilisateur, setNewUtilisateur] = useState({ name: '', lastname: '', email: '', role: '' });
+  const [dataSource, setDataSource] = useState([
+    {
+      id: 1,
+      name: 'iheb',
+      lastname: 'lastname1',
+      email: 'iheb@gmail.com',
+      role: 'super admin',
+    },
+    {
+      id: 2,
+      name: 'iyed',
+      lastname: 'lastname2',
+      email: 'iyed@gmail.com',
+      role: 'simple admin',
+    },
+  ]);
+
+  const handleChange = (value) => {
+    setEditingUtilisateur((prev) => ({ ...prev, role: value }));
+  };
+
+  const addUtilisateur = () => {
+    if (!newUtilisateur.name || !newUtilisateur.lastname || !newUtilisateur.email || !newUtilisateur.role) {
+      alert('Veuillez remplir tous les champs');
+      return;
+    }
+
+    if (!newUtilisateur.email.includes('@')) {
+      alert('L\'adresse e-mail doit contenir "@gmail.com" par exemple');
+      return;
+    }
+
+    const newId = dataSource.length > 0 ? dataSource[dataSource.length - 1].id + 1 : 1;
+    const utilisateurToAdd = { ...newUtilisateur, id: newId };
+    setDataSource((prevDataSource) => [...prevDataSource, utilisateurToAdd]);
+    setIsAdding(false);
+    setNewUtilisateur({ name: '', lastname: '', email: '', role: '' });
+>>>>>>> e148b99a8f4d14599360c44a4142faca187086ed
   };
 
   const onDeleteUtilisateur = (record) => {
@@ -146,6 +195,7 @@ function Gest() {
     },
     {
       key: '3',
+<<<<<<< HEAD
       title: 'lastname',
       dataIndex: 'lastname',
     },
@@ -166,6 +216,23 @@ function Gest() {
     },
     {
       key: '7',
+=======
+      title: 'Lastname',
+      dataIndex: 'lastname',
+    },
+    {
+      key: '4',
+      title: 'Email',
+      dataIndex: 'email',
+    },
+    {
+      key: '5',
+      title: 'Role',
+      dataIndex: 'role',
+    },
+    {
+      key: '6',
+>>>>>>> e148b99a8f4d14599360c44a4142faca187086ed
       title: 'Actions',
       render: (record) => (
         <>
@@ -192,7 +259,11 @@ function Gest() {
   return (
     <div className="gestion">
       <header className="gestion-header">
-        <Button onClick={onAddUtilisateur}>Ajouter Utilisateur</Button>
+      <h1>Liste des Responsables</h1>
+      <Link to="/ajouter-utilisateur" onClick={(e) => { e.preventDefault(); onAddUtilisateur(); }} className="ajouter-link">
+  Ajouter Utilisateur
+</Link>
+
         <Table columns={columns} dataSource={dataSource} className="responsive-table"></Table>
 
         <Modal
@@ -202,17 +273,36 @@ function Gest() {
           onCancel={resetEditing}
           onOk={handleSaveEdit}
         >
-          <Input
+          <div className="input-container">
+          <input
+            placeholder=" Enter Name"
+            className="input-field"
             value={editingUtilisateur?.name}
             onChange={(e) => {
               setEditingUtilisateur((prev) => ({ ...prev, name: e.target.value }));
             }}
           />
-          <Input
+           <label htmlFor="input-field" className="input-label">
+                    Enter Name
+                  </label>
+                  <span className="input-highlight"></span>
+                </div>
+          <div className="input-container">
+          <input
+            placeholder="Lastname"
+            className="input-field"
             value={editingUtilisateur?.lastname}
             onChange={(e) => setEditingUtilisateur(prev => ({ ...prev, lastname: e.target.value }))}
           />
-          <Input
+          <label htmlFor="input-field" className="input-label">
+                    Enter lastname
+                  </label>
+                  <span className="input-highlight"></span>
+                </div>
+           <div className="input-container">
+          <input
+            placeholder="Email"
+            className="input-field"
             value={editingUtilisateur?.email}
             onChange={(e) => setEditingUtilisateur(prev => ({ ...prev, email: e.target.value }))}
           />
@@ -220,6 +310,7 @@ function Gest() {
             value={editingUtilisateur?.password}
             onChange={(e) => setEditingUtilisateur(prev => ({ ...prev, password: e.target.value }))}
           />
+<<<<<<< HEAD
           <Select
             style={{ width: '100%' }}
             value={editingUtilisateur?.role}
@@ -228,30 +319,72 @@ function Gest() {
             <Option value="0">super admin</Option>
             <Option value="1">simple admin</Option>
           </Select>
+=======
+          <label htmlFor="input-field" className="input-label">
+                    Enter Email
+                  </label>
+                  <span className="input-highlight"></span>
+          </div>
+          <div class="mydict">
+          <div defaultValue={editingUtilisateur?.role}
+            onChange={handleChange}>
+            <label>
+              <input type="radio" name="radio"  value="0" />
+              <span>Super Admin</span>
+            </label>
+            <label>
+              <input type="radio" name="radio" value="1"/>
+              <span>Simple Admin</span>
+            </label>
+          </div>
+        </div>
+>>>>>>> e148b99a8f4d14599360c44a4142faca187086ed
         </Modal>
         <Modal
-          title="Ajouter nouvelle Utilisateur"
+          title="Ajouter Nouvelle Utilisateur"
           visible={isAdding}
           okText="Ajouter"
           onCancel={() => setIsAdding(false)}
           onOk={addUtilisateur}
         >
-          <Input
-            placeholder="Name"
+          <div className="input-container">
+          <input
+            placeholder=" Enter Name"
             value={newUtilisateur.name}
+            className="input-field"
             onChange={(e) => setNewUtilisateur({ ...newUtilisateur, name: e.target.value })}
           />
+<<<<<<< HEAD
           <Input
             placeholder="Lastname"
+=======
+          <label htmlFor="input-field" className="input-label">
+                    Enter Name
+                  </label>
+                  <span className="input-highlight"></span>
+                </div>
+         <div className="input-container">
+          <input
+            placeholder=" Entre Lastname"
+>>>>>>> e148b99a8f4d14599360c44a4142faca187086ed
             value={newUtilisateur.lastname}
+            className="input-field"
+           
             onChange={(e) => setNewUtilisateur({ ...newUtilisateur, lastname: e.target.value })}
           />
-          <Input
-            placeholder="Email"
+          <label htmlFor="input-field" className="input-label">
+                    Enter Lastname
+                  </label>
+                  <span className="input-highlight"></span>
+                </div>
+          <div className="input-container">
+          <input
+            placeholder=" Enter Email"
+            className="input-field"
             value={newUtilisateur.email}
-            style={{ marginTop: 10 }}
             onChange={(e) => setNewUtilisateur({ ...newUtilisateur, email: e.target.value })}
           />
+<<<<<<< HEAD
           <Input
             placeholder="password"
             value={newUtilisateur.password}
@@ -267,6 +400,38 @@ function Gest() {
             <Option value="0">super admin</Option>
             <Option value="1">simple admin</Option>
           </Select>
+=======
+          <label htmlFor="input-field" className="input-label">
+                    Enter Email
+                  </label>
+                  <span className="input-highlight"></span>
+                </div>
+                < label  className="label-role">Choisir Role:</label>             
+          <div className="mydict">
+            <div>
+              <label>
+                <input
+                  type="radio"
+                  name="radio"
+                  value="0"
+                  checked={newUtilisateur.role === '0'}
+                  onChange={() => setNewUtilisateur({ ...newUtilisateur, role: '0' })}
+                />
+                <span>Super Admin</span>
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="radio"
+                  value="1"
+                  checked={newUtilisateur.role === '1'}
+                  onChange={() => setNewUtilisateur({ ...newUtilisateur, role: '1' })}
+                />
+                <span>Simple Admin</span>
+              </label>
+            </div>
+          </div>
+>>>>>>> e148b99a8f4d14599360c44a4142faca187086ed
         </Modal>
       </header>
     </div>
