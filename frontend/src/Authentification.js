@@ -1,4 +1,3 @@
-// Import  les modules et composants nécessaires
 import React, { useState } from 'react';
 import { Link, Route, BrowserRouter as Router, Switch, useHistory } from 'react-router-dom';
 import { Container, Row, Col, Form } from 'react-bootstrap';
@@ -8,39 +7,41 @@ import axios from 'axios'; // Import Axios
 import './Authentification.css'; // Import local styles
 import Logo from './media/logo.png'; // Import logo image
 import MotPasseOublie from './MotPasseOublie'; // Import le composant Mot Passe Oublie pour le routage
+import App from './app';
 
 // Main Authentification Component
 function Authentification() {
- // Configurer l'objet historique à partir du routeur React
+  // Configurer l'objet historique à partir du routeur React
   const history = useHistory();
 
   // Configurer des variables d'état à l'aide du use State hook
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
- 
+
   //Gérer la fonctionnalité de connexion
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      
       //Faites une demande POST à votre point de terminaison principal pour l'authentification
       const response = await axios.post('http://localhost:3001/api/signin', {
         email,
         password,
       });
 
-    
-      toast.success(response.data.message, {
-        position: 'top-center',
-        onClose: () => {
-          // Rediriger vers la page spécifiée en cas de connexion réussie
-          history.push('/App');
-        },
-      });
+      // Vérifier si la connexion a réussi
+      if (response.status === 200) {
+        // Rediriger vers la page principale après une connexion réussie
+        history.push('/app');
+      } else {
+        // Gérer l'échec d'authentification
+        toast.error('La connexion a échoué. Veuillez vérifier vos informations.', {
+          position: 'top-center',
+        });
+      }
     } catch (error) {
       // Gérer l'échec d'authentification
-      toast.error('La connexion a échoué. Veuillez vérifier vos informations .', {
+      toast.error('La connexion a échoué. Veuillez vérifier vos informations.', {
         position: 'top-center',
       });
     }
@@ -48,7 +49,7 @@ function Authentification() {
 
   // Handle click on "Mot de Passe Oublié" link
   const handleMotPasseOublieClick = () => {
-    //Rediriger vers route'MotPasseOublie' 
+    //Rediriger vers route 'MotPasseOublie' 
     history.push('/motPasseOublie');
   };
 
@@ -120,6 +121,7 @@ function Authentification() {
         {/* Route pour  'MotPasseOublie' component */}
         <Switch>
           <Route path="/motPasseOublie" component={MotPasseOublie} />
+          <Route path="/app" component={App} />
         </Switch>
       </Container>
     </Router>
@@ -128,4 +130,3 @@ function Authentification() {
 
 // Exporter le composant d'authentification comme exportation par défaut
 export default Authentification;
-

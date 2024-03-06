@@ -9,7 +9,7 @@ const nodemailer = require('nodemailer');
 const saltRounds = 10;
 require('dotenv').config();
 const base64 = require('base64-js');
-
+const Buffer = require('buffer').Buffer;
   
 exports.singnup = (req, res) => {
     // Validate user inputs
@@ -132,14 +132,14 @@ exports.update = async (req, res) => {
             user.lastname = lastname;
             user.email = email;
             user.role = role;
-        
+            user.password=password;
         } else {
             // Mise à jour des champs basée sur le rôle fourni
             user.name = name;
             user.lastname = lastname;
             user.email = email;
             user.role = role;
-            user.password=password;
+            
         }
 
         // Enregistrer l'utilisateur mis à jour dans la base de données
@@ -305,49 +305,35 @@ exports.resetPasswordWithOTP = (req, res) => {
             console.error('Erreur lors de la recherche de l\'utilisateur :', err);
             return res.status(500).send('Une erreur s\'est produite lors de la recherche de l\'utilisateur.');
         }
-        console.log(err);
         if (!user) {
             console.log('Aucun utilisateur trouvé.');
             return res.status(400).send('OTP non valide ou expiré.');
         }
-        console.log(!user);
 
-        // Hachage du nouveau mot de passe avant de le sauvegarder
-        bcrypt.hash(newPassword, saltRounds, (err, hashedPassword) => {
+        // Encodage du nouveau mot de passe en Base64a
+        const encodedPassword = Buffer.from(newPassword).toString('base64');
+
+        // Mise à jour du mot de passe encodé
+        user.password = encodedPassword;
+        user.otp = undefined; // Supprimer l'OTP après la réinitialisation du mot de passe
+        user.otpExpires = undefined; // Supprimer la date d'expiration de l'OTP
+
+        // Sauvegarde des modifications de l'utilisateur
+        userser.save((err) => {
             if (err) {
-                console.error('Erreur lors du hachage du nouveau mot de passe :', err);
-                return res.status(500).send('Une erreur s\'est produite lors de la mise à jour du mot de passe.');
+                console.error('Erreur lors de la sauvegarde des données utilisateur :', err);
+                return res.status(500).send('Une erreur s\'est produite lors de la sauvegarde des données utilisateur.');
             }
 
-            // Mise à jour du mot de passe haché
-            user.password = hashedPassword;
-            user.otp = undefined; // Supprimer l'OTP après la réinitialisation du mot de passe
-            user.otpExpires = undefined; // Supprimer la date d'expiration de l'OTP
+            // Création du jeton d'authentification
+            const token = jwt.sign({ _id: user._id }, process.env.SECRET);
+            // Enregistrement du jeton dans les cookies
+            res.cookie('token', token, { expires: new Date(Date.now() + 1) });
 
-            user.save((err) => {
-                if (err) {
-                    console.error('Erreur lors de la sauvegarde des données utilisateur :', err);
-                    return res.status(500).send('Une erreur s\'est produite lors de la sauvegarde des données utilisateur.');
-                }
-
-                // Recherche de l'utilisateur avec le nouvel e-mail et le nouveau mot de passe
-                User.findOne({ email, password: hashedPassword }, (err, user) => {
-                    if (err || !user) {
-                        return res.status(400).json({
-                            error: "Erreur lors de la connexion automatique après la réinitialisation du mot de passe."
-                        });
-                    }
-                    // Création du jeton d'authentification
-                    const token = jwt.sign({ _id: user._id }, process.env.SECRET);
-                    // Enregistrement du jeton dans les cookies
-                    res.cookie('token', token, { expires: new Date(Date.now() + 1) });
-
-                    const { _id, name, email } = user;
-                    return res.json({
-                        token,
-                        user: { _id, name, email }
-                    });
-                });
+            const { _id, name, email } = user;
+            return res.json({
+                token,
+                user: { _id, name, email }
             });
         });
     });

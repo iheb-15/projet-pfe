@@ -9,8 +9,9 @@ const { check } = require('express-validator');
 const User = require("../models/user"); 
 const router = express.Router(); 
 const authController = require('../controllers/user'); 
-
 const {deleteUser} =require("../controllers/user");
+
+
 
 router.post('/add', [
     check("name", "le nom doit obtenir 3 caractére").isLength({ min: 3 }),
@@ -28,7 +29,7 @@ router.put('/update/:userId', [ // Correction du chemin avec paramètre dynamiqu
     check("role", "Le rôle est requis et doit être un nombre").isNumeric(), // Exemple de validation pour role
 ], update);
 
-// router.delete('/delete/:userId', authController.delete);
+
 ;
 router.post('/singup',authController.singnup);
 router.post('/signin', signin); 
@@ -48,6 +49,8 @@ router.get('/affichage', async (req, res) => {
     }
   });
 
+
+  
 
 
 module.exports=router;

@@ -15,21 +15,39 @@ import Gest from './pages/gest_utilisateur';
 import "antd/dist/antd.min.css";
 import logo1 from '../src/media/logo1.png';
 import './App.css';
+
 const { Header, Sider, Content } = Layout;
 
 const App = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [user, setUser] = useState({ name: 'nom utilisateur' });
+  const [user, setUser] = useState({ name: 'Visiteur' });
 
   const handleCollapse = () => {
     setCollapsed(!collapsed);
+  };
+
+  const handleLogout = () => {
+    fetch('http://localhost:3001/api/signout', {
+      method: 'GET',
+      credentials: 'include', // Inclure les cookies dans la requête
+    })
+    .then(response => {
+      if (response.ok) {
+        setUser({ name: 'Visiteur' }); // Réinitialisez l'utilisateur après la déconnexion
+      } else {
+        console.error('Erreur lors de la déconnexion:', response.statusText);
+      }
+    })
+    .catch(error => {
+      console.error('Erreur lors de la déconnexion :', error);
+    });
   };
 
   const items = [
     {
       key: '1',
       icon: <UserOutlined />,
-      label: 'gestion utilisateur',
+      label: 'Gestion utilisateur',
       to: '/gest_utilisateur',
     },
     {
@@ -55,16 +73,14 @@ const App = () => {
         <Link to="/profile">Mon profile</Link>
       </Menu.Item>
       <Menu.Divider />
-      <Menu.Item key="2" onClick={() => setUser({ name: "Visiteur" })}>Déconnexion</Menu.Item>
+      <Menu.Item key="2" onClick={handleLogout}>Déconnexion</Menu.Item>
     </Menu>
   );
 
-  
   return (
     <Router>
       <Layout style={{ minHeight: '100vh' }}>
-        <Sider trigger={null} collapsible collapsed={collapsed}
-          style={{ background: '#379DD0' }}>
+        <Sider trigger={null} collapsible collapsed={collapsed} style={{ background: '#379DD0' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
             <img src={logo1} alt="Logo" style={{ width: '50px', height: 'auto', margin: '20px' }} />
             <Link to="/app" style={{ color: 'white', marginBottom: '20px' }}>Rec-inov</Link>
@@ -82,18 +98,11 @@ const App = () => {
             })}
            <Dropdown overlay={userMenu} trigger={['click']}>
               <Link to="#" className='ant-dropdown-link' onClick={e => e.preventDefault()} style={{ color: 'white', marginLeft: '88%', cursor: 'pointer' }}>
-                {user.name} <DownOutlined />
+                {user.name !== 'Visiteur' ? user.name : 'Connexion'} <DownOutlined />
               </Link>
           </Dropdown>
           </Header>
-          <Content
-            className="site-layout-background"
-            style={{
-              margin: '24px 16px',
-              padding: 24,
-              minHeight: 280,
-              background: '#fff'
-            }}>
+          <Content className="site-layout-background" style={{ margin: '24px 16px', padding: 24, minHeight: 280, background: '#fff' }}>
             <Switch>
               <Route path="/gest_utilisateur" component={Gest} />
             </Switch>
