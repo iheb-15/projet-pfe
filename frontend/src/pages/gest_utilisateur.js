@@ -138,12 +138,7 @@ function Gest() {
   };
 
   const columns = [
-    {
-      key: '1',
-      title: 'ID',
-      dataIndex: 'id',
-      responsive: ['sm'],
-    },
+   
     {
       key: '2',
       title: 'name',
