@@ -35,7 +35,7 @@ function Authentification() {
         position: 'top-center',
         onClose: () => {
           // Rediriger vers la page spécifiée en cas de connexion réussie
-          history.push('/pages/gest_utilisateur');
+          history.push('/App');
         },
       });
     } catch (error) {

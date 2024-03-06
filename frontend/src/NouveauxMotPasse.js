@@ -9,11 +9,11 @@ function NouveauxMotPasse() {
   const history = useHistory();
 
   const handleConnecterClick = () => {
-    history.push('/App'); // Change the route to '/gestion-utilisateur'
+    history.push('/App'); 
   };
 
   const handleRetourClick = () => {
-    history.push('/login'); // Go back to the previous page
+    history.push('/login'); 
   };
 
   return (
@@ -36,7 +36,7 @@ function NouveauxMotPasse() {
                 {/*  nouveau Password input */}
                 <div className="input-container">
                   <input
-                    placeholder="Enter Password"
+                    placeholder="Enter Nouveau Password"
                     className="input-field"
                     type="Nouveau Password"
                   />
