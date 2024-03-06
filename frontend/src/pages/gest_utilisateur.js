@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Table, Modal, Input, Select } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import axios from 'axios';
@@ -9,54 +9,39 @@ function Gest() {
   const [isEditing, setIsEditing] = useState(false);
   const [editingUtilisateur, setEditingUtilisateur] = useState(null);
   const [isAdding, setIsAdding] = useState(false);
-  const [newUtilisateur, setNewUtilisateur] = useState({ name: '', lastname: '',password:'', email: '', role: '' });
-  const [dataSource, setDataSource] = useState([
-    // {
-    //   id: 1,
-    //   name: 'iheb',
-    //   lastname: 'iheb',
-    //   password:'jbjbj16',
-    //   email: 'iheb@gmail.com',
-    //   role: 'super admin',
-    // },
-  ]);
+  const [newUtilisateur, setNewUtilisateur] = useState({ name: '', lastname: '', password: '', email: '', role: '' });
+  const [dataSource, setDataSource] = useState([]);
 
-  const handleChange = (value) => {
-    console.log(value);
-    setEditingUtilisateur(prev => ({ ...prev, role: value }));
-  };
+  useEffect(() => {
+    fetchUtilisateurs();
+  }, []);
 
-  const addUtilisateurToBackend = async (utilisateur) => {
+  const fetchUtilisateurs = async () => {
     try {
-      const response = await axios.post('http://localhost:3001/api/add', utilisateur);
-      return response.data; // Assuming the API returns the added utilisateur with an id
+      const response = await axios.get('http://localhost:3001/api/affichage');
+
+      const utilisateurs = response.data.map((utilisateur) => ({
+        id: utilisateur._id,
+        name: utilisateur.name,
+        lastname: utilisateur.lastname,
+        email: utilisateur.email,
+        password: utilisateur.encry_password,
+        role: utilisateur.role
+      }));
+      setDataSource(utilisateurs);
     } catch (error) {
-      console.error("Failed to add utilisateur", error);
-      alert('Failed to add utilisateur');
-      throw error; // Re-throwing the error for handling it elsewhere if needed
+      console.error("Failed to fetch users", error);
+      // Gérer l'erreur si nécessaire
     }
-  };
+  }
 
-  const addUtilisateur = async () => {
-    if (!newUtilisateur.name || !newUtilisateur.lastname || !newUtilisateur.email ||!newUtilisateur.password || !newUtilisateur.role) {
-      alert('Veuillez remplir tous les champs');
-      return;
-    }
-
-    if (!newUtilisateur.email.includes('@')) {
-      alert('L\'adresse e-mail doit contenir "@gmail.com" par exemple');
-      return;
-    }
-
+  const deleteUtilisateurFromBackend = async (id) => {
     try {
-      const addedUtilisateur = await addUtilisateurToBackend(newUtilisateur);
-      const newId = dataSource.length > 0 ? dataSource[dataSource.length - 1].id + 1 : 1;
-    const utilisateurToAdd = { ...newUtilisateur, id: newId };
-    setDataSource((prevDataSource) => [...prevDataSource, utilisateurToAdd]);
-      setIsAdding(false);
-      setNewUtilisateur({ name: '', lastname: '', password:'', email: '', role: '' });
+      await axios.delete(`http://localhost:3001/api/delete/${id}`);
     } catch (error) {
-      // Handle the error if needed
+      console.error("Failed to delete utilisateur", error);
+      alert('Failed to delete utilisateur');
+      throw error;
     }
   };
 
@@ -65,8 +50,13 @@ function Gest() {
       title: 'Êtes-vous sûr de vouloir supprimer cet enregistrement utilisateur ?',
       okText: 'Yes',
       okType: 'danger',
-      onOk: () => {
-        setDataSource(prevDataSource => prevDataSource.filter((utilisateur) => utilisateur.id !== record.id));
+      onOk: async () => {
+        try {
+          await deleteUtilisateurFromBackend(record.id);
+          setDataSource(prevDataSource => prevDataSource.filter((utilisateur) => utilisateur.id !== record.id));
+        } catch (error) {
+          console.error("Failed to delete utilisateur", error);
+        }
       },
     });
   };
@@ -79,6 +69,72 @@ function Gest() {
   const resetEditing = () => {
     setIsEditing(false);
     setEditingUtilisateur(null);
+  };
+
+  const handleChange = (value) => {
+    console.log(value);
+    setEditingUtilisateur(prev => ({ ...prev, role: value }));
+  };
+
+  const updateUtilisateurToBackend = async (utilisateur) => {
+    console.log(utilisateur);
+    try {
+      await axios.put(`http://localhost:3001/api/update/${utilisateur.id}`, utilisateur);
+    } catch (error) {
+      console.error("Failed to update utilisateur", error);
+      alert('Failed to update utilisateur');
+      throw error;
+    }
+  };
+
+  const handleSaveEdit = async () => {
+    try {
+      await updateUtilisateurToBackend(editingUtilisateur);
+      setDataSource(dataSource.map((user) => {
+        if (user.id === editingUtilisateur.id) {
+          return editingUtilisateur;
+        }
+        return user;
+      }));
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Failed to save edit", error);
+      alert('Failed to save edit');
+    }
+  };
+
+  const addUtilisateurToBackend = async (utilisateur) => {
+    try {
+      const response = await axios.post('http://localhost:3001/api/add', utilisateur);
+      return response.data;
+    } catch (error) {
+      console.error("Failed to add utilisateur", error);
+      alert('Failed to add utilisateur');
+      throw error;
+    }
+  };
+
+  const addUtilisateur = async () => {
+    if (!newUtilisateur.name || !newUtilisateur.lastname || !newUtilisateur.email || !newUtilisateur.password || !newUtilisateur.role) {
+      alert('Veuillez remplir tous les champs');
+      return;
+    }
+
+    if (!newUtilisateur.email.includes('@')) {
+      alert('L\'adresse e-mail doit contenir "@gmail.com" par exemple');
+      return;
+    }
+
+    try {
+      const addedUtilisateur = await addUtilisateurToBackend(newUtilisateur);
+      const newId = dataSource.length > 0 ? dataSource[dataSource.length - 1].id + 1 : 1;
+      const utilisateurToAdd = { ...newUtilisateur, id: newId };
+      setDataSource((prevDataSource) => [...prevDataSource, utilisateurToAdd]);
+      setIsAdding(false);
+      setNewUtilisateur({ name: '', lastname: '', password: '', email: '', role: '' });
+    } catch (error) {
+      // Handle the error if needed
+    }
   };
 
   const columns = [
@@ -149,20 +205,9 @@ function Gest() {
           visible={isEditing}
           okText="Save"
           onCancel={resetEditing}
-          onOk={() => {
-            setDataSource((prevDataSource) => {
-              return prevDataSource.map((utilisateur) => {
-                if (utilisateur.id === editingUtilisateur.id) {
-                  return editingUtilisateur;
-                } else {
-                  return utilisateur;
-                }
-              });
-            });
-            resetEditing();
-          }}
+          onOk={handleSaveEdit}
         >
-           <Input
+          <Input
             value={editingUtilisateur?.name}
             onChange={(e) => {
               setEditingUtilisateur((prev) => ({ ...prev, name: e.target.value }));

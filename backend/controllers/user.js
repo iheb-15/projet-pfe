@@ -10,7 +10,7 @@ const saltRounds = 10;
 require('dotenv').config();
 const base64 = require('base64-js');
 
-
+  
 exports.singnup = (req, res) => {
     // Validate user inputs
     const errors = validationResult(req);
@@ -125,34 +125,28 @@ exports.update = async (req, res) => {
             return res.status(404).json({ error: 'Utilisateur non trouvé.' });
         }
 
-        // Mise à jour des champs basée sur le rôle fourni
-        if (role === '0') {
-            // Un admin peut modifier tous les champs
+        // Si la méthode de la requête est "add", ne pas modifier le mot de passe
+        if (req.method === 'add') {
+            // Mise à jour des champs basée sur le rôle fourni
             user.name = name;
             user.lastname = lastname;
             user.email = email;
-
-            // Hacher le nouveau mot de passe avant de le sauvegarder
-            if (password) {
-                const salt = await bcrypt.genSalt(10);
-                user.password = await bcrypt.hash(password, salt);
-            }
-        } else if (role === '1') {
-            // Un utilisateur peut uniquement modifier son mot de passe
-            if (password) {
-                const salt = await bcrypt.genSalt(10);
-                user.password = await bcrypt.hash(password, salt);
-            }
+            user.role = role;
+        
         } else {
-            // Rôle non valide
-            return res.status(400).json({ error: 'Rôle non valide.' });
+            // Mise à jour des champs basée sur le rôle fourni
+            user.name = name;
+            user.lastname = lastname;
+            user.email = email;
+            user.role = role;
+            user.password=password;
         }
 
         // Enregistrer l'utilisateur mis à jour dans la base de données
         await user.save();
 
         // Répondre avec succès
-        res.json({ message: 'Utilisateur mis à jour avec succès.', user: { id: user._id, name: user.name, lastname: user.lastname, email: user.email, role } });
+        res.json({ message: 'Utilisateur mis à jour avec succès.', user: { id: user._id, name: user.name, lastname: user.lastname, email: user.email, role: user.role } });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Erreur interne du serveur.' });

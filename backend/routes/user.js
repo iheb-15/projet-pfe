@@ -6,7 +6,7 @@ const { update } = require("../controllers/user");
 const { signin } = require("../controllers/user"); 
 const { signout } = require("../controllers/user"); 
 const { check } = require('express-validator'); 
-const user = require("../models/user"); 
+const User = require("../models/user"); 
 const router = express.Router(); 
 const authController = require('../controllers/user'); 
 
@@ -38,6 +38,15 @@ router.delete('/delete/:userId', deleteUser);
 router.post('/forgot-password', authController.forgotPassword);
 router.put('/reset-password-with-otp', authController.resetPasswordWithOTP);
 
+router.get('/affichage', async (req, res) => {
+    try {
+      const users = await User.find({});
+      res.json(users);
+    } catch (error) {
+      console.error("Failed to fetch users", error);
+      res.status(500).json({ message: "Failed to fetch users" });
+    }
+  });
 
 
 
