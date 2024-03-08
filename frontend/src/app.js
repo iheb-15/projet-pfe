@@ -16,6 +16,8 @@ import "antd/dist/antd.min.css";
 import logo1 from '../src/media/logo1.png';
 import './App.css';
 
+
+
 const { Header, Sider, Content } = Layout;
 
 const App = () => {
@@ -98,13 +100,14 @@ const App = () => {
             })}
            <Dropdown overlay={userMenu} trigger={['click']}>
               <Link to="#" className='ant-dropdown-link' onClick={e => e.preventDefault()} style={{ color: 'white', marginLeft: '88%', cursor: 'pointer' }}>
-                {user.name !== 'Visiteur' ? user.name : 'Connexion'} <DownOutlined />
+                { user.name } <DownOutlined />
               </Link>
           </Dropdown>
           </Header>
           <Content className="site-layout-background" style={{ margin: '24px 16px', padding: 24, minHeight: 280, background: '#fff' }}>
             <Switch>
               <Route path="/gest_utilisateur" component={Gest} />
+           
             </Switch>
           </Content>
         </Layout>

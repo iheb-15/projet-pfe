@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, Route, BrowserRouter as Router, Switch, useHistory } from 'react-router-dom';
 import { Container, Row, Col, Form } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios'; // Import Axios
+import { Select } from 'antd';
+import 'antd/dist/antd.css';
 import './Authentification.css'; // Import local styles
 import Logo from './media/logo.png'; // Import logo image
 import MotPasseOublie from './MotPasseOublie'; // Import le composant Mot Passe Oublie pour le routage
 import App from './app';
+import Gest from './pages/gest_utilisateur';
 
 // Main Authentification Component
 function Authentification() {
@@ -17,20 +20,28 @@ function Authentification() {
   // Configurer des variables d'état à l'aide du use State hook
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [role, setRole] = useState('1');
+  const [userRole, setUserRole] = useState('');
 
-  //Gérer la fonctionnalité de connexion
+  // Gérer la fonctionnalité de connexion
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      //Faites une demande POST à votre point de terminaison principal pour l'authentification
+      // Faites une demande POST à votre point de terminaison principal pour l'authentification
       const response = await axios.post('http://localhost:3001/api/signin', {
         email,
         password,
+        role
       });
-
+    
       // Vérifier si la connexion a réussi
       if (response.status === 200) {
+        const userRole = response.data.role; // Récupérer le rôle de l'utilisateur depuis la réponse
+        
+        // Stocker le rôle de l'utilisateur dans l'état de l'application
+        setUserRole(userRole);
+
         // Rediriger vers la page principale après une connexion réussie
         history.push('/app');
       } else {
@@ -49,7 +60,7 @@ function Authentification() {
 
   // Handle click on "Mot de Passe Oublié" link
   const handleMotPasseOublieClick = () => {
-    //Rediriger vers route 'MotPasseOublie' 
+    // Rediriger vers route 'MotPasseOublie' 
     history.push('/motPasseOublie');
   };
 
@@ -70,7 +81,7 @@ function Authentification() {
             <Form>
               <h4 className="title">REC-INOV</h4>
               <Form.Group>
-                {/*Saisie par e-mail */}
+                {/* Saisie par e-mail */}
                 <div className="input-container">
                   <input
                     placeholder="Enter Email"
@@ -99,6 +110,18 @@ function Authentification() {
                   </label>
                   <span className="input-highlight"></span>
                 </div>
+
+                {/* Select role */}
+                <div>
+                  <Select
+                    style={{ width: '100%' }}
+                    value={role}
+                    onChange={(value) => setRole(value)}
+                  >
+                    <Select.Option value="0">Super Admin</Select.Option>
+                    <Select.Option value="1">Simple Admin</Select.Option>
+                  </Select>
+                </div>
               </Form.Group>
 
               {/* Bouton de connexion */}
@@ -122,11 +145,14 @@ function Authentification() {
         <Switch>
           <Route path="/motPasseOublie" component={MotPasseOublie} />
           <Route path="/app" component={App} />
+          {/* Route for another page */}
+          <Route path="/another_page" render={() => <div>Another Page</div>} />
+          {/* Conditionally render the route based on user role */}
+          {userRole === '1' && <Route path="/gest_utilisateur" component={Gest} />}
         </Switch>
       </Container>
     </Router>
   );
 }
 
-// Exporter le composant d'authentification comme exportation par défaut
 export default Authentification;

@@ -15,7 +15,16 @@ function Gest() {
   const [newUtilisateur, setNewUtilisateur] = useState({ name: '', lastname: '', password: '', email: '', role: '' });
   const [dataSource, setDataSource] = useState([]);
   const [searchValue, setSearchValue] = useState('');
+  useEffect(() => {
+    // Récupérer le rôle de l'utilisateur depuis le stockage local
+    const userRole = localStorage.getItem('userRole');
 
+    // Vérifier si le rôle de l'utilisateur est égal à 1 (Simple Admin)
+    if (userRole === '1') {
+      // Afficher une alerte indiquant l'absence d'autorisation
+      alert("Vous n'avez pas les autorisations nécessaires pour accéder à cette page.");
+    }
+  }, []);
   useEffect(() => {
     fetchUtilisateurs();
   }, []);

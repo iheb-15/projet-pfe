@@ -181,8 +181,8 @@ exports.deleteUser = async (req, res) => {
 
 // Fonction de contrôleur pour gérer la connexion de l'utilisateur
 exports.signin = (req, res) => {
-    // Extraire l'e-mail et le mot de passe du corps de la requête
-    const { email, password } = req.body;
+    // Extraire l'e-mail, le mot de passe et le rôle du corps de la requête
+    const { email, password, role } = req.body;
 
     // Retrouver l'utilisateur par email dans la base de données
     User.findOne({ email }, (err, user) => {
@@ -200,10 +200,17 @@ exports.signin = (req, res) => {
             });
         }
 
-        // Générer un JSON Web Token (JWT) pour l'authentification
-        const token = jwt.sign({ _id: user._id }, process.env.SECRET);
+        // Vérifier le rôle de l'utilisateur
+        if (user.role !== role) {
+            return res.status(403).json({
+                error: "Vous n'avez pas les autorisations nécessaires pour vous connecter avec ce rôle."
+            });
+        }
 
-        // Définissez le token  en tant que bcookie dans la réponse
+        // Générer un JSON Web Token (JWT) pour l'authentification
+        const token = jwt.sign({ _id: user._id, role }, process.env.SECRET);
+
+        // Définissez le token en tant que cookie dans la réponse
         res.cookie('token', token, { expires: new Date(Date.now() + 1) });
 
         // Extraire les détails pertinents de l'utilisateur
