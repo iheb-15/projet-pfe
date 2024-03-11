@@ -1,17 +1,21 @@
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 
-const ProtectedRoute = ({ component: Component, role, allowedRoles, ...rest }) => {
-  // Vérifie si le rôle de l'utilisateur est autorisé à accéder à la route
-  const isAuthorized = allowedRoles.includes(parseInt(role));
+  
 
+const ProtectedRoute = ({ component: Component, userRole, allowedRoles, ...rest }) => {
   return (
     <Route
       {...rest}
-      render={(props) =>
-        // Si l'utilisateur est autorisé, affiche le composant, sinon redirige vers une autre page
-        isAuthorized ? <Component {...props} /> : <Redirect to="/unauthorized" />
-      }
+      render={(props) => {
+        // Vérifie si l'utilisateur est authentifié et a le rôle requis
+        if (userRole && allowedRoles.includes(userRole)) {
+          return <Component {...props} />;
+        } else {
+          // Rediriger vers la page de connexion si l'utilisateur n'est pas authentifié ou n'a pas le rôle requis
+          return <Redirect to="/" />;
+        }
+      }}
     />
   );
 };

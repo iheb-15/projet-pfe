@@ -11,6 +11,7 @@ import Logo from './media/logo.png'; // Import logo image
 import MotPasseOublie from './MotPasseOublie'; // Import le composant Mot Passe Oublie pour le routage
 import App from './app';
 import Gest from './pages/gest_utilisateur';
+import PrivateRoute from './pages/privetroute';
 
 // Main Authentification Component
 function Authentification() {
@@ -26,7 +27,7 @@ function Authentification() {
   // Gérer la fonctionnalité de connexion
   const handleLogin = async (e) => {
     e.preventDefault();
-
+  
     try {
       // Faites une demande POST à votre point de terminaison principal pour l'authentification
       const response = await axios.post('http://localhost:3001/api/signin', {
@@ -34,30 +35,32 @@ function Authentification() {
         password,
         role
       });
-    
+  
       // Vérifier si la connexion a réussi
-      if (response.status === 200) {
+      if (response.status === 200 && response.data.role !== undefined) {
         const userRole = response.data.role; // Récupérer le rôle de l'utilisateur depuis la réponse
+        console.log('Rôle de l\'utilisateur après connexion:', userRole);
         
         // Stocker le rôle de l'utilisateur dans l'état de l'application
         setUserRole(userRole);
-
+        console.log(' role utilisateur stocker',userRole);
         // Rediriger vers la page principale après une connexion réussie
         history.push('/app');
       } else {
         // Gérer l'échec d'authentification
+        console.error('Erreur de connexion:', response);
         toast.error('La connexion a échoué. Veuillez vérifier vos informations.', {
           position: 'top-center',
         });
       }
     } catch (error) {
-      // Gérer l'échec d'authentification
-      toast.error('La connexion a échoué. Veuillez vérifier vos informations.', {
+      // Gérer les erreurs lors de la connexion
+      console.error('Erreur lors de la connexion:', error);
+      toast.error('Une erreur s\'est produite lors de la connexion. Veuillez réessayer.', {
         position: 'top-center',
       });
     }
   };
-
   // Handle click on "Mot de Passe Oublié" link
   const handleMotPasseOublieClick = () => {
     // Rediriger vers route 'MotPasseOublie' 
@@ -147,8 +150,13 @@ function Authentification() {
           <Route path="/app" component={App} />
           {/* Route for another page */}
           <Route path="/another_page" render={() => <div>Another Page</div>} />
-          {/* Conditionally render the route based on user role */}
-          {userRole === '1' && <Route path="/gest_utilisateur" component={Gest} />}
+          {/* Private route for gest_utilisateur */}
+          <PrivateRoute
+            path="/gest_utilisateur"
+            component={Gest}
+            userRole={userRole}
+            allowedRoles={['0']} // Super Admin
+          />
         </Switch>
       </Container>
     </Router>

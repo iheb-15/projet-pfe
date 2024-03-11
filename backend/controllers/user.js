@@ -182,7 +182,7 @@ exports.deleteUser = async (req, res) => {
 // Fonction de contrôleur pour gérer la connexion de l'utilisateur
 exports.signin = (req, res) => {
     // Extraire l'e-mail, le mot de passe et le rôle du corps de la requête
-    const { email, password, role } = req.body;
+    const { email, password } = req.body;
 
     // Retrouver l'utilisateur par email dans la base de données
     User.findOne({ email }, (err, user) => {
@@ -200,15 +200,11 @@ exports.signin = (req, res) => {
             });
         }
 
-        // Vérifier le rôle de l'utilisateur
-        if (user.role !== role) {
-            return res.status(403).json({
-                error: "Vous n'avez pas les autorisations nécessaires pour vous connecter avec ce rôle."
-            });
-        }
+        // Récupérer le rôle de l'utilisateur depuis la base de données
+        const userRole = user.role;
 
         // Générer un JSON Web Token (JWT) pour l'authentification
-        const token = jwt.sign({ _id: user._id, role }, process.env.SECRET);
+        const token = jwt.sign({ _id: user._id, role: userRole }, process.env.SECRET);
 
         // Définissez le token en tant que cookie dans la réponse
         res.cookie('token', token, { expires: new Date(Date.now() + 1) });
@@ -216,14 +212,14 @@ exports.signin = (req, res) => {
         // Extraire les détails pertinents de l'utilisateur
         const { _id, name, email } = user;
 
-        // Répondez avec le jeton et les détails de l'utilisateur
+        // Répondez avec le jeton, le rôle de l'utilisateur et les détails de l'utilisateur
         return res.json({
             token,
-            user: { _id, name, email }
+            user: { _id, name, email },
+            role: userRole
         });
     });
-};
-
+}
 // Fonction de contrôleur pour gérer la déconnexion de l'utilisateur
 exports.signout = (req, res) => {
     // Effacer le cookie de jeton d'authentification
