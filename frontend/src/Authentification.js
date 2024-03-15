@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, Route, BrowserRouter as Router, Switch, useHistory } from 'react-router-dom';
+import { Link, Route,Redirect, BrowserRouter as Router, Switch, useHistory } from 'react-router-dom';
 import { Container, Row, Col, Form } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -152,11 +152,17 @@ function Authentification() {
           <Route path="/another_page" render={() => <div>Another Page</div>} />
           {/* Private route for gest_utilisateur */}
           <PrivateRoute
-            path="/gest_utilisateur"
-            component={Gest}
-            userRole={userRole}
-            allowedRoles={['0']} // Super Admin
-          />
+  path="/gest_utilisateur"
+  render={() => {
+    // Vérifier si l'utilisateur a un rôle de "Super Admin"
+    if (userRole === '0') { // Super Admin
+      return <Gest />;
+    } else {
+      // Rediriger vers une autre page si l'utilisateur n'a pas les autorisations nécessaires
+      return <Redirect to="/app" />;
+    }
+  }}
+/>
         </Switch>
       </Container>
     </Router>

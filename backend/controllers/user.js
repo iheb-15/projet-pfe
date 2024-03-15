@@ -263,8 +263,9 @@ exports.forgotPassword = function(req, res) {
         // Generate OTP
         const otp = generateOTP();
         user.otp = otp;
-        user.otpExpires = Date.now() + 600000; // OTP expires in 10 minutes
-
+        user.otpExpires = new Date(Date.now() + 6 * 60 * 1000); // OTP expires in 6 minutes
+        console.log(otp);
+       
         // Save the OTP to the user in the database
         user.save(function(err) {
             // Handle errors during OTP save
@@ -295,52 +296,63 @@ exports.forgotPassword = function(req, res) {
     });
 };
 
-
 exports.resetPasswordWithOTP = (req, res) => {
     const { email, otp, newPassword } = req.body;
 
-    // Encode l'OTP en Base64
-    const encodedOTP = Buffer.from(otp).toString('base64');
-
-    // Recherche de l'utilisateur en fonction de l'e-mail, de l'OTP et de la date d'expiration de l'OTP
-    User.findOne({ email, otp: encodedOTP, otpExpires: { $gt: Date.now() } }, (err, user) => {
+    // Recherche de l'utilisateur en fonction de l'email
+    User.findOne({ email }, function(err, user) {
         if (err) {
             console.error('Erreur lors de la recherche de l\'utilisateur :', err);
             return res.status(500).send('Une erreur s\'est produite lors de la recherche de l\'utilisateur.');
         }
         if (!user) {
             console.log('Aucun utilisateur trouvé.');
-            return res.status(400).send('OTP non valide ou expiré.');
+            return res.status(400).send('Aucun utilisateur trouvé.');
+        }
+        
+        // Vérification de la date d'expiration de l'OTP
+        if (user.otpExpires < Date.now()) {
+            console.log('OTP expiré.');
+            return res.status(400).send('OTP expiré.');
         }
 
-        // Encodage du nouveau mot de passe en Base64a
-        const encodedPassword = Buffer.from(newPassword).toString('base64');
+        // Vérification de l'OTP
+        if (user.otp !== otp) {
+            console.log('OTP non valide.');
+            return res.status(400).send('OTP non valide.');
+        }
 
-        // Mise à jour du mot de passe encodé
-        user.password = encodedPassword;
-        user.otp = undefined; // Supprimer l'OTP après la réinitialisation du mot de passe
-        user.otpExpires = undefined; // Supprimer la date d'expiration de l'OTP
+        // Mise à jour du mot de passe de l'utilisateur avec le nouveau mot de passe
+        user.password = newPassword;
+
+        // Supprimer l'OTP et la date d'expiration de l'OTP après la réinitialisation du mot de passe
+        user.otp = undefined;
+        user.otpExpires = undefined;
 
         // Sauvegarde des modifications de l'utilisateur
-        userser.save((err) => {
+        user.save((err) => {
             if (err) {
                 console.error('Erreur lors de la sauvegarde des données utilisateur :', err);
                 return res.status(500).send('Une erreur s\'est produite lors de la sauvegarde des données utilisateur.');
             }
 
             // Création du jeton d'authentification
-            const token = jwt.sign({ _id: user._id }, process.env.SECRET);
+            const jwt = require('jsonwebtoken');
+            const token = jwt.sign({ _id: user._id }, process.env.SECRET, { expiresIn: '6m' }); // La durée d'expiration est maintenant de 6 minutes
+
             // Enregistrement du jeton dans les cookies
-            res.cookie('token', token, { expires: new Date(Date.now() + 1) });
+            res.cookie('token', token, { httpOnly: true, expires: new Date(Date.now() + 6 * 60 * 1000) }); // 6 minutes d'expiration
 
             const { _id, name, email } = user;
             return res.json({
+                message: "Mot de passe réinitialisé avec succès",
                 token,
                 user: { _id, name, email }
             });
         });
     });
 };
+
 function generateOTP() {
     return Math.floor(100000 + Math.random() * 900000).toString();// pour générer code entre 0 et 899999 avec l'ajout de 100000 pour le code
 };

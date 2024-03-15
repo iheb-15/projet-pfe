@@ -4,7 +4,7 @@ const crypto = require("crypto");
 const uuidv1 = require("uuid/v1"); 
 const { ObjectId } = mongoose.Schema; 
 const bcrypt = require("bcryptjs"); 
-
+const { promisify } = require('util');
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -26,12 +26,14 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        default: 'user'
+        default: 'user',
+       
     },
     encry_password:{
         type:String,
         required:true
     },
+   
     
    
     salt:String,// sécurité mot pass
@@ -48,7 +50,10 @@ const userSchema = new mongoose.Schema({
 
 userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) return next();
-    this.password = await bcrypt.hash(this.password, 12);
+
+    // Utiliser Base64 pour le hachage du mot de passe
+    this.password = Buffer.from(this.password).toString('base64');
+
     next();
 });
 
