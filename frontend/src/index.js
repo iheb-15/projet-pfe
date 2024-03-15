@@ -32,9 +32,9 @@ const Root = () => (
       {/* Route pour la composante "MotPasseOublie"  */}
       <Route path="/motPasseOublie" component={MotPasseOublie} />
 
-      <Route path="/codeotp" component={CodeOTP} />
+      <Route path="/CodeOTP" component={CodeOTP} />
       <Route path="/nouveauMotPasse" component={NouveauxMotPasse} />
-      <Route path="/gestionUtilisateur" component={Gest} />
+      <Route path="/gest_utilisateur" component={Gest} />
     </Switch>
     <ToastContainer/>
   </Router>

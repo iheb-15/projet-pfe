@@ -22,7 +22,7 @@ function MotPasseOublie() {
         setShowSuccessModal(true);
         setTimeout(() => {
           setShowSuccessModal(false);
-          history.push('/login'); // Redirection vers la page de connexion après la fermeture du modal
+          history.push('/CodeOTP'); // Redirection vers la page de connexion après la fermeture du modal
         }, 4000);
       } else {
         console.error('Error sending code:', response.data.error);
@@ -33,7 +33,7 @@ function MotPasseOublie() {
   };
 
   const handleRetourClick = () => {
-    history.push('/codeotp'); // Change the route to '/codeotp'
+    history.push('/CodeOTP'); // Change the route to '/codeotp'
   };
 
   const handleSuccessModalClose = () => {
