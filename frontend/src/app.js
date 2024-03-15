@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
 import { Layout, Menu, Button, Dropdown } from 'antd';
 import {
   UserOutlined,
-  VideoCameraOutlined,
-  UploadOutlined,
+  HighlightOutlined,
+  PlusCircleOutlined ,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   LeftOutlined,
@@ -12,13 +12,13 @@ import {
   DownOutlined
 } from '@ant-design/icons';
 import Gest from './pages/gest_utilisateur';
+import AjoutQuestion from './AjoutQuestion';
 import "antd/dist/antd.min.css";
 import logo1 from '../src/media/logo1.png';
 import './App.css';
 
-
-
 const { Header, Sider, Content } = Layout;
+const { SubMenu } = Menu;
 
 const App = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -29,13 +29,13 @@ const App = () => {
   };
 
   const handleLogout = () => {
-    fetch('http://localhost:3001/api/signout', {
+    fetch('http://localhost:3002/api/signout', {
       method: 'GET',
-      credentials: 'include', // Inclure les cookies dans la requête
+      credentials: 'include',
     })
     .then(response => {
       if (response.ok) {
-        setUser({ name: 'Visiteur' }); // Réinitialisez l'utilisateur après la déconnexion
+        setUser({ name: 'Visiteur' });
       } else {
         console.error('Erreur lors de la déconnexion:', response.statusText);
       }
@@ -45,69 +45,54 @@ const App = () => {
     });
   };
 
-  const items = [
-    {
-      key: '1',
-      icon: <UserOutlined />,
-      label: 'Gestion utilisateur',
-      to: '/gest_utilisateur',
-    },
-    {
-      key: '2',
-      icon: <VideoCameraOutlined />,
-      label: 'Nav 2',
-      to: '/page2',
-    },
-    {
-      key: '3',
-      icon: <UploadOutlined />,
-      label: 'Nav 3',
-      to: '/',
-    },
-  ].map(item => ({
-    ...item,
-    label: <Link to={item.to}>{item.label}</Link>,
-  }));
-
   const userMenu = (
     <Menu>
       <Menu.Item key="1">
-        <Link to="/profile">Mon profile</Link>
+        <Link to="/profile" style={{ color: '#000000' }}>Mon profil</Link>
       </Menu.Item>
       <Menu.Divider />
-      <Menu.Item key="2" onClick={handleLogout}>Déconnexion</Menu.Item>
+      <Menu.Item key="2" onClick={handleLogout} style={{ color: '#000000' }}>Déconnexion</Menu.Item>
     </Menu>
   );
 
   return (
     <Router>
-      <Layout style={{ minHeight: '100vh' }}>
-        <Sider trigger={null} collapsible collapsed={collapsed} style={{ background: '#379DD0' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+      <Layout style={{ minHeight: '100vh'  }}>
+        <Sider trigger={null} collapsible collapsed={collapsed} style={{ background: '#3987ee' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column'  }}>
             <img src={logo1} alt="Logo" style={{ width: '50px', height: 'auto', margin: '20px' }} />
-            <Link to="/app" style={{ color: 'white', marginBottom: '20px' }}>Rec-inov</Link>
+            <Link to="/app" style={{ color: 'white', marginBottom: '20px', textDecoration: 'none' }}>Rec-inov</Link>
           </div>
-          <Menu  style={{ background: '#379DD0' }} mode="inline" defaultSelectedKeys={['1']} items={items} />
-          <Button className="btn" onClick={handleCollapse} style={{ border: 'none' }}>
+          <Menu style={{ backgroundColor: '#3987ee' }} mode="inline" defaultSelectedKeys={['1']}>
+            <Menu.Item key="1" icon={<UserOutlined />} style={{ color: '#000000',background: '#3987ee'  }}>
+              <Link to="/gest_utilisateur" style={{ color: '#000000', fontSize:"14px" }}>Gestion utilisateur</Link>
+            </Menu.Item>
+            <SubMenu key="sub1" icon={<HighlightOutlined style={{ color: '#000000' }} />} title={<span style={{ color: '#000000', fontSize:"13px" }}>Gestion de Questions</span>}>
+              <Menu.Item key="2" icon={<PlusCircleOutlined  style={{ color: '#000000' }} />} style={{ background: '#3987ee' }} >
+                <Link to="/ajouter_question" style={{ color: '#000000', backgroundColor: '#3987ee' , fontSize:"13px"}}>Ajout Question</Link>
+              </Menu.Item>
+            </SubMenu>
+          </Menu>
+          <Button className="btn" onClick={handleCollapse} style={{ border: "none", backgroundColor: "#1271ec" }}>
             {collapsed ? <RightOutlined /> : <LeftOutlined />}
           </Button>
         </Sider>
         <Layout className="site-layout">
-          <Header className="site-layout-background" style={{ padding: 0, background: '#379DD0' }}>
+          <Header className="site-layout-background" style={{ padding: 0, background: '#3987ee' }}>
             {React.createElement(collapsed ? MenuUnfoldOutlined : MenuFoldOutlined, {
               className: 'trigger',
               onClick: () => setCollapsed(!collapsed),
             })}
-           <Dropdown overlay={userMenu} trigger={['click']}>
-              <Link to="#" className='ant-dropdown-link' onClick={e => e.preventDefault()} style={{ color: 'white', marginLeft: '88%', cursor: 'pointer' }}>
-                { user.name } <DownOutlined />
+            <Dropdown overlay={userMenu} trigger={['click']}>
+              <Link to="#" className='ant-dropdown-link' onClick={e => e.preventDefault()} style={{ color: 'white', marginLeft: '88%', cursor: 'pointer', textDecoration: 'none' }}>
+                {user.name} <DownOutlined />
               </Link>
-          </Dropdown>
+            </Dropdown>
           </Header>
-          <Content className="site-layout-background" style={{ margin: '24px 16px', padding: 24, minHeight: 280, background: '#fff' }}>
+          <Content className="site-layout-background" style={{ margin: '24px 16px', padding: 24, minHeight: 280,  }}>
             <Switch>
-              <Route path="/gest_utilisateur" component={Gest} />
-           
+              <Route path="/gest_utilisateur" style={{ backgroundColor: '#3987ee' }} component={Gest} />
+              <Route path="/ajouter_question" style={{ background: '#3987ee' }} component={AjoutQuestion} />
             </Switch>
           </Content>
         </Layout>

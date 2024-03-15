@@ -14,7 +14,7 @@ function MotPasseOublie() {
   const handleEnvoyerClick = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3001/api/forgot-password', {
+      const response = await axios.post('http://localhost:3002/api/forgot-password', {
         email,
       });
 

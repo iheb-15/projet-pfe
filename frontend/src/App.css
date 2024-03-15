@@ -8,7 +8,7 @@
   }
   
   #components-layout-demo-custom-trigger .trigger:hover {
-    color: #1890ff;
+    color: #3987ee;
   }
   
   #components-layout-demo-custom-trigger .logo {
@@ -77,4 +77,8 @@
       padding: 10px; 
     }
   }
+  .menu-item {
+    font-size: 14px; /* Taille de la police ajustée */
+  }
+  
  

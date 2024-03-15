@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
 import { Link, Route,Redirect, BrowserRouter as Router, Switch, useHistory } from 'react-router-dom';
+=======
+import React, { useState } from 'react';
+import { Link, Route, BrowserRouter as Router, Switch, useHistory } from 'react-router-dom';
+>>>>>>> 85ab2509da1348447265b7b72023f11181a6459a
 import { Container, Row, Col, Form } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -30,7 +35,7 @@ function Authentification() {
   
     try {
       // Faites une demande POST à votre point de terminaison principal pour l'authentification
-      const response = await axios.post('http://localhost:3001/api/signin', {
+      const response = await axios.post('http://localhost:3002/api/signin', {
         email,
         password,
         role
@@ -104,7 +109,7 @@ function Authentification() {
                   <input
                     placeholder="Enter Password"
                     className="input-field"
-                    type="password"
+                    type="Password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
@@ -116,11 +121,12 @@ function Authentification() {
 
                 {/* Select role */}
                 <div>
-                  <Select
-                    style={{ width: '100%' }}
-                    value={role}
+                  <Select 
+                   placeholder="Select Role "
+                    style={{ width: '100%' , marginTop:"20px"}}
+                   
                     onChange={(value) => setRole(value)}
-                  >
+                  > 
                     <Select.Option value="0">Super Admin</Select.Option>
                     <Select.Option value="1">Simple Admin</Select.Option>
                   </Select>
