@@ -31,7 +31,7 @@ function Gest() {
 
   const fetchUtilisateurs = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/api/affichage');
+      const response = await axios.get('http://localhost:3002/api/affichage');
 
       const utilisateurs = response.data.map((utilisateur) => ({
         id: utilisateur._id,
@@ -50,7 +50,7 @@ function Gest() {
 
   const deleteUtilisateurFromBackend = async (id) => {
     try {
-      await axios.delete(`http://localhost:3001/api/delete/${id}`);
+      await axios.delete(`http://localhost:3002/api/delete/${id}`);
     } catch (error) {
       console.error("Failed to delete utilisateur", error);
       alert('Failed to delete utilisateur');
@@ -91,7 +91,7 @@ function Gest() {
 
   const updateUtilisateurToBackend = async (utilisateur) => {
     try {
-      const response = await axios.put(`http://localhost:3001/api/update/${utilisateur.id}`, utilisateur);
+      const response = await axios.put(`http://localhost:3002/api/update/${utilisateur.id}`, utilisateur);
       return response.data; // Retourne les données mises à jour de l'utilisateur
     } catch (error) {
       console.error("Failed to update utilisateur", error);
@@ -121,7 +121,7 @@ function Gest() {
 
   const addUtilisateurToBackend = async (utilisateur) => {
     try {
-      const response = await axios.post('http://localhost:3001/api/add', utilisateur);
+      const response = await axios.post('http://localhost:3002/api/add', utilisateur);
       return response.data;
     } catch (error) {
       console.error("Failed to add utilisateur", error);

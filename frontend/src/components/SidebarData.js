@@ -22,4 +22,21 @@ export const SidebarData = [
     icon: <FaIcons.FaEnvelopeOpenText />,
     path: "/contact",
   },
+  {
+    title: 'Gestion de Question',
+    path: '/gest_question',
+    icon: <IoIcons.IoIosPaper />,
+    iconClosed: <RiIcons.RiArrowDownSFill />,
+    iconOpened: <RiIcons.RiArrowUpSFill />,
+
+    subNav: [
+      {
+        title: 'Gestion de Question ',
+        path: '/gest_question/AjoutQuestion',
+        icon: <IoIcons.IoIosPaper />,
+        cName: 'sub-nav'
+      },
+      
+    ]
+  },
 ];
