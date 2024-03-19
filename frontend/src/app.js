@@ -16,6 +16,7 @@ import AjoutQuestion from './AjoutQuestion';
 import "antd/dist/antd.min.css";
 import logo1 from '../src/media/logo1.png';
 import './App.css';
+import Question from './pages/ModifierQuestion';
 
 const { Header, Sider, Content } = Layout;
 const { SubMenu } = Menu;
@@ -71,6 +72,9 @@ const App = () => {
               <Menu.Item key="2" icon={<PlusCircleOutlined  style={{ color: '#000000' }} />} style={{ background: '#3987ee' }} >
                 <Link to="/ajouter_question" style={{ color: '#000000', backgroundColor: '#3987ee' , fontSize:"13px"}}>Ajout Question</Link>
               </Menu.Item>
+              <Menu.Item key="2" icon={<PlusCircleOutlined  style={{ color: '#000000' }} />} style={{ background: '#3987ee' }} >
+                <Link to="/ModifierQuestion" style={{ color: '#000000', backgroundColor: '#3987ee' , fontSize:"13px"}}>ModifierQuestion</Link>
+              </Menu.Item>
             </SubMenu>
           </Menu>
           <Button className="btn" onClick={handleCollapse} style={{ border: "none", backgroundColor: "#1271ec" }}>
@@ -93,6 +97,7 @@ const App = () => {
             <Switch>
               <Route path="/gest_utilisateur" style={{ backgroundColor: '#3987ee' }} component={Gest} />
               <Route path="/ajouter_question" style={{ background: '#3987ee' }} component={AjoutQuestion} />
+              <Route path="/ModifierQuestion" style={{ background: '#3987ee' }} component={Question} />
             </Switch>
           </Content>
         </Layout>

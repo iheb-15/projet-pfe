@@ -10,3 +10,10 @@ button{
     cursor: pointer;
    margin-top: 20px;
 }
+.custom-select-width {
+    width: 210px; 
+  }
+  
+.btn-success{
+  width: 60px;
+}
