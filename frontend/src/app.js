@@ -5,6 +5,7 @@ import {
   UserOutlined,
   HighlightOutlined,
   PlusCircleOutlined ,
+  BarsOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   LeftOutlined,
@@ -16,6 +17,9 @@ import AjoutQuestion from './AjoutQuestion';
 import "antd/dist/antd.min.css";
 import logo1 from '../src/media/logo1.png';
 import './App.css';
+import Ajout2 from './Ajout2';
+import TraduireQuest from './TraduireQuest';
+import ListeQuest from './ListeQuest';
 
 const { Header, Sider, Content } = Layout;
 const { SubMenu } = Menu;
@@ -64,12 +68,15 @@ const App = () => {
             <Link to="/app" style={{ color: 'white', marginBottom: '20px', textDecoration: 'none' }}>Rec-inov</Link>
           </div>
           <Menu style={{ backgroundColor: '#3987ee' }} mode="inline" defaultSelectedKeys={['1']}>
-            <Menu.Item key="1" icon={<UserOutlined />} style={{ color: '#000000',background: '#3987ee'  }}>
-              <Link to="/gest_utilisateur" style={{ color: '#000000', fontSize:"14px" }}>Gestion utilisateur</Link>
+            <Menu.Item key="1" icon={<UserOutlined />} style={{ color: 'white',background: '#3987ee'  }}>
+              <Link to="/gest_utilisateur" style={{ color: 'white', fontSize:"14px" }}>Gestion utilisateur</Link>
             </Menu.Item>
-            <SubMenu key="sub1" icon={<HighlightOutlined style={{ color: '#000000' }} />} title={<span style={{ color: '#000000', fontSize:"13px" }}>Gestion de Questions</span>}>
-              <Menu.Item key="2" icon={<PlusCircleOutlined  style={{ color: '#000000' }} />} style={{ background: '#3987ee' }} >
-                <Link to="/ajouter_question" style={{ color: '#000000', backgroundColor: '#3987ee' , fontSize:"13px"}}>Ajout Question</Link>
+            <SubMenu key="sub1" icon={<HighlightOutlined style={{ color: 'white' }} />} title={<span style={{ color: 'white', fontSize:"13px" }}>Gestion de Questions</span>}>
+            <Menu.Item key="2" icon={<BarsOutlined   style={{ color: 'white' }} />} style={{ background: '#3987ee' }} >
+                <Link to="/liste_question" style={{ color: 'white', backgroundColor: '#3987ee' , fontSize:"13px"}}> Liste Question </Link>
+                </Menu.Item>  
+              <Menu.Item key="2" icon={<PlusCircleOutlined  style={{ color: 'white' }} />} style={{ background: '#3987ee' }} >
+                <Link to="/ajouter_question" style={{ color: 'white', backgroundColor: '#3987ee' , fontSize:"13px" }}>Ajout Question</Link>
               </Menu.Item>
             </SubMenu>
           </Menu>
@@ -92,7 +99,10 @@ const App = () => {
           <Content className="site-layout-background" style={{ margin: '24px 16px', padding: 24, minHeight: 280,  }}>
             <Switch>
               <Route path="/gest_utilisateur" style={{ backgroundColor: '#3987ee' }} component={Gest} />
-              <Route path="/ajouter_question" style={{ background: '#3987ee' }} component={AjoutQuestion} />
+              <Route path="/ajouter_question" style={{ background: '#3987ee'}} component={AjoutQuestion} />
+              <Route path="/ajout2" component={Ajout2} />
+              <Route path="/traduire_quest" component={TraduireQuest} />
+              <Route path="/liste_question"  style={{ background: '#3987ee' }} component={ListeQuest} />
             </Switch>
           </Content>
         </Layout>
