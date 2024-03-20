@@ -1,10 +1,5 @@
-<<<<<<< HEAD
 import React, { useState } from 'react';
 import { Link, Route, BrowserRouter as Router, Switch, useHistory } from 'react-router-dom';
-=======
-import React, { useState, useEffect } from 'react';
-import { Link, Route,Redirect, BrowserRouter as Router, Switch, useHistory } from 'react-router-dom';
->>>>>>> a1199abff0dd6debb02ed1ebf07b575e68a56ee3
 import { Container, Row, Col, Form } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
 
