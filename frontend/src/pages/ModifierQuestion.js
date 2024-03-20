@@ -5,6 +5,7 @@ import { CloseSquareOutlined, EditOutlined } from '@ant-design/icons';
 import { FaPlus, FaTrash } from 'react-icons/fa'; 
 import '../AjoutQuestion.css';
 import Filtrer from './filtrer_Question';
+import Link from 'antd/lib/typography/Link';
 
 const { TextArea } = Input;
 
@@ -23,7 +24,14 @@ function Modifier() {
   const [editReponseModalVisible, setEditReponseModalVisible] = useState(false);
   const [editReponseData, setEditReponseData] = useState({ questionId: null, reponseId: null });
   const [confirmationModalVisible, setConfirmationModalVisible] = useState(false);
-
+  const [filtreVisible, setFiltreVisible] = useState(false); 
+  const [modalFiltrerVisible, setModalFiltrerVisible] = useState(false);
+  const openModalFiltrer = () => {
+    setModalFiltrerVisible(true);
+  };
+  const closeModalFiltrer = () => {
+    setModalFiltrerVisible(false);
+  };
   const handleNiveauChange = (questionId, e) => {
     const selectedNiveau = e.target.value;
     const updatedQuestions = questions.map(question =>
@@ -150,16 +158,23 @@ function Modifier() {
     setConfirmationModalVisible(false);
   };
   const handleFiltrerClick = () => {
-    // Logique pour afficher la page de filtrage
-    // Par exemple, vous pouvez utiliser des routes pour naviguer vers la page de filtrage
-    // Ou vous pouvez utiliser un état pour afficher/dissimuler la page de filtrage
+    openModalFiltrer();
   };
   return (
     <div className="container">
       <div className="text-center">
         <h2 style={{ color: '#3987ee' }}>Modifier Questions</h2>
-        <Button onClick={handleFiltrerClick} style={{ marginRight: '10px' }}>Filtrer</Button>
-      </div>
+        <Button onClick={handleFiltrerClick} style={{ marginRight: '10px' }}>Filtrer</Button>      </div>
+        <Modal 
+            title="Filtrer"
+            visible={modalFiltrerVisible}
+            onCancel={closeModalFiltrer}
+            footer={null}
+            width={1200}
+          >
+            {/* Contenu de la page de filtrage */}
+            <Filtrer />
+        </Modal>
       {/* Modal pour éditer la question */}
       <Modal
         title="Modifier la Question"
