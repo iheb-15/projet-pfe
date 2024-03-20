@@ -11,11 +11,13 @@ import App from './app';  // Import the App component
 import './App.css';  
 import 'bootstrap/dist/css/bootstrap.min.css';  // Import Bootstrap styles
 import { ToastContainer } from 'react-toastify';
-
+import AjoutQuestion from './AjoutQuestion';
+import Ajout2 from './Ajout2';
 
 import CodeOTP from './CodeOTP';
 import NouveauxMotPasse from './NouveauxMotPasse';
 import Gest from './pages/gest_utilisateur';
+
 
 
 // Composant racine pour l'application
@@ -35,6 +37,8 @@ const Root = () => (
       <Route path="/CodeOTP" component={CodeOTP} />
       <Route path="/nouveauMotPasse" component={NouveauxMotPasse} />
       <Route path="/gest_utilisateur" component={Gest} />
+      <Route path="/AjoutQuestion" component={AjoutQuestion} />
+        <Route path="/Ajout2" component={Ajout2} />
     </Switch>
     <ToastContainer/>
   </Router>

@@ -1,4 +1,7 @@
-button{
+.title{
+    font-size: 24px;
+}
+button {
     width: 120px;
     height: 40px;
     border-radius: 8px;
@@ -8,6 +11,7 @@ button{
     border: none;
     text-align: center;
     cursor: pointer;
+<<<<<<< HEAD
    margin-top: 20px;
 }
 .custom-select-width {
@@ -17,3 +21,26 @@ button{
 .btn-success{
   width: 60px;
 }
+=======
+    
+}
+
+.button2 {
+    float: right;  
+}
+
+.button-group {
+    float: right;
+    margin-right: 10px; 
+}
+.next-button {
+    float: right;   
+}
+.form-container {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
+    background-color: #f9f9f9;
+}
+
+>>>>>>> 058a293bf834a8d7ced6f23507d6ee0bb81ed096

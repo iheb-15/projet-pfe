@@ -1,6 +1,13 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
 import { Link, Route,Redirect, BrowserRouter as Router, Switch, useHistory } from 'react-router-dom';
+=======
+import React, { useState } from 'react';
+import { Link, Route, BrowserRouter as Router, Switch, useHistory } from 'react-router-dom';
+>>>>>>> 058a293bf834a8d7ced6f23507d6ee0bb81ed096
 import { Container, Row, Col, Form } from 'react-bootstrap';
+import { Redirect } from 'react-router-dom';
+
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios'; // Import Axios

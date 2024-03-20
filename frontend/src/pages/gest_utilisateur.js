@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Table, Modal, Input, Select } from 'antd';
+import { Table, Modal, Input, Select } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import axios from 'axios';
 
@@ -213,7 +213,7 @@ function Gest() {
       <header className="gestion-header">
         <h1>Liste des Responsables</h1>
         <div style={{ float: 'right', marginBottom: '10px' }}>
-        <h5 style={{color:'blue',margin:'5px'}}>Rechercher utilisateur </h5>
+        <h5 style={{color:'#007bff',margin:'5px'}}>Rechercher utilisateur </h5>
           <Input
             placeholder="Rechercher par nom"
             value={searchValue}
@@ -222,7 +222,7 @@ function Gest() {
             style={{ width: '200px' }}
           />
         </div>
-        <Link to="/ajouter-utilisateur" onClick={(e) => { e.preventDefault(); onAddUtilisateur(); }} className="ajouter-link">
+        <Link to="/ajouter-utilisateur" onClick={(e) => { e.preventDefault(); onAddUtilisateur(); }} className="ajouter-link" >
           Ajouter Utilisateur
         </Link>
 
