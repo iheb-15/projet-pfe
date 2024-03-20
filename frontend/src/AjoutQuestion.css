@@ -11,6 +11,7 @@ button {
     border: none;
     text-align: center;
     cursor: pointer;
+<<<<<<< HEAD
     
 }
 
@@ -32,3 +33,14 @@ button {
     background-color: #f9f9f9;
 }
 
+=======
+   margin-top: 20px;
+}
+.custom-select-width {
+    width: 210px; 
+  }
+  
+.btn-success{
+  width: 60px;
+}
+>>>>>>> a1199abff0dd6debb02ed1ebf07b575e68a56ee3
