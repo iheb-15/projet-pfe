@@ -4,9 +4,10 @@ import { Radio, Modal, Form, Input, Select, Button } from 'antd';
 import { CloseSquareOutlined, EditOutlined } from '@ant-design/icons';
 import { FaPlus, FaTrash } from 'react-icons/fa'; 
 import '../AjoutQuestion.css';
+import Filtrer from './filtrer_Question';
 
 const { TextArea } = Input;
-const { Option } = Select;
+
 
 function Modifier() {
   const [questions, setQuestions] = useState([
@@ -148,11 +149,16 @@ function Modifier() {
     // Logique pour la modification
     setConfirmationModalVisible(false);
   };
-
+  const handleFiltrerClick = () => {
+    // Logique pour afficher la page de filtrage
+    // Par exemple, vous pouvez utiliser des routes pour naviguer vers la page de filtrage
+    // Ou vous pouvez utiliser un état pour afficher/dissimuler la page de filtrage
+  };
   return (
     <div className="container">
       <div className="text-center">
         <h2 style={{ color: '#3987ee' }}>Modifier Questions</h2>
+        <Button onClick={handleFiltrerClick} style={{ marginRight: '10px' }}>Filtrer</Button>
       </div>
       {/* Modal pour éditer la question */}
       <Modal
