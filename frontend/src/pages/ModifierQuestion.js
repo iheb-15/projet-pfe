@@ -169,7 +169,13 @@ function Modifier() {
       >
         {/* Formulaire pour éditer la question */}
         <Form>
-          {/* Insérez ici les champs de formulaire pour éditer la question */}
+          <Form.Item label="Question">
+            <TextArea
+              className="form-control"
+              value={questions.find(q => q.id === editQuestionId)?.question}
+              onChange={e => handleQuestionChange(editQuestionId, e)}
+            />
+          </Form.Item>
         </Form>
       </Modal>
       {/* Modal pour éditer la réponse */}
@@ -181,7 +187,13 @@ function Modifier() {
       >
         {/* Formulaire pour éditer la réponse */}
         <Form>
-          {/* Insérez ici les champs de formulaire pour éditer la réponse */}
+        <Form.Item label="Question">
+        <TextArea
+          className="form-control"
+          value={questions.find(question => question.id === editQuestionId)?.question} // Correction ici
+          onChange={e => handleQuestionChange(editQuestionId, e)}
+        />
+      </Form.Item>
         </Form>
       </Modal>
       {/* Modal de confirmation */}
@@ -189,10 +201,10 @@ function Modifier() {
         title="Confirmation"
         visible={confirmationModalVisible}
         onOk={handleModifier}
-        onCancel={() => setConfirmationModalVisible(false)}
-      >
+        onCancel={() => setConfirmationModalVisible(false)}      >
         <p>Êtes-vous sûr de vouloir effectuer la modification ?</p>
       </Modal>
+       
       {questions.map(question => (
         <div key={question.id}>
           <h4 style={{ fontSize: '14px' }}>Paramètre Question*</h4>
