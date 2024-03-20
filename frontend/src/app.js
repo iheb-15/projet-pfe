@@ -17,14 +17,14 @@ import AjoutQuestion from './AjoutQuestion';
 import "antd/dist/antd.min.css";
 import logo1 from '../src/media/logo1.png';
 import './App.css';
-<<<<<<< HEAD
+
 import Question from './pages/ModifierQuestion';
 import Filter from './pages/filtrer_Question';
-=======
+
 import Ajout2 from './Ajout2';
 import TraduireQuest from './TraduireQuest';
 import ListeQuest from './ListeQuest';
->>>>>>> 058a293bf834a8d7ced6f23507d6ee0bb81ed096
+
 
 const { Header, Sider, Content } = Layout;
 const { SubMenu } = Menu;
@@ -110,16 +110,16 @@ const App = () => {
           <Content className="site-layout-background" style={{ margin: '24px 16px', padding: 24, minHeight: 280,  }}>
             <Switch>
               <Route path="/gest_utilisateur" style={{ backgroundColor: '#3987ee' }} component={Gest} />
-<<<<<<< HEAD
+
               <Route path="/ajouter_question" style={{ background: '#3987ee' }} component={AjoutQuestion} />
               <Route path="/ModifierQuestion" style={{ background: '#3987ee' }} component={Question} />
               <Route path="/filtrer_Question" style={{ background: '#3987ee' }} component={Filter} />
-=======
+
               <Route path="/ajouter_question" style={{ background: '#3987ee'}} component={AjoutQuestion} />
               <Route path="/ajout2" component={Ajout2} />
               <Route path="/traduire_quest" component={TraduireQuest} />
               <Route path="/liste_question"  style={{ background: '#3987ee' }} component={ListeQuest} />
->>>>>>> 058a293bf834a8d7ced6f23507d6ee0bb81ed096
+
             </Switch>
           </Content>
         </Layout>

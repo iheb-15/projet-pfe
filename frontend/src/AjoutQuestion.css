@@ -11,7 +11,7 @@ button {
     border: none;
     text-align: center;
     cursor: pointer;
-<<<<<<< HEAD
+
    margin-top: 20px;
 }
 .custom-select-width {
@@ -21,9 +21,9 @@ button {
 .btn-success{
   width: 60px;
 }
-=======
+
     
-}
+
 
 .button2 {
     float: right;  
@@ -43,4 +43,4 @@ button {
     background-color: #f9f9f9;
 }
 
->>>>>>> 058a293bf834a8d7ced6f23507d6ee0bb81ed096
+
