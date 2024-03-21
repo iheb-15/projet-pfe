@@ -17,20 +17,9 @@ import AjoutQuestion from './AjoutQuestion';
 import "antd/dist/antd.min.css";
 import logo1 from '../src/media/logo1.png';
 import './App.css';
-<<<<<<< HEAD
 import Ajout2 from './Ajout2';
 import TraduireQuest from './TraduireQuest';
 import ListeQuest from './ListeQuest';
-=======
-
-import Question from './pages/ModifierQuestion';
-import Filter from './pages/filtrer_Question';
-
-import Ajout2 from './Ajout2';
-import TraduireQuest from './TraduireQuest';
-import ListeQuest from './ListeQuest';
-
->>>>>>> f050691787d81b1a0ca713803108b20582f96a16
 
 const { Header, Sider, Content } = Layout;
 const { SubMenu } = Menu;
