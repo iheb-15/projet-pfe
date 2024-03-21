@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Checkbox, Radio } from 'antd';
 import { FaPlus } from 'react-icons/fa';
-
+import {  useHistory } from 'react-router-dom';
 function Filtrer() {
   const [selectedCompetences, setSelectedCompetences] = useState([]);
   const [selectedDomaines, setSelectedDomaines] = useState([]);
@@ -72,6 +72,11 @@ function Filtrer() {
     setNewDomaine('');
     setNewSkill('');
    
+  };
+  const history = useHistory(); // Obtenir l'objet history
+
+  const handleRetourListe = () => {
+    history.push('/liste_question'); // Naviguer vers la route de la liste des questions
   };
 
   return (
@@ -175,6 +180,11 @@ function Filtrer() {
             <button onClick={handleAfficherResultats} style={{marginLeft: '30px'}}>Afficher Résultats</button>
             <button  onClick={handleAnnuler} style={{marginLeft: '30px'}}>Annuler</button>
           </div>
+          <div className="text-center mt-4">
+          {/* Bouton pour retourner à la liste des questions */}
+          <button onClick={handleRetourListe} style={{ marginRight: '875px' }}>Précedent</button>
+        </div>
+        
       </div>
     </div>
   );

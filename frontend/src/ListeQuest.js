@@ -3,8 +3,10 @@ import 'bootstrap/dist/css/bootstrap.min.css'; // Import des styles Bootstrap
 import './AjoutQuestion.css'; // Import des styles spécifiques à ce composant
 import { Table, Space, Modal } from 'antd'; // Import des composants Table, Space et Modal depuis Ant Design
 import { EditOutlined, DeleteOutlined, SnippetsOutlined } from '@ant-design/icons'; // Import des icônes depuis Ant Design
-
+import {  useHistory } from 'react-router-dom';
 function ListeQuest() {
+     // Configurer l'objet historique à partir du routeur React
+     const history = useHistory();
     // Définition des états initiaux à l'aide du hook useState
     const [selectedLangue, setSelectedLangue] = useState('');
     const [selectedDomaine, setSelectedDomaine] = useState('');
@@ -43,6 +45,15 @@ function ListeQuest() {
             },
         });
     };
+    const handleEditClick = () => {
+        // Rediriger vers route '/ModifierQuestion'
+        history.push('/ModifierQuestion');
+      };
+
+      const handleFiltrerClick = () => {
+        // Rediriger vers route 'MotPasseOublie' 
+        history.push('/filtrer_Question');
+      };
 
     // Définition des colonnes pour la table des questions
     const columns = [
@@ -66,11 +77,11 @@ function ListeQuest() {
             render: (text, record) => (
                 <Space size="middle">
                     {/* Icône pour éditer la question */}
-                    <EditOutlined style={{ color: 'blue' }} />
+                    <EditOutlined style={{ color: 'blue' }} onClick={handleEditClick} />
                     {/* Icône pour supprimer la question */}
                     <DeleteOutlined style={{ color: 'red' }} onClick={() => handleDelete(record)} />
                     {/* Icône pour afficher le code associé à la question */}
-                    <SnippetsOutlined style={{ color: 'gray' }} />
+                    <SnippetsOutlined style={{ color: 'gray' }} onClick={handleFiltrerClick} />
                 </Space>
             ),
         },
@@ -84,7 +95,10 @@ function ListeQuest() {
             <div className="border p-3 mb-4 form-container">
                 {/* Sélection de langue, domaine et skills */}
                 <div className="form-group">
-                    <label htmlFor="langue">Langue* :</label>
+                    <label htmlFor="langue">Langue
+                    <b style={{ color: 'red' }}>* </b>
+
+                    </label>
                     <select
                         className="form-control"
                         id="langue"
@@ -98,7 +112,9 @@ function ListeQuest() {
                     </select>
                 </div>
                 <div className="form-group">
-                    <label htmlFor="domaine">Domaine* :</label>
+                    <label htmlFor="domaine">Domaine
+                    <b style={{ color: 'red' }}>* </b>
+                    </label>
                     <select
                         className="form-control"
                         id="domaine"
@@ -107,12 +123,25 @@ function ListeQuest() {
                     >
                         <option value="">Choisissez un domaine</option>
                         <option value="programmation">Programmation</option>
-                        <option value="design">Design</option>
+                        <option value="Design et créativité">Design et créativité</option>
                         <option value="gestion_de_projet">Gestion de projet</option>
+                        <option value="IT">IT</option>
+                        <option value="Santé"> Santé</option>
+                        <option value="Finance"> Finance</option>
+                        <option value="Éducation">Éducation</option>
+                        <option value="Commerce électronique"> Commerce électronique</option>
+                        <option value="Divertissement et médias"> Divertissement et médias</option>
+                        <option value="Mobilité et transport "> Mobilité et transport</option>
+                        <option value="Science des données et analytique">Science des données et analytique</option>
+                        <option value="Sécurité">Sécurité</option>
+                        <option value="Tourisme et voyage">Tourisme et voyage</option>
+                        <option value="Gestion des ressources humaines">Gestion des ressources humaines</option>
                     </select>
                 </div>
                 <div className="form-group">
-                    <label htmlFor="skills">Skills* :</label>
+                    <label htmlFor="skills">Skills
+                    <b style={{ color: 'red' }}>* </b>
+                    </label>
                     <select
                         className="form-control"
                         id="skills"
@@ -122,7 +151,30 @@ function ListeQuest() {
                         <option value="">Choisissez un skill</option>
                         <option value="communication">Communication</option>
                         <option value="analyse">Analyse</option>
-                        <option value="resolution_probleme">Résolution de problèmes</option>
+                        <option value="cybersécurité"> cybersécurité</option>
+                        <option value="intelligence artificielle">intelligence artificielle</option>
+                        <option value="services de cloud computing">services de cloud computing</option>
+                        <option value="technologies médicales">technologies médicales</option>
+                        <option value="services bancaires en ligne">services bancaires en ligne</option>
+                        <option value="paiements numériques">paiements numériques</option>
+                        <option value="solutions d'e-learning">solutions d'e-learning</option>
+                        <option value="marché en ligne">marché en ligne</option>
+                        <option value="marketing numérique">marketing numérique</option>
+                        <option value="solutions de recrutement en ligne">solutions de recrutement en ligne</option>
+                        <option value="solutions de cybersécurité">solutions de cybersécurité</option>
+                        <option value="design industriel">design industriel</option>
+                        <option value="architecture">architecture</option>
+                        <option value="intelligence d'affaires">intelligence d'affaires</option>
+                        <option value="analyse de Big Data">analyse de Big Data</option>
+                        <option value="solutions de gestion de données">solutions de gestion de données</option>
+                        <option value="Java">Java</option>
+                        <option value="Python">Python</option>
+                        <option value="C">C</option>
+                        <option value="C++">C++</option>
+                        <option value="JavaScript">JavaScript</option>
+                        <option value="PHP">PHP</option>
+                        
+                    
                     </select>
                 </div>
             </div>
@@ -133,5 +185,4 @@ function ListeQuest() {
         </div>
     );
 }
-
 export default ListeQuest;

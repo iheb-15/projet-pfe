@@ -76,7 +76,9 @@ function Ajout2() {
             <div className="border p-3 mb-4 form-container" >
                 {/* Sélection du type de question */}
                 <div className="form-group">
-                    <label htmlFor="type">Type *:</label>
+                    <label htmlFor="type">Type 
+                    <b style={{ color: 'red' }}>* </b>
+                    </label>
                     <select className="form-control" id="type">
                         <option value="" disabled selected>-- Sélectionner un type --</option>
                         <option value="texte">Texte</option>
@@ -86,14 +88,18 @@ function Ajout2() {
                 </div>
                 {/* Saisie du nombre de points */}
                 <div className="form-group">
-                    <label htmlFor="points">Points *:</label>
+                    <label htmlFor="points">Points 
+                    <b style={{ color: 'red' }}>* </b>
+                    </label>
                     <div className="input-group">
                         <input type="number" className="form-control" id="points" value={points} onChange={handlePointsChange} />
                     </div>
                 </div>
                 {/* Saisie du temps alloué */}
                 <div className="form-group">
-                    <label htmlFor="temps">Temps *:</label>
+                    <label htmlFor="temps">Temps 
+                    <b style={{ color: 'red' }}>* </b>
+                    </label>
                     <div className="input-group">
                         <input type="number" className="form-control" id="minutes" value={minutes} onChange={handleMinutesChange} placeholder="Minutes" style={{ marginRight: '10px' }} />
                         <input type="number" className="form-control" id="seconds" value={seconds} onChange={handleSecondsChange} placeholder="Secondes" />

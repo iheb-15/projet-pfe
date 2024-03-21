@@ -17,9 +17,14 @@ import AjoutQuestion from './AjoutQuestion';
 import "antd/dist/antd.min.css";
 import logo1 from '../src/media/logo1.png';
 import './App.css';
+
+import Question from './pages/ModifierQuestion';
+import Filter from './pages/filtrer_Question';
+
 import Ajout2 from './Ajout2';
 import TraduireQuest from './TraduireQuest';
 import ListeQuest from './ListeQuest';
+
 
 const { Header, Sider, Content } = Layout;
 const { SubMenu } = Menu;
@@ -78,12 +83,7 @@ const App = () => {
               <Menu.Item key="2" icon={<PlusCircleOutlined  style={{ color: 'white' }} />} style={{ background: '#3987ee' }} >
                 <Link to="/ajouter_question" style={{ color: 'white', backgroundColor: '#3987ee' , fontSize:"13px" }}>Ajout Question</Link>
               </Menu.Item>
-              <Menu.Item key="2" icon={<PlusCircleOutlined  style={{ color: '#000000' }} />} style={{ background: '#3987ee' }} >
-                <Link to="/ModifierQuestion" style={{ color: '#000000', backgroundColor: '#3987ee' , fontSize:"13px"}}>ModifierQuestion</Link>
-              </Menu.Item>
-              <Menu.Item key="2" icon={<PlusCircleOutlined  style={{ color: '#000000' }} />} style={{ background: '#3987ee' }} >
-                <Link to="/filtrer_Question" style={{ color: '#000000', backgroundColor: '#3987ee' , fontSize:"13px"}}>filterQuestion</Link>
-              </Menu.Item>
+            
             </SubMenu>
           </Menu>
           <Button className="btn" onClick={handleCollapse} style={{ border: "none", backgroundColor: "#1271ec" }}>
@@ -105,6 +105,9 @@ const App = () => {
           <Content className="site-layout-background" style={{ margin: '24px 16px', padding: 24, minHeight: 280,  }}>
             <Switch>
               <Route path="/gest_utilisateur" style={{ backgroundColor: '#3987ee' }} component={Gest} />
+              <Route path="/ajouter_question" style={{ background: '#3987ee' }} component={AjoutQuestion} />
+              <Route path="/ModifierQuestion" style={{ background: '#3987ee' }} component={Question} />
+              <Route path="/filtrer_Question" style={{ background: '#3987ee' }} component={Filter} />
               <Route path="/ajouter_question" style={{ background: '#3987ee'}} component={AjoutQuestion} />
               <Route path="/ajout2" component={Ajout2} />
               <Route path="/traduire_quest" component={TraduireQuest} />

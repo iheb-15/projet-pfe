@@ -6,6 +6,7 @@ import { FaPlus, FaTrash } from 'react-icons/fa';
 import '../AjoutQuestion.css';
 import Filtrer from './filtrer_Question';
 import Link from 'antd/lib/typography/Link';
+import {  useHistory } from 'react-router-dom';
 
 const { TextArea } = Input;
 
@@ -160,6 +161,10 @@ function Modifier() {
   const handleFiltrerClick = () => {
     openModalFiltrer();
   };
+  const history = useHistory(); // Obtenir l'objet history
+  const handleRetourListe = () => {
+    history.push('/liste_question'); // Naviguer vers la route de la liste des questions
+  };
   return (
     <div className="container">
       <div className="text-center">
@@ -226,7 +231,8 @@ function Modifier() {
           <div className="border p-3 mb-4">
             <div className="form-group">
               <label htmlFor={`domaine_${question.id}`}>
-                Domaine* :{' '}
+                Domaine{' '}
+                <b style={{ color: 'red' }}>* </b>
               </label>
               <select
                 className="form-control custom-select-width"
@@ -236,13 +242,25 @@ function Modifier() {
               >
                 <option value="">Choisissez un domaine</option>
                 <option value="programmation">Programmation</option>
-                <option value="design">Design</option>
-                <option value="gestion_de_projet">Gestion de projet</option>
+                        <option value="Design et créativité">Design et créativité</option>
+                        <option value="gestion_de_projet">Gestion de projet</option>
+                        <option value="IT">IT</option>
+                        <option value="Santé"> Santé</option>
+                        <option value="Finance"> Finance</option>
+                        <option value="Éducation">Éducation</option>
+                        <option value="Commerce électronique"> Commerce électronique</option>
+                        <option value="Divertissement et médias"> Divertissement et médias</option>
+                        <option value="Mobilité et transport "> Mobilité et transport</option>
+                        <option value="Science des données et analytique">Science des données et analytique</option>
+                        <option value="Sécurité">Sécurité</option>
+                        <option value="Tourisme et voyage">Tourisme et voyage</option>
+                        <option value="Gestion des ressources humaines">Gestion des ressources humaines</option>
               </select>
             </div>
             <div className="form-group">
               <label htmlFor={`niveau_${question.id}`}>
-                Niveau* :{' '}
+                Niveau{' '}
+                <b style={{ color: 'red' }}>* </b>
               </label>
               <select
                 className="form-control custom-select-width"
@@ -257,7 +275,9 @@ function Modifier() {
               </select>
             </div>
             <div className="form-group">
-              <label>Type* :</label>
+              <label>Type 
+              <b style={{ color: 'red' }}>* </b>
+              </label>
               <div>
                 <Radio.Group onChange={handleTypeChange} value={selectedType}>
                   <div><Radio value="seul">Seul réponse</Radio></div>
@@ -266,7 +286,9 @@ function Modifier() {
               </div>
             </div>
             <div className="form-group" style={{ width: '60%' }}>
-              <label htmlFor={`question_${question.id}`}>Question* :</label>
+              <label htmlFor={`question_${question.id}`}>Question
+              <b style={{ color: 'red' }}>* </b>
+              </label>
               <TextArea
                 className="form-control"
                 id={`question_${question.id}`}
@@ -279,7 +301,9 @@ function Modifier() {
             </div>
             {question.reponses.map(reponse => (
               <div className="form-group" key={reponse.id} style={{ width: '60%' }}>
-                <label htmlFor={`reponse_${question.id}_${reponse.id}`}>Réponse {reponse.id}* :</label>
+                <label htmlFor={`reponse_${question.id}_${reponse.id}`}>Réponse {reponse.id}
+                <b style={{ color: 'red' }}>* </b>
+                </label>
                 <TextArea
                   className="form-control"
                   id={`reponse_${question.id}_${reponse.id}`}
@@ -307,6 +331,10 @@ function Modifier() {
       <button onClick={ajouterQuestion} style={{ width: '350px', marginTop: '10px',marginLeft: '30px' }}>
         <FaPlus /> Ajouter une autre Question à Modifier
       </button>
+      <div className="text-center mt-4">
+          {/* Bouton pour retourner à la liste des questions */}
+          <button onClick={handleRetourListe} style={{ marginRight: '875px' }}>Précedent</button>
+        </div>
     </div>
   );
 }

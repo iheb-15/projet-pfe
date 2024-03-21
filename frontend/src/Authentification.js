@@ -1,15 +1,8 @@
-<<<<<<< HEAD
 import React, { useState } from 'react';
 import { Link, Route, BrowserRouter as Router, Switch, useHistory } from 'react-router-dom';
-=======
-
-import React, { useState, useEffect } from 'react';
-import { Link, Route,Redirect, BrowserRouter as Router, Switch, useHistory } from 'react-router-dom';
-
-
-
->>>>>>> f050691787d81b1a0ca713803108b20582f96a16
 import { Container, Row, Col, Form } from 'react-bootstrap';
+import { Redirect } from 'react-router-dom';
+
 
 
 import { toast } from 'react-toastify';

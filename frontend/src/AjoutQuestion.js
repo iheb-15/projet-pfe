@@ -69,7 +69,9 @@ function AjoutQuestion() {
           <div className="border p-3 mb-4 form-container"> {/* Conteneur du formulaire */}
             {/* Sélection de langue, domaine et skills */}
             <div className="form-group">
-              <label htmlFor="langue">Langue* :</label>
+              <label htmlFor="langue">Langue
+              <b style={{ color: 'red' }}>* </b>
+              </label>
               <select
                 className="form-control"
                 id="langue"
@@ -84,7 +86,9 @@ function AjoutQuestion() {
             </div>
             {/* Sélection du domaine */}
             <div className="form-group">
-              <label htmlFor="domaine">Domaine* :</label>
+              <label htmlFor="domaine">Domaine
+              <b style={{ color: 'red' }}>* </b>
+              </label>
               <select
                 className="form-control"
                 id="domaine"
@@ -93,28 +97,66 @@ function AjoutQuestion() {
               >
                 <option value="">Choisissez un domaine</option>
                 <option value="programmation">Programmation</option>
-                <option value="design">Design</option>
+                <option value="Design et créativité">Design et créativité</option>
                 <option value="gestion_de_projet">Gestion de projet</option>
+                <option value="IT">IT</option>
+                <option value="Santé"> Santé</option>
+                <option value="Finance"> Finance</option>
+                <option value="Éducation">Éducation</option>
+                <option value="Commerce électronique"> Commerce électronique</option>
+                <option value="Divertissement et médias"> Divertissement et médias</option>
+                <option value="Mobilité et transport "> Mobilité et transport</option>
+                <option value="Science des données et analytique">Science des données et analytique</option>
+                <option value="Sécurité">Sécurité</option>
+                <option value="Tourisme et voyage">Tourisme et voyage</option>
+                <option value="Gestion des ressources humaines">Gestion des ressources humaines</option>
+               
               </select>
             </div>
             {/* Sélection des skills */}
             <div className="form-group">
-              <label htmlFor="skills">Skills* :</label>
+              <label htmlFor="skills">Skills
+              <b style={{ color: 'red' }}>* </b>
+              </label>
               <select
                 className="form-control"
                 id="skills"
                 value={selectedSkill}
                 onChange={handleSkillChange}
               >
-                <option value="">Choisissez un skill</option>
+                <option value="">Choisissez un Skill</option>
                 <option value="communication">Communication</option>
-                <option value="analyse">Analyse</option>
-                <option value="resolution_probleme">Résolution de problèmes</option>
+                        <option value="analyse">Analyse</option>
+                        <option value="cybersécurité"> cybersécurité</option>
+                        <option value="intelligence artificielle">intelligence artificielle</option>
+                        <option value="services de cloud computing">services de cloud computing</option>
+                        <option value="technologies médicales">technologies médicales</option>
+                        <option value="services bancaires en ligne">services bancaires en ligne</option>
+                        <option value="paiements numériques">paiements numériques</option>
+                        <option value="solutions d'e-learning">solutions d'e-learning</option>
+                        <option value="marché en ligne">marché en ligne</option>
+                        <option value="marketing numérique">marketing numérique</option>
+                        <option value="solutions de recrutement en ligne">solutions de recrutement en ligne</option>
+                        <option value="solutions de cybersécurité">solutions de cybersécurité</option>
+                        <option value="design industriel">design industriel</option>
+                        <option value="architecture">architecture</option>
+                        <option value="intelligence d'affaires">intelligence d'affaires</option>
+                        <option value="analyse de Big Data">analyse de Big Data</option>
+                        <option value="solutions de gestion de données">solutions de gestion de données</option>
+                        <option value="Java">Java</option>
+                        <option value="Python">Python</option>
+                        <option value="C">C</option>
+                        <option value="C++">C++</option>
+                        <option value="JavaScript">JavaScript</option>
+                        <option value="PHP">PHP</option>
+
               </select>
             </div>
             {/* Champ de texte pour la question */}
             <div className="form-group">
-              <label htmlFor="question">Question* :</label>
+              <label htmlFor="question">Question
+              <b style={{ color: 'red' }}>* </b>
+              </label>
               <textarea
                 className="form-control"
                 id="question"
@@ -126,7 +168,9 @@ function AjoutQuestion() {
             {/* Boucle pour afficher les champs de réponse */}
             {reponses.map((reponse, index) => (
               <div className="form-group" key={index}>
-                <label htmlFor={`reponse${index + 1}`}>Réponse {index + 1}* :</label>
+                <label htmlFor={`reponse${index + 1}`}>Réponse {index + 1}
+                <b style={{ color: 'red' }}>* </b>
+                </label>
                 <div className="input-group">
                   <textarea
                     className="form-control"
