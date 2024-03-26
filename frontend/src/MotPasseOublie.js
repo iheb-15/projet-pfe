@@ -4,8 +4,6 @@ import { Container, Row, Col, Form, Modal } from 'react-bootstrap';
 import Logo from './media/logo.png';
 import axios from 'axios'; // Assurez-vous d'avoir installé Axios dans votre projet
 
-
-
 function MotPasseOublie() {
   const history = useHistory();
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -22,7 +20,7 @@ function MotPasseOublie() {
         setShowSuccessModal(true);
         setTimeout(() => {
           setShowSuccessModal(false);
-          history.push('/CodeOTP'); // Redirection vers la page de connexion après la fermeture du modal
+          history.push('/CodeOTP'); // Redirection vers la page de code OTP après la fermeture du modal
         }, 4000);
       } else {
         console.error('Error sending code:', response.data.error);
@@ -33,7 +31,7 @@ function MotPasseOublie() {
   };
 
   const handleRetourClick = () => {
-    history.push('/CodeOTP'); // Change the route to '/codeotp'
+    history.push('/login'); // Redirection vers la page de connexion
   };
 
   const handleSuccessModalClose = () => {
@@ -76,9 +74,8 @@ function MotPasseOublie() {
 
             <div>
               <button variant="secondary" className="second-boutton" onClick={handleRetourClick}>
-                Next
+                Retour 
               </button>
-            
             </div>
           </Form>
 
@@ -95,4 +92,3 @@ function MotPasseOublie() {
 }
 
 export default MotPasseOublie;
-

@@ -2,13 +2,11 @@ import React, { useState } from 'react';
 import { Link, Route, BrowserRouter as Router, Switch, useHistory } from 'react-router-dom';
 import { Container, Row, Col, Form } from 'react-bootstrap';
 import { Redirect } from 'react-router-dom';
-
-
-
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios'; // Import Axios
 import { Select } from 'antd';
+import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons'; // Import des icônes pour afficher/masquer le mot de passe
 import 'antd/dist/antd.css';
 import './Authentification.css'; // Import local styles
 import Logo from './media/logo.png'; // Import logo image
@@ -27,6 +25,7 @@ function Authentification() {
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('1');
   const [userRole, setUserRole] = useState('');
+  const [showPassword, setShowPassword] = useState(false); // État pour afficher/masquer le mot de passe
 
   // Gérer la fonctionnalité de connexion
   const handleLogin = async (e) => {
@@ -65,6 +64,7 @@ function Authentification() {
       });
     }
   };
+  
   // Handle click on "Mot de Passe Oublié" link
   const handleMotPasseOublieClick = () => {
     // Rediriger vers route 'MotPasseOublie' 
@@ -105,17 +105,24 @@ function Authentification() {
 
                 {/* Password input */}
                 <div className="input-container">
-                  <input
-                    placeholder="Enter Password"
-                    className="input-field"
-                    type="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                  <label htmlFor="input-field" className="input-label">
-                    Enter Password
-                  </label>
-                  <span className="input-highlight"></span>
+                      <input
+                        placeholder="Enter Password"
+                        className="input-field"
+                        type={showPassword ? "text" : "password"} // Utiliser un type dynamique basé sur l'état showPassword
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                      />
+                      <label htmlFor="input-field" className="input-label">
+                        Enter Password
+                        
+                      </label>
+                      {/* Icône pour afficher/masquer le mot de passe */}
+                      {showPassword ? (
+                        <EyeTwoTone  className="password-toggle" onClick={() => setShowPassword(false)} />
+                        ) : (
+                        <EyeInvisibleOutlined  className="password-toggle" onClick={() => setShowPassword(true)} />
+                      )}
+                      <span className="input-highlight"></span>
                 </div>
 
                 {/* Select role */}
@@ -157,17 +164,17 @@ function Authentification() {
           <Route path="/another_page" render={() => <div>Another Page</div>} />
           {/* Private route for gest_utilisateur */}
           <PrivateRoute
-           path="/gest_utilisateur"
-           render={() => {
-           // Vérifier si l'utilisateur a un rôle de "Super Admin"
-           if (userRole === '0') { // Super Admin
-            return <Gest />;
-             } else {
-             // Rediriger vers une autre page si l'utilisateur n'a pas les autorisations nécessaires
-             return <Redirect to="/app" />;
-             }
+            path="/gest_utilisateur"
+            render={() => {
+              // Vérifier si l'utilisateur a un rôle de "Super Admin"
+              if (userRole === '0') { // Super Admin
+                return <Gest />;
+              } else {
+                // Rediriger vers une autre page si l'utilisateur n'a pas les autorisations nécessaires
+                return <Redirect to="/app" />;
+              }
             }}
-            />
+          />
         </Switch>
       </Container>
     </Router>
