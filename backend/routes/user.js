@@ -15,6 +15,7 @@ const {deleteUser} =require("../controllers/user");
 
 
 
+
 router.post('/add', [
     check("name", "le nom doit obtenir 3 caractére").isLength({ min: 3 }),
     check("lastname", "le prénom doit obtenir 3 caractére").isLength({ min: 3 }), // Valider la saisie du nom
@@ -40,6 +41,7 @@ router.get("/signout", signout);
 
 router.post('/forgot-password', authController.forgotPassword);
 router.put('/reset-password-with-otp', authController.resetPasswordWithOTP);
+
 
 router.get('/affichage', async (req, res) => {
     try {

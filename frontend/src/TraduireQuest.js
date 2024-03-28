@@ -1,197 +1,232 @@
-import React, { useState } from 'react'; // Importation de React et de useState pour gérer l'état dans les composants fonctionnels
-import { FaPlus } from 'react-icons/fa'; // Importation de l'icône FaPlus depuis react-icons
-import { CloseSquareOutlined } from '@ant-design/icons'; // Importation de l'icône CloseSquareOutlined depuis ant-design/icons
-import { Modal } from 'react-bootstrap'; // Importation du composant Modal depuis react-bootstrap
 
+import React, { useState } from 'react';
+import { Container, Typography, TextField, Button, Select, MenuItem, FormControl, Grid, IconButton, Paper, Switch , Snackbar } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
+import { makeStyles } from '@material-ui/core/styles';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+const useStyles = makeStyles((theme) => ({
+    paper: {
+      padding: theme.spacing(3),
+      borderRadius: theme.spacing(2),
+    },
+    formControl: {
+      marginTop: theme.spacing(1),
+      marginBottom: theme.spacing(1),
+      minWidth: 200,
+    },
+    responseContainer: {
+      marginTop: theme.spacing(1),
+      display: 'flex',
+      alignItems: 'center',
+    },
+    responseCard: {
+      marginTop: theme.spacing(1),
+      padding: theme.spacing(2),
+      borderRadius: theme.spacing(2),
+      boxShadow: '0px 0px 15px 5px rgba(0,0,0,0.1)',
+    },
+    addButton: {
+      marginTop: theme.spacing(2),
+      backgroundColor: theme.palette.success.main,
+      '&:hover': {
+        backgroundColor: theme.palette.success.dark,
+      },
+    },
+    label: {
+      fontSize: '14px',
+      fontFamily: 'Arial, sans-serif',
+    },
+    spacing: {
+      marginTop: theme.spacing(1),
+      marginBottom: theme.spacing(1),
+    },
+    redAsterisk: {
+      color: 'red',
+    },
+    select: {
+      height: '40px',
+    },
+    section: {
+      padding: theme.spacing(2),
+      marginBottom: theme.spacing(2),
+      border: `1px solid ${theme.palette.primary.main}`,
+      borderRadius: theme.spacing(2),
+    },
+    expandedTextField: {
+      marginBottom: theme.spacing(2),
+    },
+  }));
 function TraduireQuest() {
-    // Déclaration des états avec useState
-    const [showModal, setShowModal] = useState(false); // État pour afficher ou masquer le modal
-    const [selectedDomaine, setSelectedDomaine] = useState(''); // État pour stocker le domaine sélectionné
-    const [selectedSkill, setSelectedSkill] = useState(''); // État pour stocker la compétence sélectionnée
-    const [question, setQuestion] = useState(''); // État pour stocker la question saisie
-    const [reponses, setReponses] = useState(['']); // État pour stocker les réponses saisies, initialisé avec une réponse vide
-    const [showConfirmationModal, setShowConfirmationModal] = useState(false); // État pour afficher ou masquer le modal de confirmation
-
-    // Fonction pour fermer le modal principal
-    const handleCloseModal = () => setShowModal(false);
-    // Fonction pour afficher le modal principal
-    const handleShowModal = () => setShowModal(true);
-    // Fonction pour gérer le changement de domaine sélectionné
-    const handleDomaineChange = (e) => {
-        setSelectedDomaine(e.target.value);
-    };
-    // Fonction pour gérer le changement de compétence sélectionnée
-    const handleSkillChange = (e) => {
-        setSelectedSkill(e.target.value);
-    };
-    // Fonction pour gérer le changement de la question saisie
-    const handleQuestionChange = (e) => {
-        setQuestion(e.target.value);
-    };
-    // Fonction pour gérer le changement d'une réponse à un index spécifique
+    const classes = useStyles();
+    const [selectedDomaine, setSelectedDomaine] = useState('');
+    const [selectedSkill, setSelectedSkill] = useState('');
+    const [question, setQuestion] = useState('');
+    const [reponses, setReponses] = useState([{ text: '', isCorrect: false }]);
+    const [selectedType, setSelectedType] = useState('');
+    const handleDomaineChange = (e) => setSelectedDomaine(e.target.value);
+    const handleSkillChange = (e) => setSelectedSkill(e.target.value);
+    const handleQuestionChange = (e) => setQuestion(e.target.value);
+    const handleTypeChange = (e) => setSelectedType(e.target.value);
+  
     const handleReponseChange = (index, e) => {
-        const newReponses = [...reponses];
-        newReponses[index] = e.target.value;
-        setReponses(newReponses);
+      const newReponses = [...reponses];
+      newReponses[index].text = e.target.value;
+      setReponses(newReponses);
     };
-    // Fonction pour ajouter une réponse
-    const ajouterReponse = () => {
-        setReponses([...reponses, '']);
+    const handleCorrectChange = (index) => {
+      const newReponses = [...reponses];
+      newReponses[index].isCorrect = !newReponses[index].isCorrect;
+      setReponses(newReponses);
     };
-    // Fonction pour supprimer une réponse à un index spécifique
+    const ajouterReponse = () => setReponses([...reponses, { text: '', isCorrect: false }]);
     const supprimerReponse = (index) => {
-        const newReponses = [...reponses];
-        newReponses.splice(index, 1);
-        setReponses(newReponses);
+      const newReponses = [...reponses];
+      newReponses.splice(index, 1);
+      setReponses(newReponses);
     };
-    // Fonction pour afficher le modal de confirmation
-    const handleShowConfirmationModal = () => {
-        setShowConfirmationModal(true);
+    const handleTraduireClick = () => {
+      // Simulation de traduction réussie
+      toast.success('Traduction réussie!', {
+        position: toast.POSITION.TOP_CENTER,
+        autoClose: 3000, // Fermer automatiquement après 3 secondes
+      });
     };
-    // Fonction pour fermer le modal de confirmation
-    const handleCloseConfirmationModal = () => {
-        setShowConfirmationModal(false);
-    };
-    // Fonction pour afficher un message de succès et masquer le modal principal
-    const handleShowSuccessMessage = () => {
-        alert('Question traduite avec succès!'); // Affichage de l'alerte
-        setShowModal(false); // Masquer le modal principal
-    };
-
-    return (
-        <div className="container">
-            <div className="text-center">
-                <h2 style={{ color: '#3987ee' }}>Ajouter Question</h2>
-            </div>
-            {/* Formulaire pour saisir et traduire la question */}
-            <h4 style={{ fontSize: '14px' }}>Traduire Question *</h4>
-            <div className="border p-3 mb-4">
+    return  (
+        <Container maxWidth="md">
+          <Typography variant="h6" style={{ color: "#3987ee" }} align="center" gutterBottom>Ajouter une Question</Typography>
+          <Paper elevation={3} className={`${classes.paper} ${classes.spacing}`}>
+            <Typography variant="h7" className={`${classes.label}`} style={{ color: "#3987ee" }} gutterBottom>Traduire Question<span className={classes.redAsterisk}>*</span></Typography>
+            <Paper className={classes.section}>
+              <Grid container spacing={2} className={`${classes.spacing}`}>
+                {/* Sélection de la langue */}
+            
                 {/* Sélection du domaine */}
-                <div className="form-group">
-                    <label htmlFor="domaine">Domaine
-                    <b style={{ color: 'red' }}>* </b>
-                    </label>
-                    <select
-                        className="form-control"
-                        id="domaine"
-                        value={selectedDomaine}
-                        onChange={handleDomaineChange}
+                <Grid item xs={4}>
+                  <FormControl className={`${classes.formControl} ${classes.spacing}`} fullWidth>
+                    <Typography variant="subtitle1" className={`${classes.label}`}>Domaine<span className={classes.redAsterisk}>*</span></Typography>
+                    <Select
+                      value={selectedDomaine}
+                      onChange={handleDomaineChange}
+                      displayEmpty
+                      inputProps={{ 'aria-label': 'Domaine' }}
                     >
-                        {/* Options pour le domaine */}
-                        <option value="">Choisissez un domaine</option>
-                        <option value="programmation">Programmation</option>
-                        <option value="Design et créativité">Design et créativité</option>
-                        <option value="gestion_de_projet">Gestion de projet</option>
-                        <option value="IT">IT</option>
-                        <option value="Santé"> Santé</option>
-                        <option value="Finance"> Finance</option>
-                        <option value="Éducation">Éducation</option>
-                        <option value="Commerce électronique"> Commerce électronique</option>
-                        <option value="Divertissement et médias"> Divertissement et médias</option>
-                        <option value="Mobilité et transport "> Mobilité et transport</option>
-                        <option value="Science des données et analytique">Science des données et analytique</option>
-                        <option value="Sécurité">Sécurité</option>
-                        <option value="Tourisme et voyage">Tourisme et voyage</option>
-                        <option value="Gestion des ressources humaines">Gestion des ressources humaines</option>
-                        {/* Autres options pour le domaine */}
-                    </select>
-                </div>
+                      <MenuItem value="" disabled>Choisissez un domaine</MenuItem>
+                      <MenuItem value="programmation">Programmation</MenuItem>
+                      <MenuItem value="design">Design</MenuItem>
+                      <MenuItem value="gestion_projet">Gestion de projet</MenuItem>
+                    </Select>
+                  </FormControl>
+                </Grid>
                 {/* Sélection de la compétence */}
-                <div className="form-group">
-                    <label htmlFor="skills">Skills
-                    <b style={{ color: 'red' }}>* </b>
-                    </label>
-                    <select
-                        className="form-control"
-                        id="skills"
-                        value={selectedSkill}
-                        onChange={handleSkillChange}
-                    >
-                        {/* Options pour la compétence */}
-                        <option value="">Choisissez un skill</option>
-                        <option value="communication">Communication</option>
-                        <option value="analyse">Analyse</option>
-                        <option value="cybersécurité"> cybersécurité</option>
-                        <option value="intelligence artificielle">intelligence artificielle</option>
-                        <option value="services de cloud computing">services de cloud computing</option>
-                        <option value="technologies médicales">technologies médicales</option>
-                        <option value="services bancaires en ligne">services bancaires en ligne</option>
-                        <option value="paiements numériques">paiements numériques</option>
-                        <option value="solutions d'e-learning">solutions d'e-learning</option>
-                        <option value="marché en ligne">marché en ligne</option>
-                        <option value="marketing numérique">marketing numérique</option>
-                        <option value="solutions de recrutement en ligne">solutions de recrutement en ligne</option>
-                        <option value="solutions de cybersécurité">solutions de cybersécurité</option>
-                        <option value="design industriel">design industriel</option>
-                        <option value="architecture">architecture</option>
-                        <option value="intelligence d'affaires">intelligence d'affaires</option>
-                        <option value="analyse de Big Data">analyse de Big Data</option>
-                        <option value="solutions de gestion de données">solutions de gestion de données</option>
-                        <option value="Java">Java</option>
-                        <option value="Python">Python</option>
-                        <option value="C">C</option>
-                        <option value="C++">C++</option>
-                        <option value="JavaScript">JavaScript</option>
-                        <option value="PHP">PHP</option>
-                        {/* Autres options pour la compétence */}
-                    </select>
-                </div>
-                {/* Saisie de la question */}
-                <div className="form-group">
-                    <label htmlFor="question">Question
-                    <b style={{ color: 'red' }}>* </b>
-                    </label>
-                    <textarea
-                        className="form-control"
-                        id="question"
-                        value={question}
-                        onChange={handleQuestionChange}
-                    ></textarea>
-                </div>
-                {/* Saisie des réponses */}
+                <Grid item xs={4}>
+                  <FormControl className={`${classes.formControl} ${classes.spacing}`} fullWidth>
+                    <Typography variant="subtitle1" className={`${classes.label}`}>Compétence<span className={classes.redAredAsterisk}>*</span></Typography>
+                    <Select
+                      value={selectedSkill}
+                      onChange={handleSkillChange}
+                      displayEmpty
+                      inputProps={{ 'aria-label': 'Compétences' }}
+                      >
+                        <MenuItem value="" disabled>Choisissez une Compétence</MenuItem>
+                        <MenuItem value="communication">Communication</MenuItem>
+                        <MenuItem value="analyse">Analyse</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                </Grid>
+              </Paper>
+              <Paper className={classes.section}>
+                <Grid container spacing={2} className={`${classes.spacing}`}>
+                  {/* Sélection du type de question */}
+                  <Grid item xs={12}>
+                    <FormControl className={`${classes.formControl} ${classes.expandedTextField}`} fullWidth>
+                      <Typography variant="subtitle1" className={`${classes.label}`}>Type de Question<span className={classes.redAsterisk}>*</span></Typography>
+                      <Select
+                        value={selectedType}
+                        onChange={handleTypeChange}
+                        displayEmpty
+                        style={{ width: "200px" }}
+                        inputProps={{ 'aria-label': 'Type de Question' }}
+                        className={classes.select}
+                      >
+                        <MenuItem value="" disabled>Choisissez un type</MenuItem>
+                        <MenuItem value="vrai-faux">Vrai/Faux</MenuItem>
+                        <MenuItem value="qcm">QCM</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Grid>
+                  {/* Zone de saisie de la question */}
+                  <Grid item xs={12}>
+                    <TextField
+                      label="Question*"
+                      multiline
+                      variant="outlined"
+                      fullWidth
+                      value={question}
+                      onChange={handleQuestionChange}
+                      className={`${classes.formControl} ${classes.spacing} ${classes.expandedTextField}`}
+                      aria-label="Question"
+                    />
+                  </Grid>
+                </Grid>
+              </Paper>
+              {/* Section pour les réponses */}
+              <Paper elevation={3} className={`${classes.responseCard} ${classes.spacing}`}>
+                <Typography variant="subtitle1" gutterBottom>Type de Réponse<span className={classes.redAsterisk}>*</span></Typography>
+                <Select
+                  value={selectedType}
+                  onChange={handleTypeChange}
+                  displayEmpty
+                  inputProps={{ 'aria-label': 'Type de Réponse' }}
+                  className={`${classes.select} ${classes.spacing}`}
+                >
+                  <MenuItem value="" disabled>Choisissez un type</MenuItem>
+                  <MenuItem value="vrai-faux">Vrai/Faux</MenuItem>
+                  <MenuItem value="qcm">QCM</MenuItem>
+                </Select>
+                {/* Affichage des réponses */}
                 {reponses.map((reponse, index) => (
-                    <div className="form-group" key={index}>
-                        <label htmlFor={`reponse${index + 1}`}>Réponse {index + 1}
-                        <b style={{ color: 'red' }}>* </b>
-                        </label>
-                        <div className="input-group">
-                            <textarea
-                                className="form-control"
-                                id={`reponse${index + 1}`}
-                                value={reponse}
-                                onChange={(e) => handleReponseChange(index, e)}
-                            ></textarea>
-                            <CloseSquareOutlined onClick={() => supprimerReponse(index)} />
-                        </div>
-                    </div>
+                  <div key={index} className={classes.responseContainer}>
+                    <TextField
+                      label={`Réponse ${index + 1}*`}
+                      multiline
+                      rows={2}
+                      variant="outlined"
+                      fullWidth
+                      value={reponse.text}
+                      onChange={(e) => handleReponseChange(index, e)}
+                      className={`${classes.formControl} ${classes.spacing}`}
+                      aria-label={`Réponse ${index + 1}`}
+                    />
+                    <Switch
+                      checked={reponse.isCorrect}
+                      onChange={() => handleCorrectChange(index)}
+                      color="primary"
+                      inputProps={{ 'aria-label': `Réponse correcte ${index + 1}` }}
+                    />
+                    <IconButton onClick={() => supprimerReponse(index)} aria-label={`Supprimer réponse ${index + 1}`}>
+                      <CloseIcon />
+                    </IconButton>
+                  </div>
                 ))}
                 {/* Bouton pour ajouter une réponse */}
-                <button onClick={ajouterReponse} className="">
-                    <FaPlus /> Ajouter
-                </button>
-            </div>
-            {/* Bouton pour ouvrir le modal de confirmation */}
-            <button className="next-button" onClick={handleShowConfirmationModal}>
-                Traduire
-            </button>
+                <Button variant="contained" style={{ color: '#fff', backgroundColor: '#3987ee' }} onClick={ajouterReponse} className={classes.addButton} aria-label="Ajouter réponse">Ajouter Réponse</Button>
+              </Paper>
+              <Button
+            variant="contained"
+            style={{ color: '#fff', backgroundColor: '#3987ee', float: 'right', marginTop: '35px' }}
+            onClick={handleTraduireClick}
+          >
+            Traduire
+          </Button>
+              </Paper>
+                
 
-            {/* Modal de confirmation */}
-            <Modal show={showConfirmationModal} onHide={handleCloseConfirmationModal}>
-                <Modal.Header closeButton>
-                    <Modal.Title>Confirmation</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    Êtes-vous sûr de vouloir traduire cette question ?
-                </Modal.Body>
-                <Modal.Footer>
-                    {/* Bouton pour annuler la traduction */}
-                    <button onClick={handleCloseConfirmationModal}>Annuler</button>
-                    {/* Bouton pour confirmer la traduction */}
-                    <button onClick={handleShowSuccessMessage}>Oui</button>
-                </Modal.Footer>
-            </Modal>
-        </div>
-    );
+              </Container>
+
+ );  
 }
 
 export default TraduireQuest;

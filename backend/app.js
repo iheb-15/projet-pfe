@@ -7,7 +7,6 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors"); 
 require("dotenv").config(); 
 
-
 // Connect to the MongoDB database
 mongoose.connect(process.env.DATABASE, {
     useNewUrlParser: true,
@@ -32,6 +31,8 @@ app.use((req, res, next) => {
 const userRoutes=require("./routes/user")
 //root
 app.use('/api',userRoutes)
+
+
 
 
 
