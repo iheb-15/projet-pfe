@@ -26,17 +26,17 @@ const Root = () => (
     {/* Configurer des routes à l'aide du composant Switch */}
     <Switch>
       {/* Route pour le composant 'App'  */}
-      <Route path="/app" component={App} />
+      <Route path="/app" component={App}/>
       
       {/* Route pour le composant 'Authentification'  */}
-      <Route path="/login" component={Authentification} />
+      <Route path="/" component={Authentification} />
       
       {/* Route pour la composante "MotPasseOublie"  */}
       <Route path="/motPasseOublie" component={MotPasseOublie} />
 
-      <Route path="/CodeOTP" component={CodeOTP} />
-      <Route path="/nouveauMotPasse" component={NouveauxMotPasse} />
-      <Route path="/gest_utilisateur" component={Gest} />
+      <Route path="/CodeOTP" component={CodeOTP}/>
+      <Route path="/nouveauMotPasse" component={NouveauxMotPasse}/>
+      <Route path="/gest_utilisateur" component={Gest}/>
       <Route path="/AjoutQuestion" component={AjoutQuestion} />
         <Route path="/Ajout2" component={Ajout2} />
     </Switch>
