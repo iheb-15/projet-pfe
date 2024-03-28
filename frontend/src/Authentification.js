@@ -167,7 +167,7 @@ function Authentification() {
             path="/gest_utilisateur"
             render={() => {
               // Vérifier si l'utilisateur a un rôle de "Super Admin"
-              if (userRole === '0') { // Super Admin
+              if (userRole !== '0') { // Super Admin
                 return <Gest />;
               } else {
                 // Rediriger vers une autre page si l'utilisateur n'a pas les autorisations nécessaires

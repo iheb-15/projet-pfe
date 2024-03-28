@@ -38,13 +38,7 @@ app.use('/api',userRoutes)
 
 
 
-<<<<<<< HEAD
 const port = process.env.PORT || 3002;
-=======
-
-
-const port = process.env.PORT || 3001;
->>>>>>> bd086feb606a6423846d5c68e539c6241113b77e
 
 
 app.listen(port, () => {
