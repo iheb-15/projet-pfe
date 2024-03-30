@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { Table, Modal, Input, Select } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import axios from 'axios';
+
 import './gest.css';
 import { Link } from 'react-router-dom/cjs/react-router-dom.min';
-import { useHistory } from 'react-router-dom';
+
 const { Option } = Select;
 
 function Gest() {
@@ -14,7 +15,6 @@ function Gest() {
   const [newUtilisateur, setNewUtilisateur] = useState({ name: '', lastname: '', password: '', email: '', role: '' });
   const [dataSource, setDataSource] = useState([]);
   const [searchValue, setSearchValue] = useState('');
-   const history = useHistory();
   useEffect(() => {
     // Récupérer le rôle de l'utilisateur depuis le stockage local
     const userRole = localStorage.getItem('userRole');

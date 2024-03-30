@@ -29,7 +29,7 @@ const Root = () => (
       <Route path="/app" component={App}/>
       
       {/* Route pour le composant 'Authentification'  */}
-      <Route path="/" component={Authentification} />
+      <Route path="/login" component={Authentification} />
       
       {/* Route pour la composante "MotPasseOublie"  */}
       <Route path="/motPasseOublie" component={MotPasseOublie} />

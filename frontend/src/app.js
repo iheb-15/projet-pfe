@@ -17,10 +17,8 @@ import AjoutQuestion from './AjoutQuestion';
 import "antd/dist/antd.min.css";
 import logo1 from '../src/media/logo1.png';
 import './App.css';
-
 import Question from './pages/ModifierQuestion';
 import Filter from './pages/filtrer_Question';
-
 import Ajout2 from './Ajout2';
 import TraduireQuest from './TraduireQuest';
 import ListeQuest from './ListeQuest';
