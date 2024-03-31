@@ -33,7 +33,13 @@ const Template = () => {
 
 
 //changer par Auth user
-  const [connected, setConnected] = useState(false)
+const [connected, setConnected] = useState(localStorage.getItem("userrole")?localStorage.getItem("userrole"):'3')
+
+useEffect(() => {
+
+  setConnected(localStorage.getItem('userrole'))
+  console.log('connected',connected)
+}, [connected]);
 
 
 
@@ -80,7 +86,7 @@ console.log("connected",connected)
       
       
       
-      {!connected && <Redirect to="/"/>}
+      {connected!=='0' && <Redirect to="/"/>}
 
 
 

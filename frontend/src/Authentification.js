@@ -5,7 +5,7 @@ import { Redirect } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios'; // Import Axios
-import { Select } from 'antd';
+import { Select, message } from 'antd';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons'; // Import des icônes pour afficher/masquer le mot de passe
 import 'antd/dist/antd.css';
 import './Authentification.css'; // Import local styles
@@ -37,7 +37,15 @@ function Authentification() {
         email,
         password,
         role
-      });
+      }).then((res)=>{
+        localStorage.setItem('token',res.data.token)
+        localStorage.setItem('userid',res.data.user._id)
+        localStorage.setItem('useremail',res.data.user.email)
+        localStorage.setItem('userrole',res.data.role)
+        console.log('res',res.data.user);
+        history.push('/');
+      }
+      )
   
       // Vérifier si la connexion a réussi
       if (response.status === 200 && response.data.role !== undefined) {
