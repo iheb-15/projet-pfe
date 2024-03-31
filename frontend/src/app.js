@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Route, Link, Switch ,Redirect} from 'react-router-dom';
 
 import "antd/dist/antd.min.css";
@@ -11,6 +11,7 @@ import MotPasseOublie from './MotPasseOublie';
 import CodeOTP from './CodeOTP';
 import NouveauxMotPasse from './NouveauxMotPasse';
 import { ToastContainer } from 'react-toastify';
+import { message } from 'antd';
 
 const App = () => {
  const [collapsed, setCollapsed] = useState(false);
@@ -21,7 +22,12 @@ const App = () => {
 
 //changer par Auth user
 
-  const [connected, setConnected] = useState(false)
+  const [connected, setConnected] = useState(localStorage.getItem("userrole")?localStorage.getItem("userrole"):'3')
+  useEffect(() => {
+
+    setConnected(localStorage.getItem('userrole'))
+    console.log('connected',connected)
+  }, [connected]);
   
 
 
@@ -38,7 +44,7 @@ const App = () => {
     <Switch>
       {/* Route pour le composant 'App'  */}
       <Route exact  path="/" >
-       {connected 
+       {connected ==='0'
         ?<Redirect to="/gest_utilisateur"/>
         :<Redirect to="/login"  />
       }
