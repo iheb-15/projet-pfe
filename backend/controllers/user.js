@@ -10,7 +10,7 @@ const saltRounds = 10;
 require('dotenv').config();
 const base64 = require('base64-js');
 const Buffer = require('buffer').Buffer;
-  
+
 exports.singnup = (req, res) => {
     // Validate user inputs
     const errors = validationResult(req);
@@ -224,13 +224,45 @@ exports.signin = (req, res) => {
 exports.signout = (req, res) => {
     // Effacer le cookie de jeton d'authentification
     res.clearCookie("token");
-
+    
     // Répondez avec un message de déconnexion
     return res.json({
         message: "Vous avez été déconnecté avec succès."
     });
 };
 
+exports.Name = (req, res) => {
+    // Vérifiez si l'en-tête Authorization est présent
+    const authHeader = req.headers['authorization'];
+    if (!authHeader) {
+        return res.status(401).json({ message: "Non autorisé. Veuillez vous connecter d'abord." });
+    }
+
+    // Récupérez le token d'authentification du header
+    const token = authHeader.split(' ')[1];
+    
+    // Vérifiez et décodez le token
+    jwt.verify(token, (err, decodedToken) => {
+        if (err) {
+            return res.status(401).json({ message: "Token invalide. Veuillez vous connecter à nouveau." });
+        }
+        
+        // L'identifiant de l'utilisateur connecté
+        const userId = decodedToken.userId;
+
+        // Recherchez l'utilisateur dans la base de données en utilisant l'identifiant
+        User.findById(userId, (err, user) => {
+            if (err) {
+                return res.status(500).json({ message: "Une erreur s'est produite lors de la recherche de l'utilisateur." });
+            }
+            if (!user) {
+                return res.status(404).json({ message: "Utilisateur introuvable." });
+            }
+            // Renvoyer le nom de l'utilisateur dans la réponse
+            return res.json({ name: user.name });
+        });
+    });
+};
 
 
 // Créer un transporteur nodemailer pour l'envoi d'e-mails

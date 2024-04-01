@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
-import { Link, Route, BrowserRouter as Router, Switch, useHistory } from 'react-router-dom';
+import { Link, Route, BrowserRouter as Router, Switch, useHistory,Redirect } from 'react-router-dom';
 import { Container, Row, Col, Form } from 'react-bootstrap';
-import { Redirect } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios'; // Import Axios
-import { Select, message } from 'antd';
+import { Select} from 'antd';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons'; // Import des icônes pour afficher/masquer le mot de passe
 import 'antd/dist/antd.css';
 import './Authentification.css'; // Import local styles
 import Logo from './media/logo.png'; // Import logo image
 import MotPasseOublie from './MotPasseOublie'; // Import le composant Mot Passe Oublie pour le routage
-import App from './app';
 import Gest from './pages/gest_utilisateur';
 import PrivateRoute from './pages/privetroute';
+import Dashboard from './pages/Dashboard';
 
 // Main Authentification Component
 function Authentification() {
@@ -32,37 +31,54 @@ function Authentification() {
     e.preventDefault();
   
     try {
-      // Faites une demande POST à votre point de terminaison principal pour l'authentification
       const response = await axios.post('http://localhost:3002/api/signin', {
         email,
         password,
         role
-      }).then((res)=>{
-        localStorage.setItem('token',res.data.token)
-        localStorage.setItem('userid',res.data.user._id)
-        localStorage.setItem('useremail',res.data.user.email)
-        localStorage.setItem('userrole',res.data.role)
-        console.log('res',res.data.user);
-        history.push('/');
-      }
-      )
-  
-      // Vérifier si la connexion a réussi
-      if (response.status === 200 && response.data.role !== undefined) {
-        const userRole = response.data.role; // Récupérer le rôle de l'utilisateur depuis la réponse
-        console.log('Rôle de l\'utilisateur après connexion:', userRole);
-        
-        // Stocker le rôle de l'utilisateur dans l'état de l'application
-        setUserRole(userRole);
-        console.log(' role utilisateur stocker',userRole);
-        // Rediriger vers la page principale après une connexion réussie
-        history.push('/app');
+      });
+      
+    
+      if (response.status === 200 && response.data.token) {
+        const token = response.data.token;
+        const userId = response.data.user._id;
+        const userEmail = response.data.user.email;
+        const userRole = response.data.role;
+        const user =response.data.user;
+        localStorage.setItem('token', token);
+        localStorage.setItem('userid', userId);
+        localStorage.setItem('useremail', userEmail);
+        localStorage.setItem('userrole', userRole);
+        console.log('user',user);
+        history.push('/Dashboard');
       } else {
-        // Gérer l'échec d'authentification
-        console.error('Erreur de connexion:', response);
-        toast.error('La connexion a échoué. Veuillez vérifier vos informations.', {
-          position: 'top-center',
-        });
+        // Gérer les différents cas d'échec d'authentification
+        if (response.status === 401) {
+          if (response.data.message === 'Incorrect email') {
+            // L'email est incorrect
+            console.error('Erreur de connexion:', response);
+            toast.error('L\'email spécifié est incorrect. Veuillez vérifier vos informations.', {
+              position: 'top-center',
+            });
+          } else if (response.data.message === 'Incorrect password') {
+            // Le mot de passe est incorrect
+            console.error('Erreur de connexion:', response);
+            toast.error('Le mot de passe spécifié est incorrect. Veuillez vérifier vos informations.', {
+              position: 'top-center',
+            });
+          }
+        } else if (response.status === 404) {
+          // L'email n'existe pas
+          console.error('Erreur de connexion:', response);
+          toast.error('L\'email spécifié n\'existe pas. Veuillez vérifier vos informations.', {
+            position: 'top-center',
+          });
+        } else {
+          // Autres erreurs de connexion
+          console.error('Erreur de connexion:', response);
+          toast.error('La connexion a échoué. Veuillez réessayer.', {
+            position: 'top-center',
+          });
+        }
       }
     } catch (error) {
       // Gérer les erreurs lors de la connexion
@@ -167,7 +183,7 @@ function Authentification() {
         {/* Route pour  'MotPasseOublie' component */}
         <Switch>
           <Route path="/motPasseOublie" component={MotPasseOublie} />
-          <Route path="/app" component={App} />
+          <Route path="/Dashboard" component={Dashboard} />
           {/* Route for another page */}
           <Route path="/another_page" render={() => <div>Another Page</div>} />
           {/* Private route for gest_utilisateur */}
@@ -175,11 +191,11 @@ function Authentification() {
             path="/gest_utilisateur"
             render={() => {
               // Vérifier si l'utilisateur a un rôle de "Super Admin"
-              if (userRole !== '0') { // Super Admin
+              if (userRole === '0') { // Super Admin
                 return <Gest />;
               } else {
                 // Rediriger vers une autre page si l'utilisateur n'a pas les autorisations nécessaires
-                return <Redirect to="/app" />;
+                return <Redirect to="/Dashboard" />;
               }
             }}
           />
