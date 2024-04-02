@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors"); 
 require("dotenv").config(); 
 
+
 // Connect to the MongoDB database
 mongoose.connect(process.env.DATABASE, {
     useNewUrlParser: true,
@@ -20,7 +21,6 @@ mongoose.connect(process.env.DATABASE, {
     }
 });
 
-
 app.use(bodyParser.json())
 app.use(cookieParser())
 app.use(cors())
@@ -28,19 +28,20 @@ app.use((req, res, next) => {
     console.log(req.body); // Cela affichera le corps de la requête dans la console
     next();
   });
+
+
 const userRoutes=require("./routes/user")
-//root
 app.use('/api',userRoutes)
 
+const recinovQuestionRoutes = require('./routes/questionRoutes');
+app.use('/api/recinovquestions', recinovQuestionRoutes);
 
-
-
-
-
+const languageRoutes  = require('./routes/questionRoutes');
+app.use('/api/languages', languageRoutes);
+// const questionRoutes = require('./routes/questionRoutes');
+// app.use('/questions', questionRoutes);
 
 const port = process.env.PORT || 3002;
-
-
 app.listen(port, () => {
     console.log(`App is running at http://localhost:${port}`);
 });
