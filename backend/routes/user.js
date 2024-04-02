@@ -10,7 +10,7 @@ const User = require("../models/user");
 const router = express.Router(); 
 const authController = require('../controllers/user'); 
 const {deleteUser} =require("../controllers/user");
-
+const { Name } = require("../controllers/user"); 
 
 
 
@@ -52,6 +52,7 @@ router.get('/affichage', async (req, res) => {
       res.status(500).json({ message: "Failed to fetch users" });
     }
   });
+  router.get('/name', authController.Name);
 
 
   

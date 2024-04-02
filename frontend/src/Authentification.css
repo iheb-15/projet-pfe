@@ -144,3 +144,12 @@
   background-color:#313335a2;
   
 }
+
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  cursor: pointer;
+}

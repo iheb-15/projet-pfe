@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Table, Modal, Input, Select } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import axios from 'axios';
+import { useHistory } from 'react-router-dom';
 
 import './gest.css';
 import { Link } from 'react-router-dom/cjs/react-router-dom.min';
+import Dashboard from './Dashboard';
 
 const { Option } = Select;
 
@@ -15,19 +17,18 @@ function Gest() {
   const [newUtilisateur, setNewUtilisateur] = useState({ name: '', lastname: '', password: '', email: '', role: '' });
   const [dataSource, setDataSource] = useState([]);
   const [searchValue, setSearchValue] = useState('');
+  const history = useHistory();
   useEffect(() => {
-    // Récupérer le rôle de l'utilisateur depuis le stockage local
+    // Redirect if not authorized
     const userRole = localStorage.getItem('userRole');
-
-    // Vérifier si le rôle de l'utilisateur est égal à 1 (Simple Admin)
-    if (userRole === '1') {
-      // Afficher une alerte indiquant l'absence d'autorisation
+    if (userRole === '1') { // Vérifie si le rôle de l'utilisateur n'est pas '0' (super admin)
       alert("Vous n'avez pas les autorisations nécessaires pour accéder à cette page.");
+      // Rediriger vers une autre page
+      history.push('/Dashboard');
+    } else {
+      fetchUtilisateurs();
     }
-  }, []);
-  useEffect(() => {
-    fetchUtilisateurs();
-  }, []);
+  }, [history]);
 
   const fetchUtilisateurs = async () => {
     try {

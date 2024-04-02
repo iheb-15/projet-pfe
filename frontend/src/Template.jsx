@@ -1,44 +1,93 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Route, Link, Switch ,Redirect} from 'react-router-dom';
+import { BrowserRouter as Router, Route, Link,Redirect } from 'react-router-dom';
+import { Layout, Menu, Button, Dropdown } from 'antd';
+import {
+  UserOutlined,
+  HighlightOutlined,
+  PlusCircleOutlined ,
+  BarsOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  LeftOutlined,
+  RightOutlined,
+  DownOutlined
+} from '@ant-design/icons';
+import Gest from './pages/gest_utilisateur';
+import AjoutQuestion from './AjoutQuestion';
 import "antd/dist/antd.min.css";
-import './App.css';
-
+import logo1 from '../src/media/logo1.png';
 import Question from './pages/ModifierQuestion';
 import Filter from './pages/filtrer_Question';
-
 import Ajout2 from './Ajout2';
 import TraduireQuest from './TraduireQuest';
 import ListeQuest from './ListeQuest';
+import PrivateRoute from './pages/privetroute';
+import Dashboard from './pages/Dashboard';
+import { useHistory } from 'react-router-dom';
 
 
-const { Header, Sider, Content } = Layout;
-const { SubMenu } = Menu;
-
-const App = () => {
+const Template = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [user, setUser] = useState({ name: 'Visiteur' });
+  const { Header, Sider, Content } = Layout;
+  const { SubMenu } = Menu;
+  const history = useHistory();
+
+
+//changer par Auth user
+const [connected, setConnected] = useState(localStorage.getItem("userrole")?localStorage.getItem("userrole"):'3')
+
+useEffect(() => {
+
+  setConnected(localStorage.getItem('userrole'))
+  console.log('connected',connected)
+}, [connected]);
 
   const handleCollapse = () => {
     setCollapsed(!collapsed);
   };
 
   const handleLogout = () => {
+    localStorage.clear(); // Effacer toutes les données du localStorage
     fetch('http://localhost:3002/api/signout', {
-      method: 'GET',
-      credentials: 'include',
+        method: 'GET',
+        credentials: 'include',
     })
     .then(response => {
-      if (response.ok) {
-        setUser({ name: 'Visiteur' });
-      } else {
-        console.error('Erreur lors de la déconnexion:', response.statusText);
-      }
+        if (response.ok) {
+            // Redirection vers la page de connexion
+            history.push('/login'); // Utilisation de history pour la redirection
+        } else {
+            console.error('Erreur lors de la déconnexion:', response.statusText);
+        }
     })
     .catch(error => {
-      console.error('Erreur lors de la déconnexion :', error);
+        console.error('Erreur lors de la déconnexion :', error);
     });
-  };
+};
+const handlename= () => {
+  fetch('http://localhost:3002/api/name', {
+      method: 'GET',
+      credentials: 'include',
+  })
+  .then(response => {
+      if (response.ok) {
+          return response.json();
+      } else {
+          throw new Error('Erreur lors de la récupération des informations de l\'utilisateur');
+      }
+  })
+  .then(data => {
+      // Afficher le nom de l'utilisateur récupéré dans votre interface utilisateur
+      console.log('Nom de l\'utilisateur:', data.name);
+  })
+  .catch(error => {
+      console.error('Erreur:', error.message);
+  });
+};
 
+// Appelez cette fonction pour récupérer les informations de l'utilisateur une fois que l'utilisateur est connecté
+handlename();
   const userMenu = (
     <Menu>
       <Menu.Item key="1">
@@ -49,13 +98,18 @@ const App = () => {
     </Menu>
   );
 
+console.log("connected",connected)
   return (
-    <Router>
-      <Layout style={{ minHeight: '100vh'  }}>
+    <Layout style={{ minHeight: '100vh'  }}>
+      
+      
+      
+      {(connected ==='0' || connected==='1') && <Redirect to="/Dashboard"/>}
+
         <Sider trigger={null} collapsible collapsed={collapsed} style={{ background: '#3987ee' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column'  }}>
             <img src={logo1} alt="Logo" style={{ width: '50px', height: 'auto', margin: '20px' }} />
-            <Link to="/app" style={{ color: 'white', marginBottom: '20px', textDecoration: 'none' }}>Rec-inov</Link>
+            <Link to="/Dashboard" style={{ color: 'white', marginBottom: '20px', textDecoration: 'none' }}>Rec-inov</Link>
           </div>
           <Menu style={{ backgroundColor: '#3987ee' }} mode="inline" defaultSelectedKeys={['1']}>
             <Menu.Item key="1" icon={<UserOutlined />} style={{ color: 'white',background: '#3987ee'  }}>
@@ -88,8 +142,9 @@ const App = () => {
             </Dropdown>
           </Header>
           <Content className="site-layout-background" style={{ margin: '24px 16px', padding: 24, minHeight: 280,  }}>
-            <Switch>
-              <Route path="/gest_utilisateur" style={{ backgroundColor: '#3987ee' }} component={Gest} />
+           
+           <PrivateRoute path="/gest_utilisateur" style={{ background: '#3987ee' }} component={Gest} allowedRoles={['0']} userRole={connected} />
+
               <Route path="/ajouter_question" style={{ background: '#3987ee' }} component={AjoutQuestion} />
               <Route path="/ModifierQuestion" style={{ background: '#3987ee' }} component={Question} />
               <Route path="/filtrer_Question" style={{ background: '#3987ee' }} component={Filter} />
@@ -97,12 +152,16 @@ const App = () => {
               <Route path="/ajout2" component={Ajout2} />
               <Route path="/traduire_quest" component={TraduireQuest} />
               <Route path="/liste_question"  style={{ background: '#3987ee' }} component={ListeQuest} />
-            </Switch>
+              
+              <Route path="/AjoutQuestion" component={AjoutQuestion} />
+                <Route path="/Ajout2" component={Ajout2} />
+          
           </Content>
         </Layout>
       </Layout>
-    </Router>
+
+
   );
 };
 
-export default App;
+export default Template;
