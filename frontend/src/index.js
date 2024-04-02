@@ -1,10 +1,18 @@
+// Import les modules et styles nécessaires
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import 'react-toastify/dist/ReactToastify.css';  // Import Toastify styles
+import Authentification from './Authentification';  // Import the Authentification component
+import reportWebVitals from './reportWebVitals';
+import './index.css';  // Import global styles
 import MotPasseOublie from './MotPasseOublie';  // Import the MotPasseOublie component
 import App from './app';  // Import the App component
 import './App.css';  
 import 'bootstrap/dist/css/bootstrap.min.css';  // Import Bootstrap styles
 import { ToastContainer } from 'react-toastify';
 import AjoutQuestion from './AjoutQuestion';
-import Ajout2 from './Ajout2';
+
 
 import CodeOTP from './CodeOTP';
 import NouveauxMotPasse from './NouveauxMotPasse';

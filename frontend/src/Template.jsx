@@ -18,7 +18,6 @@ import "antd/dist/antd.min.css";
 import logo1 from '../src/media/logo1.png';
 import Question from './pages/ModifierQuestion';
 import Filter from './pages/filtrer_Question';
-import Ajout2 from './Ajout2';
 import TraduireQuest from './TraduireQuest';
 import ListeQuest from './ListeQuest';
 import PrivateRoute from './pages/privetroute';
@@ -149,12 +148,11 @@ console.log("connected",connected)
               <Route path="/ModifierQuestion" style={{ background: '#3987ee' }} component={Question} />
               <Route path="/filtrer_Question" style={{ background: '#3987ee' }} component={Filter} />
               <Route path="/ajouter_question" style={{ background: '#3987ee'}} component={AjoutQuestion} />
-              <Route path="/ajout2" component={Ajout2} />
               <Route path="/traduire_quest" component={TraduireQuest} />
               <Route path="/liste_question"  style={{ background: '#3987ee' }} component={ListeQuest} />
               
               <Route path="/AjoutQuestion" component={AjoutQuestion} />
-                <Route path="/Ajout2" component={Ajout2} />
+                
           
           </Content>
         </Layout>
