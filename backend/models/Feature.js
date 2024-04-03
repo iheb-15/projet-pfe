@@ -1,19 +1,14 @@
 const mongoose = require('mongoose');
 
 
- const featureSchema = new mongoose.Schema({
-      name: String,
-      class: {
-        type: String, 
-        ref: 'feature:0' 
-      },
-      skill: {
-        type: String, 
-        ref: 'feature:0 ' 
-      }
-    }, { collection: 'features', timestamps: true });
-    
-    module.exports = mongoose.model('Feature', featureSchema);
-    
+const featureSchema = new mongoose.Schema({
+  class: String,
+  skill: String,
+  ref: String
+});
+
+
+const Feature = mongoose.model('features', featureSchema);
+module.exports = Feature; 
     
     

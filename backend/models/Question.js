@@ -15,11 +15,7 @@ const recinovQuestionSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Language',
   },
-  // Ajouter une référence à la table RecinovAnswers
-  // answers: [{
-  //     type: mongoose.Schema.Types.ObjectId,
-  //     ref: 'RecinovAnswer'
-  // }]
+  
 }, { collection: 'recinovquestions', timestamps: true });
 
 module.exports = mongoose.model('RecinovQuestion', recinovQuestionSchema);

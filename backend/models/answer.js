@@ -2,14 +2,13 @@ const mongoose = require('mongoose');
 
 
 const recinovAnswerSchema = new mongoose.Schema({
-  answer: String,
-  question_id: {
+  question: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'RecinovQuestion' 
+    ref: 'RecinovQuestion',
+    required: true
   },
-  langue: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Language' 
-  }
+  answer_en: String,
+  answer_fr: String,
 }, { collection: 'recinovanswers', timestamps: true });
+
 module.exports = mongoose.model('RecinovAnswer', recinovAnswerSchema);
