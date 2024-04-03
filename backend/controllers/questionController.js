@@ -84,121 +84,59 @@ exports.getAllFeatures = async (req, res) => {
           } catch (error) {
             res.status(500).send({ message: error.message });
           } };
-
           exports.getQuestionWithAnswers = async (req, res) => {
-            
-              try {
-                const lang = req.query.lang; 
-                console.log('Language:', lang);
-            
-                const questions = await RecinovQuestion.find({});
-            
-                if (questions.length === 0) {
-                  return res.status(404).json({ message: 'No questions found' });
-                }
-            
-                const responses = [];
-            
-                for (const question of questions) {
-                  let answerProjection;
-                  if (!lang) {
-                    answerProjection = {
-                      answer_fr: 1,
-                      answer_en: 1,
-                      isCorrect: 1,
-                      _id: 0 
-                    };
-                  } else {
-                    const answerField = lang === 'fr' ? 'answer_fr' : 'answer_en';
-                    answerProjection = {
-                      [answerField]: 1,
-                      isCorrect: 1,
-                      _id: 0 
-                    };
-                  }
-            
-                  const answers = await RecinovAnswer.find({ idQuestion: question._id }, answerProjection);
-            
+            try {
+              // Ne pas utiliser l'ID de question
+          
+              const lang = req.query.lang; // Ne pas mettre de valeur par défaut ici
+          
+              // Obtenir toutes les questions
+              const questions = await RecinovQuestion.find({});
+              if (!questions.length) {
+                return res.status(404).json({ message: 'No questions found' });
+              }
+          
+              // Agrégation pour récupérer les réponses pour toutes les questions
+              const answers = await RecinovAnswer.aggregate([
+                { $match: { idQuestion: questions._id } },
+                { $project: {
+                  question_fr: 1,
+                  question_en: 1,
+                  recinovanswers: {
+                    _id: 1,
+                    answer_fr: 1,
+                    answer_en: 1,
+                    isCorrect: 1,
+                  },
+                } } // Inclure tous les champs
+              ]);
+          
+              // Préparer la réponse
+              const response = {
+                questions: questions.map(question => {
                   let questionResponse;
                   if (!lang) {
+                    // Si aucune langue n'est spécifiée, incluez la question dans les deux langues
                     questionResponse = {
+                      id: question._id,
                       question_fr: question.question_fr,
                       question_en: question.question_en,
                     };
                   } else {
+                    // Si une langue est spécifiée, incluez seulement la question dans cette langue
                     questionResponse = lang === 'fr' ? question.question_fr : question.question_en;
                   }
-            
-                  
-                  responses.push({
+          
+                  return {
                     question: questionResponse,
-                    answers
-                  });
-                }
-            
-                res.json(responses);
-              } catch (error) {
-                console.error('Failed to fetch questions and answers', error);
-                res.status(500).json({ message: 'Server error' });
-              }
-            };
-
-            // exports.getQuestionWithAnswers = async (req, res) => {
-            //   try {
-            //     const questionId = req.params.id;
-            //     const lang = req.query.lang; 
-            //     console.log('Question ID:', questionId, 'Language:', lang);
-            
-               
-            //     const question = await RecinovQuestion.findById(questionId);
-            //     if (!question) {
-            //       return res.status(404).json({ message: 'Question not found' });
-            //     }
-            
-            //     let answerProjection;
-            //     if (!lang) {
-                  
-            //       answerProjection = {
-            //         answer_fr: 1,
-            //         answer_en: 1,
-            //         isCorrect: 1,
-            //         _id: 1
-            //       };
-            //     } else {
-            //       const answerField = lang === 'fr' ? 'answer_fr' : 'answer_en';
-            //       answerProjection = {
-            //         answer: `$${answerField}`,
-            //         isCorrect: 1,
-            //         _id: 1
-            //       };
-            //     }
-            
-            //     const answers = await RecinovAnswer.aggregate([
-            //       { $match: { idQuestion: question._id } },
-            //       {
-            //         $project: answerProjection
-            //       }
-            //     ]);
-            
-                
-            //     let questionResponse;
-            //     if (!lang) {
-            //       questionResponse = {
-            //         question_fr: question.question_fr,
-            //         question_en: question.question_en,
-            //       };
-            //     } else {
-            //       questionResponse = lang === 'fr' ? question.question_fr : question.question_en;
-            //     }
-            
-            //     const response = {
-            //       question: questionResponse,
-            //       answers
-            //     };
-            
-            //     res.json(response);
-            //   } catch (error) {
-            //     console.error('Failed to fetch question and answers', error);
-            //     res.status(500).json({ message: 'Server error' });
-            //   }
-            // };
+                    answers: answers.filter(answer => answer.idQuestion === question._id),
+                  };
+                }),
+              };
+          
+              res.json(response);
+            } catch (error) {
+              console.error('Failed to fetch questions and answers', error);
+              res.status(500).json({ error: error.message });
+            }
+          };
