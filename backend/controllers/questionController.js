@@ -85,58 +85,66 @@ exports.getAllFeatures = async (req, res) => {
             res.status(500).send({ message: error.message });
           } };
           exports.getQuestionWithAnswers = async (req, res) => {
-            try {
-              // Ne pas utiliser l'ID de question
-          
-              const lang = req.query.lang; // Ne pas mettre de valeur par défaut ici
-          
-              // Obtenir toutes les questions
-              const questions = await RecinovQuestion.find({});
-              if (!questions.length) {
-                return res.status(404).json({ message: 'No questions found' });
-              }
-          
-              // Agrégation pour récupérer les réponses pour toutes les questions
-              const answers = await RecinovAnswer.aggregate([
-                { $match: { idQuestion: questions._id } },
-                { $project: {
-                  question_fr: 1,
-                  question_en: 1,
-                  recinovanswers: {
-                    _id: 1,
-                    answer_fr: 1,
-                    answer_en: 1,
-                    isCorrect: 1,
-                  },
-                } } // Inclure tous les champs
-              ]);
-          
-              // Préparer la réponse
-              const response = {
-                questions: questions.map(question => {
-                  let questionResponse;
-                  if (!lang) {
-                    // Si aucune langue n'est spécifiée, incluez la question dans les deux langues
-                    questionResponse = {
-                      id: question._id,
-                      question_fr: question.question_fr,
-                      question_en: question.question_en,
-                    };
-                  } else {
-                    // Si une langue est spécifiée, incluez seulement la question dans cette langue
-                    questionResponse = lang === 'fr' ? question.question_fr : question.question_en;
-                  }
-          
-                  return {
-                    question: questionResponse,
-                    answers: answers.filter(answer => answer.idQuestion === question._id),
-                  };
-                }),
-              };
-          
-              res.json(response);
-            } catch (error) {
-              console.error('Failed to fetch questions and answers', error);
-              res.status(500).json({ error: error.message });
-            }
+
+
+  try {
+    const lang = req.query.lang; 
+
+   
+    const questions = await RecinovQuestion.find({});
+    if (!questions.length) {
+        return res.status(404).json({ message: 'No questions found' });
+    }
+
+    let answerProjection;
+    if (!lang) {
+        
+        answerProjection = {
+            answer_fr: 1,
+            answer_en: 1,
+            isCorrect: 1,
+            _id: 0 
+        };
+    } else {
+        
+        const answerField = lang === 'fr' ? 'answer_fr' : 'answer_en';
+        answerProjection = {
+            [answerField]: 1,
+            isCorrect: 1,
+            _id: 0 
+        };
+    }
+
+    
+    const answers = await RecinovAnswer.aggregate([
+        { $match: { idQuestion: { $in: questions.map(question => question._id) } } }, 
+        { $project: answerProjection }
+    ]);
+
+    
+    const response = questions.map((question, index) => {
+        let questionResponse;
+        if (!lang) {
+            
+            questionResponse = {
+                id: question._id,
+                question_fr: question.question_fr,
+                question_en: question.question_en,
+            };
+        } else {
+            
+            questionResponse = lang === 'fr' ? question.question_fr : question.question_en;
+        }
+        return {
+            id: question._id,
+            question: questionResponse,
+            answers: answers[index] 
+        };
+    });
+
+    res.json(response);
+} catch (error) {
+    console.error('Failed to fetch questions and answers', error);
+    res.status(500).json({ error: error.message });
+}
           };
