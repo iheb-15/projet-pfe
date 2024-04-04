@@ -1,188 +1,285 @@
-import React, { useState } from 'react'; // Import de React et du hook useState
-import 'bootstrap/dist/css/bootstrap.min.css'; // Import des styles Bootstrap
-import './AjoutQuestion.css'; // Import des styles spécifiques à ce composant
-import { Table, Space, Modal } from 'antd'; // Import des composants Table, Space et Modal depuis Ant Design
-import { EditOutlined, DeleteOutlined, SnippetsOutlined } from '@ant-design/icons'; // Import des icônes depuis Ant Design
+import React, { useState } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './AjoutQuestion.css';
+import { Table, Space, Modal, Select as AntdSelect  } from 'antd';
+import { EditOutlined, DeleteOutlined, SnippetsOutlined, PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons'; // Importez également l'icône de MinusCircleOutlined
 import {  useHistory } from 'react-router-dom';
+import { makeStyles } from '@material-ui/core/styles';
+import { Container, Typography, Grid, Paper , Button} from '@material-ui/core';
+
+
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    padding: theme.spacing(3),
+    borderRadius: theme.spacing(2),
+    
+  },
+  formControl: {
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+    minWidth: 200,
+    
+    
+  },
+  responseContainer: {
+    marginTop: theme.spacing(1),
+    display: 'flex',
+    alignItems: 'center',
+  },
+  responseCard: {
+    marginTop: theme.spacing(1),
+    padding: theme.spacing(2),
+    borderRadius: theme.spacing(2),
+    boxShadow: '0px 0px 15px 5px rgba(0,0,0,0.1)',
+  },
+  addButton: {
+    marginTop: theme.spacing(2),
+    color:"#3987ee",
+  },
+  label: {
+    fontSize: '14px',
+    fontFamily: 'Arial, sans-serif',
+  },
+  spacing: {
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+    
+  },
+  redAsterisk: {
+    color: 'red',
+  },
+  section: {
+    padding: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+    border: `1px solid `,
+    color:"#3987ee",
+    borderRadius: theme.spacing(2),
+  },
+  expandedTextField: {
+    marginBottom: theme.spacing(2),
+    color:"#3987ee",
+  },
+  tableContainer: {
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+    boxShadow: '0px 0px 15px 5px rgba(0,0,0,0.1)',
+    borderRadius: theme.spacing(2),
+    padding: theme.spacing(2),
+    background: 'rgba(0, 0, 0, 0.05)',
+  },
+}));
+
 function ListeQuest() {
-     // Configurer l'objet historique à partir du routeur React
-     const history = useHistory();
-    // Définition des états initiaux à l'aide du hook useState
-    const [selectedLangue, setSelectedLangue] = useState('');
-    const [selectedDomaine, setSelectedDomaine] = useState('');
-    const [selectedSkill, setSelectedSkill] = useState('');
-    const [questions, setQuestions] = useState([
-        // Initialisation de l'état 'questions' avec un tableau d'objets représentant des questions
-        { id: 1, question: "Qu'est-ce que React?", reponse: "React est une bibliothèque JavaScript pour la construction d'interfaces utilisateur.", code: "console.log('Hello, React!');" },
-        { id: 2, question: "Qu'est-ce que Bootstrap?", reponse: "Bootstrap est un framework CSS pour le développement web.", code: "<button class='btn btn-primary'>Click me</button>" },
-        { id: 3, question: "Qu'est-ce que JavaScript?", reponse: "JavaScript est un langage de programmation côté client pour le web.", code: "alert('Hello, JavaScript!');" }
-    ]);
+  const classes = useStyles();
+  const history = useHistory();
 
-    // Gestionnaires d'événements pour mettre à jour les états en fonction des changements dans les formulaires
-    const handleLangueChange = (e) => {
-        setSelectedLangue(e.target.value);
-    };
+  const [questions, setQuestions] = useState([
+    { id: 1, question: "Qu'est-ce que React?", reponse: "React est une bibliothèque JavaScript pour la construction d'interfaces utilisateur.", code: "console.log('Hello, React!');" },
+    { id: 2, question: "Qu'est-ce que Bootstrap?", reponse: "Bootstrap est un framework CSS pour le développement web.", code: "<button class='btn btn-primary'>Click me</button>" },
+    { id: 3, question: "Qu'est-ce que JavaScript?", reponse: ["JavaScript est un langage de programmation côté client pour le web.", "JavaScript est également utilisé côté serveur avec Node.js."], code: "alert('Hello, JavaScript!');" }
+  ]);
 
-    const handleDomaineChange = (e) => {
-        setSelectedDomaine(e.target.value);
-    };
+  const [expandedRows, setExpandedRows] = useState([]);
 
-    const handleSkillChange = (e) => {
-        setSelectedSkill(e.target.value);
-    };
+  const handleEditClick = () => {
+    history.push('/ModifierQuestion');
+  };
 
-    // Fonction pour supprimer une question
-    const handleDelete = (record) => {
-        Modal.confirm({
-            title: 'Confirmation',
-            content: `Êtes-vous sûr de vouloir supprimer la question: "${record.question}" ?`,
-            onOk() {
-                const filteredQuestions = questions.filter((q) => q.id !== record.id);
-                setQuestions(filteredQuestions);
-            },
-            onCancel() {
-                console.log('Annuler');
-            },
-        });
-    };
-    const handleEditClick = () => {
-        // Rediriger vers route '/ModifierQuestion'
-        history.push('/ModifierQuestion');
-      };
+  const handleFiltrerClick = () => {
+    history.push('/filtrer_Question');
+  };
 
-      const handleFiltrerClick = () => {
-        // Rediriger vers route 'MotPasseOublie' 
-        history.push('/filtrer_Question');
-      };
+  const handleDelete = (record) => {
+    Modal.confirm({
+      title: 'Confirmation',
+      content: `Êtes-vous sûr de vouloir supprimer la question: "${record.question}" ?`,
+      onOk() {
+        const filteredQuestions = questions.filter((q) => q.id !== record.id);
+        setQuestions(filteredQuestions);
+      },
+      onCancel() {
+        console.log('Annuler');
+      },
+    });
+  };
 
-    // Définition des colonnes pour la table des questions
-    const columns = [
-        {
-            title: 'Question',
-            dataIndex: 'question',
-            key: 'question',
-            width: '40%',
-        },
-        {
-            title: 'Reponse',
-            dataIndex: 'reponse',
-            key: 'reponse',
-            width: '40%',
-        },
-        {
-            title: 'Actions',
-            key: 'actions',
-            width: '20%',
-            // Définition des actions à effectuer pour chaque ligne de la table
-            render: (text, record) => (
-                <Space size="middle">
-                    {/* Icône pour éditer la question */}
-                    <EditOutlined style={{ color: 'blue' }} onClick={handleEditClick} />
-                    {/* Icône pour supprimer la question */}
-                    <DeleteOutlined style={{ color: 'red' }} onClick={() => handleDelete(record)} />
-                    {/* Icône pour afficher le code associé à la question */}
-                    <SnippetsOutlined style={{ color: 'gray' }} onClick={handleFiltrerClick} />
-                </Space>
-            ),
-        },
-    ];
+  const handleToggleRow = (record) => {
+    if (expandedRows.includes(record.id)) {
+      setExpandedRows(expandedRows.filter((id) => id !== record.id));
+    } else {
+      setExpandedRows([...expandedRows, record.id]);
+    }
+  };
 
-    return (
-        <div>
-            <div className="text-center">
-                <h2 style={{ color: '#3987ee' }}>Liste Question</h2> {/* Titre de la page */}
-            </div>
-            <div className="border p-3 mb-4 form-container">
-                {/* Sélection de langue, domaine et skills */}
-                <div className="form-group">
-                    <label htmlFor="langue">Langue
-                    <b style={{ color: 'red' }}>* </b>
+  const handleAjouterQuestion = () => {
+    history.push("/ajouter_question");
+  };
+  const onChange = (value) => {
+    console.log(`Selected: ${value}`);
+  };
+  
+  // Define onSearch function
+  const onSearch = (value) => {
+    console.log('Searched:', value);
+  };
+  
+  // Define filterOption function
+  const filterOption = (input, option) => {
+    return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+  };
 
-                    </label>
-                    <select
-                        className="form-control"
-                        id="langue"
-                        value={selectedLangue}
-                        onChange={handleLangueChange}
-                    >
-                        <option value="">Choisissez une langue</option>
-                        <option value="francais">Français</option>
-                        <option value="anglais">Anglais</option>
-                        <option value="arabe">Arabe</option>
-                    </select>
-                </div>
-                <div className="form-group">
-                    <label htmlFor="domaine">Domaine
-                    <b style={{ color: 'red' }}>* </b>
-                    </label>
-                    <select
-                        className="form-control"
-                        id="domaine"
-                        value={selectedDomaine}
-                        onChange={handleDomaineChange}
-                    >
-                        <option value="">Choisissez un domaine</option>
-                        <option value="programmation">Programmation</option>
-                        <option value="Design et créativité">Design et créativité</option>
-                        <option value="gestion_de_projet">Gestion de projet</option>
-                        <option value="IT">IT</option>
-                        <option value="Santé"> Santé</option>
-                        <option value="Finance"> Finance</option>
-                        <option value="Éducation">Éducation</option>
-                        <option value="Commerce électronique"> Commerce électronique</option>
-                        <option value="Divertissement et médias"> Divertissement et médias</option>
-                        <option value="Mobilité et transport "> Mobilité et transport</option>
-                        <option value="Science des données et analytique">Science des données et analytique</option>
-                        <option value="Sécurité">Sécurité</option>
-                        <option value="Tourisme et voyage">Tourisme et voyage</option>
-                        <option value="Gestion des ressources humaines">Gestion des ressources humaines</option>
-                    </select>
-                </div>
-                <div className="form-group">
-                    <label htmlFor="skills">Skills
-                    <b style={{ color: 'red' }}>* </b>
-                    </label>
-                    <select
-                        className="form-control"
-                        id="skills"
-                        value={selectedSkill}
-                        onChange={handleSkillChange}
-                    >
-                        <option value="">Choisissez un skill</option>
-                        <option value="communication">Communication</option>
-                        <option value="analyse">Analyse</option>
-                        <option value="cybersécurité"> cybersécurité</option>
-                        <option value="intelligence artificielle">intelligence artificielle</option>
-                        <option value="services de cloud computing">services de cloud computing</option>
-                        <option value="technologies médicales">technologies médicales</option>
-                        <option value="services bancaires en ligne">services bancaires en ligne</option>
-                        <option value="paiements numériques">paiements numériques</option>
-                        <option value="solutions d'e-learning">solutions d'e-learning</option>
-                        <option value="marché en ligne">marché en ligne</option>
-                        <option value="marketing numérique">marketing numérique</option>
-                        <option value="solutions de recrutement en ligne">solutions de recrutement en ligne</option>
-                        <option value="solutions de cybersécurité">solutions de cybersécurité</option>
-                        <option value="design industriel">design industriel</option>
-                        <option value="architecture">architecture</option>
-                        <option value="intelligence d'affaires">intelligence d'affaires</option>
-                        <option value="analyse de Big Data">analyse de Big Data</option>
-                        <option value="solutions de gestion de données">solutions de gestion de données</option>
-                        <option value="Java">Java</option>
-                        <option value="Python">Python</option>
-                        <option value="C">C</option>
-                        <option value="C++">C++</option>
-                        <option value="JavaScript">JavaScript</option>
-                        <option value="PHP">PHP</option>
-                        
-                    
-                    </select>
-                </div>
-            </div>
-            {/* Affichage de la table des questions */}
-            <div className="table-container">
-                <Table columns={columns} dataSource={questions} bordered />
-            </div>
+  const columns = [
+    {
+      title: 'Question',
+      dataIndex: 'question',
+      key: 'question',
+      width: '40%',
+    },
+    {
+      title: 'Reponse',
+      dataIndex: 'reponse',
+      key: 'reponse',
+      width: '40%',
+      render: (text, record) => (
+        <>
+          {Array.isArray(text) && text.length > 1 ? (
+            <Space>
+              <PlusCircleOutlined style={{ color: 'green' }} onClick={() => handleToggleRow(record)} />
+              {expandedRows.includes(record.id) ? (
+                <MinusCircleOutlined style={{ color: 'red' }} onClick={() => handleToggleRow(record)} />
+              ) : null}
+            </Space>
+          ) : null}
+          {expandedRows.includes(record.id) ? (
+            <ul>
+              {text.map((item, index) => (
+                <li key={index}>{item}</li>
+              ))}
+            </ul>
+          ) : Array.isArray(text) ? text[0] : text}
+        </>
+      ),
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      width: '20%',
+      render: (text, record) => (
+        <Space size="middle">
+          <EditOutlined style={{ color: 'blue' }} onClick={handleEditClick} />
+          <DeleteOutlined style={{ color: 'red' }} onClick={() => handleDelete(record)} />
+          <SnippetsOutlined style={{ color: 'gray' }} onClick={handleFiltrerClick} />
+        </Space>
+      ),
+    },
+  ];
+
+  return (
+    <Container maxWidth="md">
+      <Typography variant="h6" style={{ color: "#3987ee" }} align="center" gutterBottom>Liste de Question</Typography>
+      <Paper elevation={3} className={`${classes.paper} ${classes.spacing}`}>
+        <Typography variant="h7" className={`${classes.label}`} style={{ color: "#3987ee" }} gutterBottom>Paramètres de la Question<span className={classes.redAsterisk}>*</span></Typography>
+        <Paper elevation={3} className={`${classes.responseCard} ${classes.spacing}`}>
+          
+          <Grid container spacing={2} className={`${classes.spacing}`}>
+            {/* En-tête pour les paramètres */}
+            <Grid item xs={12} sm={12}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={4}>
+                <Typography variant="h8" className={`${classes.label}`} >Langue<span className={classes.redAsterisk}>*</span></Typography>
+                <AntdSelect
+                placeholder="Choisir une Langue"
+                optionFilterProp="children"
+                onChange={onChange}
+                
+                filterOption={filterOption}
+                style={{width:"250px"}}
+                options={[
+                  {
+                    value: 'Francais',
+                    label: 'Francais',
+                  },
+                  {
+                    value: 'Anglais',
+                    label: 'Anglais',
+                  },
+                  {
+                    value: 'Arabe',
+                    label: 'Arabe',
+                  },
+                ]}
+              />
+
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                <Typography variant="h8" className={`${classes.label}`} >Domaine<span className={classes.redAsterisk}>*</span></Typography>
+                <AntdSelect
+                showSearch
+                placeholder="Choisir Domaine"
+                optionFilterProp="children"
+                onChange={onChange}
+                onSearch={onSearch}
+                filterOption={filterOption}
+                style={{width:"250px"}}
+                options={[
+                  {
+                    value: 'Programmation',
+                    label: 'Programmation',
+                  },
+                  {
+                    value: 'Design',
+                    label: 'Design',
+                  },
+                  {
+                    value: 'Gestion Projet',
+                    label: 'Gestion Projet',
+                  },
+                ]}
+              />
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                <Typography variant="h8" className={`${classes.label}`} >Compétence<span className={classes.redAsterisk}>*</span></Typography>
+                <AntdSelect
+                showSearch
+                placeholder="Choisir Compétence"
+                optionFilterProp="children"
+                onChange={onChange}
+                onSearch={onSearch}
+                filterOption={filterOption}
+                style={{width:"250px"}}
+                options={[
+                  {
+                    value: 'Java',
+                    label: 'Java',
+                  },
+                  {
+                    value: 'Python ',
+                    label: 'Python ',
+                  },
+                  {
+                    value: 'Agile',
+                    label: 'Agile',
+                  },
+                ]}
+              />
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Paper>
+        <div className={classes.tableContainer} style={{marginTop:"40px"}}>
+          <Button
+            variant="contained"
+            style={{ color: '#fff', backgroundColor: '#3987ee', marginBottom: '15px', float:"right" }}
+            onClick={handleAjouterQuestion}
+          >
+            Ajouter
+          </Button>
+          <Table columns={columns} dataSource={questions} bordered />
         </div>
-    );
+      </Paper>
+    </Container>
+  );
 }
+
 export default ListeQuest;

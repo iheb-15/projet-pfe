@@ -12,7 +12,7 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';  // Import Bootstrap styles
 import { ToastContainer } from 'react-toastify';
 import AjoutQuestion from './AjoutQuestion';
-import Ajout2 from './Ajout2';
+
 
 import CodeOTP from './CodeOTP';
 import NouveauxMotPasse from './NouveauxMotPasse';
@@ -50,4 +50,3 @@ ReactDOM.render(<App />, document.getElementById('root'));
 
 
 reportWebVitals();
-
