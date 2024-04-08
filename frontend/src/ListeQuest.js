@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './AjoutQuestion.css';
 import { Table, Space, Modal, Select as AntdSelect  } from 'antd';
@@ -6,8 +6,10 @@ import { EditOutlined, DeleteOutlined, SnippetsOutlined, PlusCircleOutlined, Min
 import {  useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Container, Typography, Grid, Paper , Button} from '@material-ui/core';
+import axios from 'axios';
 
-
+import { Select } from 'antd';
+const { Option } = Select;
 const useStyles = makeStyles((theme) => ({
   paper: {
     padding: theme.spacing(3),
@@ -72,12 +74,98 @@ const useStyles = makeStyles((theme) => ({
 function ListeQuest() {
   const classes = useStyles();
   const history = useHistory();
+  const [questions, setQuestions] = useState([]);
+  const [domaines, setDomaines] = useState([]);
+  const [competences, setCompetences] = useState([]);
+  const [selectedDomaine, setSelectedDomaine] = useState(null);
+  const [selectedCompetence, setSelectedCompetence] = useState(null);
+  const [langue, setLangue] = useState('');
+  useEffect(() => {
+    
+    fetchQuestions();
+  }, []);
 
-  const [questions, setQuestions] = useState([
-    { id: 1, question: "Qu'est-ce que React?", reponse: "React est une bibliothèque JavaScript pour la construction d'interfaces utilisateur.", code: "console.log('Hello, React!');" },
-    { id: 2, question: "Qu'est-ce que Bootstrap?", reponse: "Bootstrap est un framework CSS pour le développement web.", code: "<button class='btn btn-primary'>Click me</button>" },
-    { id: 3, question: "Qu'est-ce que JavaScript?", reponse: ["JavaScript est un langage de programmation côté client pour le web.", "JavaScript est également utilisé côté serveur avec Node.js."], code: "alert('Hello, JavaScript!');" }
-  ]);
+  useEffect(() => {
+    // pour récuprer les domaines depuis stockage local
+    const domainesStorage = localStorage.getItem('domaines');
+    if (domainesStorage) {
+      setDomaines(JSON.parse(domainesStorage));
+    } else {
+      axios.get('http://localhost:3002/api/domaines')
+        .then(response => {
+          setDomaines(response.data);
+          
+          localStorage.setItem('domaines', JSON.stringify(response.data));
+        })
+        .catch(error => {
+          console.error('Erreur lors de la récupération des domaines :', error);
+        });
+    }
+
+    // Récupérer les compétences depuis le stockage local
+    const competencesStorage = localStorage.getItem('competences');
+    if (competencesStorage) {
+      setCompetences(JSON.parse(competencesStorage));
+    } else {
+      axios.get('http://localhost:3002/api/competences')
+        .then(response => {
+          setCompetences(response.data);
+          // Stocker les compétences dans le stockage local
+          localStorage.setItem('competences', JSON.stringify(response.data));
+        })
+        .catch(error => {
+          console.error('Erreur lors de la récupération des compétences :', error);
+        });
+    }
+  }, []);
+
+  const fetchQuestions = async (lang) => {
+    try {
+      const response = await axios.get(`http://localhost:3002/api/questions?lang=${lang}`);
+      const questionsFromAPI = response.data.map(q => ({
+        id: q.id,
+        question: `${q.question_fr} <br>- ${q.question_en}`,
+        reponseId: q.reponse_id,
+        class: q.domaine, 
+        skill:q.competence ? q.competence.code : '',
+      }));
+      setQuestions(questionsFromAPI);
+      //  pour Sauvegarde des questions dans le localStorage
+      localStorage.setItem('questions', JSON.stringify(questionsFromAPI));
+    } catch (error) {
+      console.error('Erreur lors de la récupération des questions :', error);
+    }
+  };
+
+  useEffect(() => {
+    // Récupération des questions du localStorage lors du chargement initial de la page
+    const storedQuestions = localStorage.getItem('questions');
+    if (storedQuestions) {
+      setQuestions(JSON.parse(storedQuestions));
+    }
+  }, []);
+  
+  const handleLangueChange = (value) => {
+    setLangue(value);
+  };
+  const handleDomaineChange = (value) => {
+    setSelectedDomaine(value);
+  };
+
+  const handleCompetenceChange = (value) => {
+    setSelectedCompetence(value);
+  };
+
+  const filteredQuestions = questions.filter((question) => {
+    if (selectedDomaine && selectedCompetence) {
+      return question.class === selectedDomaine && question.skill === selectedCompetence;
+    } else if (selectedDomaine) {
+      return question.class === selectedDomaine;
+    } else if (selectedCompetence) {
+      return question.skill === selectedCompetence;
+    }
+    return true;
+  });
 
   const [expandedRows, setExpandedRows] = useState([]);
 
@@ -135,31 +223,7 @@ function ListeQuest() {
       key: 'question',
       width: '40%',
     },
-    {
-      title: 'Reponse',
-      dataIndex: 'reponse',
-      key: 'reponse',
-      width: '40%',
-      render: (text, record) => (
-        <>
-          {Array.isArray(text) && text.length > 1 ? (
-            <Space>
-              <PlusCircleOutlined style={{ color: 'green' }} onClick={() => handleToggleRow(record)} />
-              {expandedRows.includes(record.id) ? (
-                <MinusCircleOutlined style={{ color: 'red' }} onClick={() => handleToggleRow(record)} />
-              ) : null}
-            </Space>
-          ) : null}
-          {expandedRows.includes(record.id) ? (
-            <ul>
-              {text.map((item, index) => (
-                <li key={index}>{item}</li>
-              ))}
-            </ul>
-          ) : Array.isArray(text) ? text[0] : text}
-        </>
-      ),
-    },
+    
     {
       title: 'Actions',
       key: 'actions',
@@ -188,28 +252,20 @@ function ListeQuest() {
                 <Grid item xs={12} sm={4}>
                 <Typography variant="h8" className={`${classes.label}`} >Langue<span className={classes.redAsterisk}>*</span></Typography>
                 <AntdSelect
+                showSearch
                 placeholder="Choisir une Langue"
                 optionFilterProp="children"
-                onChange={onChange}
-                
+                onChange={handleLangueChange}
+                onSearch={onSearch}
                 filterOption={filterOption}
                 style={{width:"250px"}}
-                options={[
-                  {
-                    value: 'Francais',
-                    label: 'Francais',
-                  },
-                  {
-                    value: 'Anglais',
-                    label: 'Anglais',
-                  },
-                  {
-                    value: 'Arabe',
-                    label: 'Arabe',
-                  },
-                ]}
-              />
+                // options={domaines.map(domaine => ({ value: domaine, label: domaine }))}
+                >
+                  <Option value="fr">Français</Option>
+                   <Option value="en">Anglais</Option>
+                </AntdSelect>
 
+              
                 </Grid>
                 <Grid item xs={12} sm={4}>
                 <Typography variant="h8" className={`${classes.label}`} >Domaine<span className={classes.redAsterisk}>*</span></Typography>
@@ -217,25 +273,15 @@ function ListeQuest() {
                 showSearch
                 placeholder="Choisir Domaine"
                 optionFilterProp="children"
-                onChange={onChange}
+                onChange={handleDomaineChange}
                 onSearch={onSearch}
                 filterOption={filterOption}
                 style={{width:"250px"}}
-                options={[
-                  {
-                    value: 'Programmation',
-                    label: 'Programmation',
-                  },
-                  {
-                    value: 'Design',
-                    label: 'Design',
-                  },
-                  {
-                    value: 'Gestion Projet',
-                    label: 'Gestion Projet',
-                  },
-                ]}
-              />
+                options={domaines.map(domaine => ({ value: domaine, label: domaine }))}
+
+                />
+               
+                  
                 </Grid>
                 <Grid item xs={12} sm={4}>
                 <Typography variant="h8" className={`${classes.label}`} >Compétence<span className={classes.redAsterisk}>*</span></Typography>
@@ -243,25 +289,15 @@ function ListeQuest() {
                 showSearch
                 placeholder="Choisir Compétence"
                 optionFilterProp="children"
-                onChange={onChange}
+                onChange={handleCompetenceChange}
                 onSearch={onSearch}
                 filterOption={filterOption}
                 style={{width:"250px"}}
-                options={[
-                  {
-                    value: 'Java',
-                    label: 'Java',
-                  },
-                  {
-                    value: 'Python ',
-                    label: 'Python ',
-                  },
-                  {
-                    value: 'Agile',
-                    label: 'Agile',
-                  },
-                ]}
-              />
+                options={competences.map(competences => ({ value: competences, label: competences }))}
+
+                />
+                
+              
                 </Grid>
               </Grid>
             </Grid>
@@ -275,7 +311,7 @@ function ListeQuest() {
           >
             Ajouter
           </Button>
-          <Table columns={columns} dataSource={questions} bordered />
+          <Table columns={columns} dataSource={filteredQuestions} />
         </div>
       </Paper>
     </Container>

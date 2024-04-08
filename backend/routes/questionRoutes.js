@@ -11,5 +11,7 @@ router.get('/questions', recinovQuestionController.filterQuestions);
 router.get('/answer', recinovAnswerController.getAllAnswers);
 router.get('/features', featureController.getAllFeatures);
 
+router.get('/domaines', featureController.getAllClasses);
+router.get('/competences', featureController.getAllSkills);
 
 module.exports = router;
