@@ -5,6 +5,32 @@ const mongoose = require('mongoose');
 
 exports.filterQuestions = async (req, res) => {
     try {
+        // const languageCode = req.query.lang;
+        const skillFilter = req.query.skill; 
+        // let questionField = languageCode === 'en' ? 'question_en' : 'question_fr';
+
+        
+        // let dbQuery = skillFilter ? { skill: skillFilter } : {};
+
+        // const fieldsToSelect = { [questionField]: 1, skill: 1 };
+
+        const questions = await RecinovQuestion.aggregate([
+            {
+              $match: { skill: skillFilter },
+            },
+          ]);
+        
+        // find({}, {skill : skillFilter });
+
+        res.json(questions);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Erreur lors de la récupération des questions' });
+    }
+};
+
+exports.filterQuestionsIheb = async (req, res) => {
+    try {
         const languageCode = req.query.lang;
         const skillFilter = req.query.skill; 
         let questionField = languageCode === 'en' ? 'question_en' : 'question_fr';
