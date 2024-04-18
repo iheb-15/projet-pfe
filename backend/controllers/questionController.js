@@ -5,49 +5,22 @@ const mongoose = require('mongoose');
 
 exports.filterQuestions = async (req, res) => {
     try {
-        // const languageCode = req.query.lang;
-        const skillFilter = req.query.skill; 
-        // let questionField = languageCode === 'en' ? 'question_en' : 'question_fr';
-
         
-        // let dbQuery = skillFilter ? { skill: skillFilter } : {};
-
-        // const fieldsToSelect = { [questionField]: 1, skill: 1 };
-
+        const skillFilter = req.query.skill; 
         const questions = await RecinovQuestion.aggregate([
             {
               $match: { skill: skillFilter },
             },
+            
           ]);
-        
-        // find({}, {skill : skillFilter });
-
-        res.json(questions);
+         res.json(questions);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Erreur lors de la récupération des questions' });
     }
 };
 
-exports.filterQuestionsIheb = async (req, res) => {
-    try {
-        const languageCode = req.query.lang;
-        const skillFilter = req.query.skill; 
-        let questionField = languageCode === 'en' ? 'question_en' : 'question_fr';
 
-        
-        let dbQuery = skillFilter ? { skill: skillFilter } : {};
-
-        const fieldsToSelect = { [questionField]: 1, skill: 1 };
-
-        const questions = await RecinovQuestion.find(dbQuery, fieldsToSelect);
-
-        res.json(questions);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Erreur lors de la récupération des questions' });
-    }
-};
 
 exports.getAllClasses = async (req, res) => {
     try {
@@ -82,12 +55,18 @@ exports.getAllFeatures = async (req, res) => {
     
         try {
             
-            const features = await Feature.find(req.query).select('skill class');
+            const features = await Feature.aggregate([
+                {
+                    $match: { feature: 0 },
+                },
+            ])
+                
             res.json(features);
           } catch (error) {
             res.status(500).send({ message: error.message });
           } };
-          exports.getQuestionWithAnswers = async (req, res) => {
+
+exports.getQuestionWithAnswers = async (req, res) => {
 
 
                       try {
@@ -150,4 +129,6 @@ exports.getAllFeatures = async (req, res) => {
                         console.error('Failed to fetch questions and answers', error);
                         res.status(500).json({ error: error.message });
                     }
-                    };
+};
+
+

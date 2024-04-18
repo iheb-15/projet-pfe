@@ -14,4 +14,5 @@ router.get('/features', featureController.getAllFeatures);
 router.get('/domaines', featureController.getAllClasses);
 router.get('/competences', featureController.getAllSkills);
 
+
 module.exports = router;

@@ -2,13 +2,14 @@ import React, { useState,useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './AjoutQuestion.css';
 import { Table, Space, Modal, Select as AntdSelect  } from 'antd';
-import { EditOutlined, DeleteOutlined, SnippetsOutlined, PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons'; // Importez également l'icône de MinusCircleOutlined
+import { EditOutlined, DeleteOutlined, SnippetsOutlined, PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import {  useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Container, Typography, Grid, Paper , Button} from '@material-ui/core';
 import axios from 'axios';
 
 import { Select } from 'antd';
+
 const { Option } = Select;
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -72,6 +73,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function ListeQuest() {
+  const [classifiedData, setClassifiedData] = useState({});
   const classes = useStyles();
   const history = useHistory();
   const [questions, setQuestions] = useState([]);
@@ -79,63 +81,174 @@ function ListeQuest() {
   const [competences, setCompetences] = useState([]);
   const [selectedDomaine, setSelectedDomaine] = useState(null);
   const [selectedCompetence, setSelectedCompetence] = useState(null);
-  const [langue, setLangue] = useState('');
+  
+  const [selectedLanguage, setSelectedLanguage] = useState('fr');
+
   useEffect(() => {
     
     fetchQuestions();
+  }, [selectedDomaine, selectedCompetence,selectedLanguage]);
+
+
+  // pour data classified 
+  useEffect(() => {
+    // Fonction pour récupérer les données depuis l'API
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://localhost:3002/api/features');
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        const data = await response.json();
+        // Classer les données récupérées par nom
+        const classified = {};
+        data.forEach(item => {
+          if (!classified[item.class]) {
+            classified[item.class] = [item.code];
+          } else {
+            classified[item.class].push(item.code);
+          }
+        });
+        console.log('Data classified:', classified);
+        // Mettre à jour l'état avec les données classées
+        setClassifiedData(classified);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    // Appeler la fonction pour récupérer les données
+    fetchData();
   }, []);
+                                                             
 
   useEffect(() => {
     // pour récuprer les domaines depuis stockage local
     const domainesStorage = localStorage.getItem('domaines');
-    if (domainesStorage) {
-      setDomaines(JSON.parse(domainesStorage));
-    } else {
-      axios.get('http://localhost:3002/api/domaines')
-        .then(response => {
-          setDomaines(response.data);
-          
-          localStorage.setItem('domaines', JSON.stringify(response.data));
-        })
-        .catch(error => {
-          console.error('Erreur lors de la récupération des domaines :', error);
-        });
-    }
+
+if (domainesStorage) {
+  setDomaines(JSON.parse(domainesStorage));
+} else {
+  axios.get('http://localhost:3002/api/features')
+    .then(response => {
+      // Récupération des données de l'API
+      const domainesData = response.data;
+
+      // Extraction des propriétés _id et class de chaque domaine
+      const domainesProcessed = domainesData.map(domaine => ({
+        _id: domaine._id,
+        class: domaine.class,
+        code:domaine.code,
+        similar_skill:domaine.similar_skill
+
+        
+      }));
+
+      // Mise à jour de l'état avec les domaines traités
+      setDomaines(domainesProcessed);
+
+      // Stockage des domaines traités dans localStorage
+      localStorage.setItem('domaines', JSON.stringify(domainesProcessed));
+      setSelectedDomaine(null);
+    })
+    .catch(error => {
+      console.error('Erreur lors de la récupération des domaines :', error);
+    });
+}
+
 
     // Récupérer les compétences depuis le stockage local
     const competencesStorage = localStorage.getItem('competences');
     if (competencesStorage) {
       setCompetences(JSON.parse(competencesStorage));
     } else {
-      axios.get('http://localhost:3002/api/competences')
+      axios.get('http://localhost:3002/api/features')
         .then(response => {
-          setCompetences(response.data);
+          const competencesData=response.data;
+          const competencesProcessed= competencesData.map(competence=>({
+            _id:competence._id,
+            skill:competence.skill,
+            code:competence.code,
+            similar_skill:competence.similar_skill
+          }));
+          setCompetences(competencesProcessed);
           // Stocker les compétences dans le stockage local
-          localStorage.setItem('competences', JSON.stringify(response.data));
+          localStorage.setItem('competences', JSON.stringify(competencesProcessed));
+          setSelectedCompetence(null);
         })
         .catch(error => {
           console.error('Erreur lors de la récupération des compétences :', error);
         });
     }
   }, []);
+  console.log(domaines);
 
-  const fetchQuestions = async (lang) => {
-    try {
-      const response = await axios.get(`http://localhost:3002/api/questions?lang=${lang}`);
-      const questionsFromAPI = response.data.map(q => ({
-        id: q.id,
-        question: `${q.question_fr} <br>- ${q.question_en}`,
-        reponseId: q.reponse_id,
-        class: q.domaine, 
-        skill:q.competence ? q.competence.code : '',
-      }));
-      setQuestions(questionsFromAPI);
-      //  pour Sauvegarde des questions dans le localStorage
-      localStorage.setItem('questions', JSON.stringify(questionsFromAPI));
-    } catch (error) {
-      console.error('Erreur lors de la récupération des questions :', error);
-    }
-  };
+  const filteredObjects = domaines.filter((obj, index, self) =>
+      index === self.findIndex((o) => (
+        o.class === obj.class
+      ))
+    );
+    console.log(filteredObjects);
+  
+
+    
+            
+    const fetchQuestions = async () => {
+      try {
+        
+        let endpoint = `http://localhost:3002/api/questions`;
+        console.log("Endpoint:", endpoint);
+        if (selectedDomaine === null) {
+          endpoint += `?skill=${selectedCompetence}`;
+          console.log("Selected Domaine is null. Updated endpoint:", endpoint);
+        } else {
+          const selectedItems = classifiedData[selectedDomaine];
+          console.log("Selected items:", selectedItems);
+          const responses = await Promise.all(selectedItems.map(async (item) => {
+            const response = await axios.get(`${endpoint}?skill=${item}`);
+            console.log("Response for item", item, ":", response);
+            return response.data.map(q => ({
+              id: q.id,
+              question: {
+                fr: q.question_fr,
+                en: q.question_en
+              },
+              reponseId: q.reponse_id,
+              class: q.domaine, 
+              skill: q.competence ? q.competence.code : '',
+            }));
+          }));
+          console.log(" responses:", responses);
+          const questionsFromAPI = responses.reduce((accumulator, currentValue) => accumulator.concat(currentValue), []);
+          console.log("Questions from API:", questionsFromAPI);
+          setQuestions(questionsFromAPI);
+          localStorage.setItem('questions', JSON.stringify(questionsFromAPI));
+          console.log("Questions set and stored in local storage.");
+          return;
+        }
+        const response = await axios.get(endpoint);
+        console.log("Response from API:", response);
+        const questionsFromAPI = response.data.map(q => ({
+          id: q._id,
+          question: {
+            fr: q.question_fr,
+            en: q.question_en
+          },
+          reponseId: q.id,
+          class: q.domaine, 
+          skill: q.competence ? q.competence.code : '',
+        }));
+        console.log("Questions from API:", questionsFromAPI);
+        setQuestions(questionsFromAPI);
+        localStorage.setItem('questions', JSON.stringify(questionsFromAPI));
+        console.log("Questions set and stored in local storage.");
+      } catch (error) {
+        console.error('Error fetching questions:', error);
+      }
+    };
+    console.log(fetchQuestions);
+      
+         
 
   useEffect(() => {
     // Récupération des questions du localStorage lors du chargement initial de la page
@@ -144,31 +257,41 @@ function ListeQuest() {
       setQuestions(JSON.parse(storedQuestions));
     }
   }, []);
-  
-  const handleLangueChange = (value) => {
-    setLangue(value);
+  const handleCancelSelection = () => {
+    setSelectedDomaine(null); // Réinitialise la sélection
   };
+  const handleCancelSelections = () => {
+    setSelectedCompetence(null); // Réinitialise la sélection
+  };
+  
+  const handleLangueChange = async (value) => {
+    setSelectedLanguage(value);  };
+
   const handleDomaineChange = (value) => {
     setSelectedDomaine(value);
+    console.log(value);
   };
 
-  const handleCompetenceChange = (value) => {
+  const handleCompetenceChange =  async(value) => {
     setSelectedCompetence(value);
+    console.log(value);
   };
 
-  const filteredQuestions = questions.filter((question) => {
-    if (selectedDomaine && selectedCompetence) {
-      return question.class === selectedDomaine && question.skill === selectedCompetence;
-    } else if (selectedDomaine) {
-      return question.class === selectedDomaine;
-    } else if (selectedCompetence) {
-      return question.skill === selectedCompetence;
-    }
-    return true;
-  });
+  
+  //  onSearch function
+  const onSearch = (value) => {
+    console.log('Searched:', value);
+  };
+  
+  //  filterOption function
+  const filterOption = (input, option) => {
+    return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+  };
 
-  const [expandedRows, setExpandedRows] = useState([]);
-
+ 
+  const handleAjouterQuestion = () => {
+    history.push("/ajouter_question");
+  };
   const handleEditClick = () => {
     history.push('/ModifierQuestion');
   };
@@ -176,6 +299,8 @@ function ListeQuest() {
   const handleFiltrerClick = () => {
     history.push('/filtrer_Question');
   };
+
+  
 
   const handleDelete = (record) => {
     Modal.confirm({
@@ -191,39 +316,43 @@ function ListeQuest() {
     });
   };
 
-  const handleToggleRow = (record) => {
-    if (expandedRows.includes(record.id)) {
-      setExpandedRows(expandedRows.filter((id) => id !== record.id));
-    } else {
-      setExpandedRows([...expandedRows, record.id]);
-    }
-  };
+ 
+ 
 
-  const handleAjouterQuestion = () => {
-    history.push("/ajouter_question");
-  };
-  const onChange = (value) => {
-    console.log(`Selected: ${value}`);
-  };
+
   
-  // Define onSearch function
-  const onSearch = (value) => {
-    console.log('Searched:', value);
+//unique pour domaines
+  const uniqueClasses = new Set(domaines.map(domaine => domaine.class));
+// Créer des options à partir des noms de classe uniques
+const classOptions = Array.from(uniqueClasses).map(className => ({ 
+  value: className,
+  label: className
+}));
+console.log(classOptions);
+
+//unique pour compétence
+const uniqueskill = new Set(competences.map(competence => competence.skill));
+const skillOptions = Array.from(uniqueskill).map(skillName => {
+  const competence = competences.find(competence => competence.skill === skillName);
+  return {
+    value: competence.code,
+    label: ` ${skillName}` 
   };
-  
-  // Define filterOption function
-  const filterOption = (input, option) => {
-    return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-  };
+});
+console.log(skillOptions);
+
 
   const columns = [
+    
     {
       title: 'Question',
       dataIndex: 'question',
       key: 'question',
-      width: '40%',
+      render: text => <span dangerouslySetInnerHTML={{ __html: text }} />,
+      render: (text, record) => {
+        return selectedLanguage === 'en' ? <span>{record.question.en}</span> : <span>{record.question.fr}</span>;
+      },
     },
-    
     {
       title: 'Actions',
       key: 'actions',
@@ -259,7 +388,7 @@ function ListeQuest() {
                 onSearch={onSearch}
                 filterOption={filterOption}
                 style={{width:"250px"}}
-                // options={domaines.map(domaine => ({ value: domaine, label: domaine }))}
+               
                 >
                   <Option value="fr">Français</Option>
                    <Option value="en">Anglais</Option>
@@ -269,34 +398,57 @@ function ListeQuest() {
                 </Grid>
                 <Grid item xs={12} sm={4}>
                 <Typography variant="h8" className={`${classes.label}`} >Domaine<span className={classes.redAsterisk}>*</span></Typography>
-                <AntdSelect
-                showSearch
-                placeholder="Choisir Domaine"
-                optionFilterProp="children"
-                onChange={handleDomaineChange}
-                onSearch={onSearch}
-                filterOption={filterOption}
-                style={{width:"250px"}}
-                options={domaines.map(domaine => ({ value: domaine, label: domaine }))}
-
-                />
-               
+                <Select
+                    showSearch
+                    style={{ width: "250px" }}
+                    placeholder="Choisir Domaine"
+                    optionFilterProp="children"
+                    onChange={handleDomaineChange}
+                    onSearch={onSearch}
+                    filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
+                  >
+                    <Option key="null" value={null} onClick={handleCancelSelection}>
+                      Aucun domaines
+                    </Option>
+                    
+                                {Object.keys(classifiedData).map(name => (
+                                    <div key={name}>
+                                      <strong>{name}</strong>
+                                      
+                                    </div>
+                                    
+                                  ))}
+                         
                   
-                </Grid>
+             
+                  </Select>
+                  
+               
+                 </Grid>
                 <Grid item xs={12} sm={4}>
                 <Typography variant="h8" className={`${classes.label}`} >Compétence<span className={classes.redAsterisk}>*</span></Typography>
-                <AntdSelect
-                showSearch
-                placeholder="Choisir Compétence"
-                optionFilterProp="children"
-                onChange={handleCompetenceChange}
-                onSearch={onSearch}
-                filterOption={filterOption}
-                style={{width:"250px"}}
-                options={competences.map(competences => ({ value: competences, label: competences }))}
-
-                />
-                
+                <Select
+                  showSearch
+                  style={{ width: "250px" }}
+                  placeholder="Choisir Compétence"
+                  optionFilterProp="children"
+                  onChange={handleCompetenceChange}
+                  onSearch={onSearch}
+                  filterOption={(input, option) => (option?.label ?? "").includes(input)}
+                  filterSort={(optionA, optionB) =>
+                    (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
+                  }
+                >
+                  <Option key="null" value={null} onClick={handleCancelSelections}>
+                    Aucune compétence 
+                  </Option>
+                  {skillOptions.map(option => (
+                    <Option key={option.value} value={option.value} label={option.label}>
+                      {option.label}
+                    </Option>
+                  ))}
+                  </Select>
+           
               
                 </Grid>
               </Grid>
@@ -311,7 +463,19 @@ function ListeQuest() {
           >
             Ajouter
           </Button>
-          <Table columns={columns} dataSource={filteredQuestions} />
+          <Button
+            variant="contained"
+            style={{ color: '#fff', backgroundColor: '#3987ee', marginBottom: '15px', float:"right" }}
+            onClick={fetchQuestions}
+          >
+            filter
+          </Button>
+          <Table
+            dataSource={questions}
+            columns={columns}
+            rowKey="id"
+          />
+          
         </div>
       </Paper>
     </Container>
