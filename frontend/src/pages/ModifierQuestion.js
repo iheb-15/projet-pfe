@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
 import '../AjoutQuestion.css';
-
 import {  useHistory } from 'react-router-dom';
 import { Container, Typography, TextField, Button, Select, MenuItem, FormControl, Grid, IconButton, Paper, Switch } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from '@material-ui/core/styles';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -79,15 +79,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Modifier() {
-
-
-  const handleImageUpload = (event) => {
-    const file = event.target.files[0]; // Get the selected image file
-    // You can process the file here, for example, upload it to the server
-    console.log('Image uploaded:', file);
-  };
-
+function Modifier(props) {
+  const [idFromUrl, setIdFromUrl] = useState(null);
   const classes = useStyles();
   const history = useHistory();
   const [selectedDomaine, setSelectedDomaine] = useState('');
@@ -101,7 +94,52 @@ function Modifier() {
   const handleDomaineChange = (e) => setSelectedDomaine(e.target.value);
   const handleSkillChange = (e) => setSelectedSkill(e.target.value);
   const handleQuestionChange = (e) => setQuestion(e.target.value);
+  const [selectedResponseType, setSelectedResponseType] = useState(""); 
+  const questionExists = question !== undefined && question !== null;
+  const [fetchedQuestion, setFetchedQuestion] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const { location } = props;
+  const { state } = location;
+  const [idQuestion, setIdQuestion] = useState(null);
+  // const { question_fr, question_en } = state;
 
+  const {id}=useParams();
+  console.log('id',id)
+  console.log("ID from URL:", idFromUrl);
+  console.log("Question exists:", questionExists);
+  useEffect(() => {
+    setIdFromUrl(id);
+  }, [id]);
+
+  useEffect(() => {
+    // Fonction pour récupérer la question
+    const fetchQuestion = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3002/api/questions/${id}`);
+        console.log(reponses);
+        setQuestion(response.data);
+        
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchQuestion();
+  }, [id]);
+  console.log('id util',id)
+
+  
+ 
+  
+
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0]; 
+    
+    console.log('Image uploaded:', file);
+  };
+  
+  const handleResponseTypeChange = (event) => { // Définition de handleResponseTypeChange
+    setSelectedResponseType(event.target.value);
+  };
   const handleModifierQuestion = () => {
     
     window.confirm('Question modifiée avec succès !')
@@ -118,17 +156,21 @@ function Modifier() {
     newReponses[index].isCorrect = !newReponses[index].isCorrect;
     setReponses(newReponses);
   };
-  const ajouterReponse = () => setReponses([...reponses, { text: '', isCorrect: false }]);
-  const supprimerReponse = (index) => {
-    const newReponses = [...reponses];
-    newReponses.splice(index, 1);
-    setReponses(newReponses);
-  };
+
   const handleTypeChange = (e) => setSelectedType(e.target.value);
   const handleNiveauChange = (e) => setNiveau(e.target.value);
   const handlePointsChange = (e) => setPoints(e.target.value);
   const handleMinutesChange = (e) => setTemps({ ...temps, minutes: e.target.value });
   const handleSecondesChange = (e) => setTemps({ ...temps, secondes: e.target.value });
+
+  const ajouterReponse = () => setReponses([...reponses, { text: '', isCorrect: false }]);
+
+  const supprimerReponse = (index) => {
+    const newReponses = [...reponses];
+    newReponses.splice(index, 1);
+    setReponses(newReponses);
+  };
+ 
 
   
 
@@ -204,10 +246,11 @@ function Modifier() {
             </Grid>
           </Paper>
           </Paper>
+          {/* Sélection du domaine */}
         <Paper className={classes.section}>
           <Grid container spacing={2} className={`${classes.spacing}`}>
            
-            {/* Sélection du domaine */}
+            
             <Grid item xs={4}>
               <FormControl className={`${classes.formControl} ${classes.spacing}`} fullWidth>
                 <Typography variant="subtitle1" className={`${classes.label}`}>Domaine<span className={classes.redAsterisk}>*</span></Typography>
@@ -242,126 +285,146 @@ function Modifier() {
               </Grid>
             </Grid>
           </Paper>
-                <Paper className={classes.section}>
-        <Grid container spacing={2} className={`${classes.spacing}`}>
-          {/* Sélection du type de question */}
-          <Grid item xs={12}>
-            <FormControl className={`${classes.formControl} ${classes.expandedTextField}`} fullWidth>
-              <Typography variant="subtitle1" className={`${classes.label}`}>Type de Question<span className={classes.redAsterisk}>*</span></Typography>
-              <Select
-                value={selectedType}
-                onChange={handleTypeChange}
-                displayEmpty
-                style={{ width: "200px" }}
-                inputProps={{ 'aria-label': 'Type de Question' }}
-                className={classes.select}
-              >
-                <MenuItem value="" disabled>Choisissez un type</MenuItem>
-                <MenuItem value="vrai-faux">Vrai/Faux</MenuItem>
-                <MenuItem value="qcm">QCM</MenuItem>
-                <MenuItem value="image">Image</MenuItem> {/* Ajout de l'option Image */}
-              </Select>
-            </FormControl>
-          </Grid>
-          {/* Condition pour afficher soit le champ de saisie de question, soit le champ d'entrée de l'image */}
-          {selectedType !== "image" ? (
-            <Grid item xs={12}>
-              <TextField
-                label="Question*"
-                multiline
-                variant="outlined"
-                fullWidth
-                value={question}
-                onChange={handleQuestionChange}
-                className={`${classes.formControl} ${classes.spacing} ${classes.expandedTextField}`}
-                aria-label="Question"
-              />
+          {/* Type de Question */}
+          <Paper className={classes.section}>
+            <Grid container spacing={2} className={classes.spacing}>
+                <Grid item xs={12}>
+                    <FormControl className={`${classes.formControl} ${classes.expandedTextField}`} fullWidth>
+                        <Typography variant="subtitle1" className={classes.label}>
+                            Type de Question<span className={classes.redAsterisk}>*</span>
+                        </Typography>
+                        <Select
+                            value={selectedType}
+                            onChange={handleTypeChange}
+                            displayEmpty
+                            style={{ width: "200px" }}
+                            inputProps={{ 'aria-label': 'Type de Question' }}
+                            className={classes.select}
+                        >
+                            <MenuItem value="" disabled>Choisissez un type</MenuItem>
+                            <MenuItem value="vrai-faux">Vrai/Faux</MenuItem>
+                            <MenuItem value="qcm">QCM</MenuItem>
+                            <MenuItem value="image">Image</MenuItem> 
+                            <MenuItem value="text">Texte</MenuItem>
+                        </Select>
+                    </FormControl>
+                </Grid>
+                {selectedType !== "image" && (
+                    <>
+                        <Grid item xs={12}>
+                            <TextField
+                                label="Question en français*"
+                                multiline
+                                variant="outlined"
+                                fullWidth
+                                value={question.question_fr}
+                                
+                                onChange={(event) => handleQuestionChange(event, 'question')}
+                                className={`${classes.formControl} ${classes.spacing} ${classes.expandedTextField}`}
+                                aria-label="Question en français"
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                label="Question en anglais*"
+                                multiline
+                                variant="outlined"
+                                fullWidth
+                                value={question.question_en}
+                                onChange={(event) => handleQuestionChange(event, 'question')}
+                                className={`${classes.formControl} ${classes.spacing} ${classes.expandedTextField}`}
+                                aria-label="Question en anglais"
+                            />
+                        </Grid>
+                    </>
+                )}
+                {selectedType === "image" && (
+                    <Grid item xs={12}>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                        />
+                    </Grid>
+                )}
             </Grid>
-          ) : (
-            <Grid item xs={12}>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-              />
-            </Grid>
-          )}
-        </Grid>
-      </Paper>
+        </Paper>
           {/* Section pour les réponses */}
           <Paper elevation={3} className={`${classes.responseCard} ${classes.spacing}`}>
-      <Typography variant="subtitle1" gutterBottom>Type de Réponse<span className={classes.redAsterisk}>*</span></Typography>
-      <Select
-        value={selectedType}
-        onChange={handleTypeChange}
-        displayEmpty
-        inputProps={{ 'aria-label': 'Type de Réponse' }}
-        className={`${classes.select} ${classes.spacing}`}
-      >
-        <MenuItem value="" disabled>Choisissez un type</MenuItem>
-        <MenuItem value="vrai-faux">Vrai/Faux</MenuItem>
-        <MenuItem value="qcm">QCM</MenuItem>
-        <MenuItem value="image">Image</MenuItem>
-      </Select>
-      {selectedType !== "image" && (
-        <>
-          {reponses.map((reponse, index) => (
-            <div key={index} className={classes.responseContainer}>
-              <TextField
-                label={`Réponse ${index + 1}*`}
-                multiline
-                rows={2}
-                variant="outlined"
-                fullWidth
-                value={reponse.text}
-                onChange={(e) => handleReponseChange(index, e)}
-                className={`${classes.formControl} ${classes.spacing}`}
-                aria-label={`Réponse ${index + 1}`}
-              />
-              <Switch
-                checked={reponse.isCorrect}
-                onChange={() => handleCorrectChange(index)}
-                color="primary"
-                inputProps={{ 'aria-label': `Réponse correcte ${index + 1}` }}
-              />
-              <IconButton onClick={() => supprimerReponse(index)} aria-label={`Supprimer réponse ${index + 1}`}>
-                <CloseIcon />
-              </IconButton>
-            </div>
-          ))}
-          {selectedType !== "image" && reponses.every(reponse => !reponse.isCorrect) && (
-            <Typography variant="body2" style={{ color: 'red' }}>Au moins une réponse doit être correcte.</Typography>
-          )}
-          <Button variant="contained" style={{ color: '#fff', backgroundColor: '#3987ee' }} onClick={ajouterReponse} className={classes.addButton} aria-label="Ajouter réponse">Ajouter Réponse</Button>
-        </>
-      )}
-      {selectedType === "image" && (
-        <>
-          {reponses.map((reponse, index) => (
-            <div key={index} className={classes.responseContainer}>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => handleImageUpload(index, e)} // Pass index to identify which image is being uploaded
-              />
-              <Switch
-                checked={reponse.isCorrect}
-                onChange={() => handleCorrectChange(index)}
-                color="primary"
-                inputProps={{ 'aria-label': `Réponse correcte ${index + 1}` }}
-              />
-              <IconButton onClick={() => supprimerReponse(index)} aria-label={`Supprimer réponse ${index + 1}`}>
-                <CloseIcon />
-              </IconButton>
-            </div>
-          ))}
-          {selectedType === "image" && reponses.every(reponse => !reponse.isCorrect) && (
-            <Typography variant="body2" style={{ color: 'red' }}>Au moins une réponse doit être correcte.</Typography>
-          )}
-          <Button variant="contained" style={{ color: '#fff', backgroundColor: '#3987ee' }} onClick={ajouterReponse} className={classes.addButton} aria-label="Ajouter réponse">Ajouter Image</Button>
-        </>
-      )}
-    </Paper>
+            <Typography variant="subtitle1" gutterBottom>Type de Réponse</Typography>
+              <Select
+              value={selectedResponseType} // Utiliser une variable distincte pour le type de réponse
+              onChange={handleResponseTypeChange} // Gérer le changement de type de réponse
+              displayEmpty
+              inputProps={{ 'aria-label': 'Type de Réponse' }}
+              className={`${classes.select} ${classes.spacing}`}
+            >
+                  <MenuItem value="" disabled>Choisissez un type</MenuItem>
+                  <MenuItem value="vrai-faux">Vrai/Faux</MenuItem>
+                  <MenuItem value="qcm">QCM</MenuItem>
+                  <MenuItem value="image">Image</MenuItem>
+                  <MenuItem value="text">text</MenuItem>
+              </Select>
+              {/* Afficher les champs de réponse en fonction du type sélectionné */}
+              {selectedResponseType !== "image" && (
+            <>
+                        {reponses.map((reponse, index) => (
+                          <div key={index} className={classes.responseContainer}>
+                            <TextField
+                              label={`Réponse ${index + 1}*`}
+                              multiline
+                              rows={2}
+                              variant="outlined"
+                              fullWidth
+                              value={reponse.question_fr}
+                              onChange={(e) => handleReponseChange(index, e)}
+                              className={`${classes.formControl} ${classes.spacing}`}
+                              aria-label={`Réponse ${index + 1}`}
+                            />
+                            <Switch
+                              checked={reponse.isCorrect}
+                              onChange={() => handleCorrectChange(index)}
+                              color="primary"
+                              inputProps={{ 'aria-label': `Réponse correcte ${index + 1}` }}
+                            />
+                            <IconButton onClick={() => supprimerReponse(index)} aria-label={`Supprimer réponse ${index + 1}`}>
+                              <CloseIcon />
+                            </IconButton>
+                          </div>
+                        ))}
+                        {reponses.every(reponse => !reponse.isCorrect) && (
+                          <Typography variant="body2" style={{ color: 'red' }}>Au moins une réponse doit être correcte.</Typography>
+                        )}
+                        <Button variant="contained" style={{ color: '#fff', backgroundColor: '#3987ee' }} onClick={ajouterReponse} className={classes.addButton} aria-label="Ajouter réponse">Ajouter Réponse</Button>
+                      </>
+                    )}
+                    {selectedResponseType === "image" && (
+                      <>
+                        {reponses.map((reponse, index) => (
+                          <div key={index} className={classes.responseContainer}>
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={(e) => handleImageUpload(index, e)} // Pass index to identify which image is being uploaded
+                            />
+                            <Switch
+                              checked={reponse.isCorrect}
+                              onChange={() => handleCorrectChange(index)}
+                              color="primary"
+                              inputProps={{ 'aria-label': `Réponse correcte ${index + 1}` }}
+                            />
+                            <IconButton onClick={() => supprimerReponse(index)} aria-label={`Supprimer réponse ${index + 1}`}>
+                              <CloseIcon />
+                            </IconButton>
+                          </div>
+                        ))}
+                        {reponses.every(reponse => !reponse.isCorrect) && (
+                          <Typography variant="body2" style={{ color: 'red' }}>Au moins une réponse doit être correcte.</Typography>
+                        )}
+                        <Button variant="contained" style={{ color: '#fff', backgroundColor: '#3987ee' }} onClick={ajouterReponse} className={classes.addButton} aria-label="Ajouter réponse">Ajouter Image</Button>
+                      </>
+                    )}
+                  </Paper>
          
           {/* Bouton pour Modier la question */}
           <Button

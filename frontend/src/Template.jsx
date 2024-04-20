@@ -145,7 +145,7 @@ console.log("connected",connected)
            <PrivateRoute path="/gest_utilisateur" style={{ background: '#3987ee' }} component={Gest} allowedRoles={['0']} userRole={connected} />
 
               <Route path="/ajouter_question" style={{ background: '#3987ee' }} component={AjoutQuestion} />
-              <Route path="/ModifierQuestion" style={{ background: '#3987ee' }} component={Question} />
+              <Route path="/ModifierQuestion/:id" style={{ background: '#3987ee' }} component={Question} />
               <Route path="/filtrer_Question" style={{ background: '#3987ee' }} component={Filter} />
               <Route path="/ajouter_question" style={{ background: '#3987ee'}} component={AjoutQuestion} />
               <Route path="/traduire_quest" component={TraduireQuest} />

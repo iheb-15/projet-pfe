@@ -7,7 +7,7 @@ import {  useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Container, Typography, Grid, Paper , Button} from '@material-ui/core';
 import axios from 'axios';
-
+import { BrowserRouter as Router, Route, Link,Redirect } from 'react-router-dom';
 import { Select } from 'antd';
 
 const { Option } = Select;
@@ -81,13 +81,13 @@ function ListeQuest() {
   const [competences, setCompetences] = useState([]);
   const [selectedDomaine, setSelectedDomaine] = useState(null);
   const [selectedCompetence, setSelectedCompetence] = useState(null);
-  
   const [selectedLanguage, setSelectedLanguage] = useState('fr');
-
+  
   useEffect(() => {
     
     fetchQuestions();
   }, [selectedDomaine, selectedCompetence,selectedLanguage]);
+
 
 
   // pour data classified 
@@ -292,8 +292,9 @@ if (domainesStorage) {
   const handleAjouterQuestion = () => {
     history.push("/ajouter_question");
   };
-  const handleEditClick = () => {
-    history.push('/ModifierQuestion');
+  const handleEditClick = (record) => {
+    console.log('Edit',record)
+    history.push(`/ModifierQuestion/${record.id}`);
   };
 
   const handleFiltrerClick = () => {
@@ -343,7 +344,11 @@ console.log(skillOptions);
 
 
   const columns = [
-    
+    // {
+    //   title: 'ID',
+    //   dataIndex: 'id',
+    //   key: 'id',
+    // },
     {
       title: 'Question',
       dataIndex: 'question',
@@ -359,7 +364,7 @@ console.log(skillOptions);
       width: '20%',
       render: (text, record) => (
         <Space size="middle">
-          <EditOutlined style={{ color: 'blue' }} onClick={handleEditClick} />
+         <Link to={`/ModifierQuestion/${record.id}`}> <EditOutlined style={{ color: 'blue' }}/> </Link>
           <DeleteOutlined style={{ color: 'red' }} onClick={() => handleDelete(record)} />
           <SnippetsOutlined style={{ color: 'gray' }} onClick={handleFiltrerClick} />
         </Space>
@@ -456,7 +461,7 @@ console.log(skillOptions);
           </Grid>
         </Paper>
         <div className={classes.tableContainer} style={{marginTop:"40px"}}>
-          <Button
+          {/* <Button
             variant="contained"
             style={{ color: '#fff', backgroundColor: '#3987ee', marginBottom: '15px', float:"right" }}
             onClick={handleAjouterQuestion}
@@ -469,7 +474,7 @@ console.log(skillOptions);
             onClick={fetchQuestions}
           >
             filter
-          </Button>
+          </Button> */}
           <Table
             dataSource={questions}
             columns={columns}

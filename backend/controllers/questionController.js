@@ -132,3 +132,34 @@ exports.getQuestionWithAnswers = async (req, res) => {
 };
 
 
+exports.getQuestionById = async (req, res) => {
+    try {
+      const question = await RecinovQuestion.findOne({ _id: req.params.id });
+      if (!question) {
+        return res.status(404).json({ message: 'Question not found' });
+      }
+      res.json(question);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Server error' });
+    }
+  };
+
+
+  exports.getReponseById = async (req, res) => {
+    try {
+        // Use `find` to retrieve all responses that match the 'idQuestion'
+        const responses = await RecinovAnswer.find({ idQuestion: req.params.idQuestion });
+
+        // Check if any responses were found
+        if (!responses || responses.length === 0) {
+            return res.status(404).json({ message: 'No answers found for this question' });
+        }
+
+        // Send the found responses back to the client
+        res.json(responses);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ message: err.message });
+    }
+};
