@@ -83,7 +83,7 @@ function Modifier(props) {
   const [idFromUrl, setIdFromUrl] = useState(null);
   const classes = useStyles();
   const history = useHistory();
-  const [selectedDomaine, setSelectedDomaine] = useState('');
+  // const [selectedDomaine, setSelectedDomaine] = useState('');
   const [selectedSkill, setSelectedSkill] = useState('');
   const [question, setQuestion] = useState('');
   const [reponses, setReponses] = useState([{ text: '', isCorrect: false }]);
@@ -91,17 +91,21 @@ function Modifier(props) {
   const [points, setPoints] = useState(0);
   const [temps, setTemps] = useState({ minutes: 0, secondes: 0 });
   const [niveau, setNiveau] = useState('');;
-  const handleDomaineChange = (e) => setSelectedDomaine(e.target.value);
+  // const handleDomaineChange = (e) => setSelectedDomaine(e.target.value);
   const handleSkillChange = (e) => setSelectedSkill(e.target.value);
   const handleQuestionChange = (e) => setQuestion(e.target.value);
   const [selectedResponseType, setSelectedResponseType] = useState(""); 
   const questionExists = question !== undefined && question !== null;
-  const [fetchedQuestion, setFetchedQuestion] = useState(null);
-  const [loading, setLoading] = useState(false);
   const { location } = props;
-  const { state } = location;
-  const [idQuestion, setIdQuestion] = useState(null);
-  // const { question_fr, question_en } = state;
+  const [selectedDomaine, setSelectedDomaine] = useState(null);
+  const [selectedCompetence, setSelectedCompetence] = useState(null);
+  const [classifiedData, setClassifiedData] = useState({});
+  const [domaines, setDomaines] = useState([]);
+  const [reponse, setReponse] = useState('');
+  const { Option } = Select;
+  const [competences, setCompetences] = useState([]);
+
+
 
   const {id}=useParams();
   console.log('id',id)
@@ -111,12 +115,50 @@ function Modifier(props) {
     setIdFromUrl(id);
   }, [id]);
 
+  // useEffect(() => {
+    
+  //   fetchData();
+  // }, [selectedDomaine, selectedCompetence]);
+
+
+
+  // pour data classified 
+  useEffect(() => {
+    // Fonction pour récupérer les données depuis l'API
+    const fetchData = async () => {
+      try {
+        const response = await fetch('http://localhost:3002/api/features');
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+        const data = await response.json();
+        // Classer les données récupérées par nom
+        const classified = {};
+        data.forEach(item => {
+          if (!classified[item.class]) {
+            classified[item.class] = [item.code];
+          } else {
+            classified[item.class].push(item.code);
+          }
+        });
+        console.log('Data classified:', classified);
+        // Mettre à jour l'état avec les données classées
+        setClassifiedData(classified);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    // Appeler la fonction pour récupérer les données
+    fetchData();
+  }, [[selectedDomaine, selectedCompetence]]);
+
   useEffect(() => {
     // Fonction pour récupérer la question
     const fetchQuestion = async () => {
       try {
         const response = await axios.get(`http://localhost:3002/api/questions/${id}`);
-        console.log(reponses);
+        console.log(response);
         setQuestion(response.data);
         
       } catch (error) {
@@ -127,7 +169,94 @@ function Modifier(props) {
   }, [id]);
   console.log('id util',id)
 
+   // Récupération des réponses liées à la question
+   useEffect(() => {
+    const fetchResponses = async () => {
+      try {
+        const reponse = await axios.get(`http://localhost:3002/api/reponse/${id}`);
+        console.log('answr',reponse);
+        setReponse(reponse.data);
+        console.log('set',setReponse)
+      } catch (error) {
+        console.error('Erreur lors de la récupération des réponses:', error);
+      }
+    };
+
+    if (id) {
+      fetchResponses();
+    }
+  }, [id]);
+
+console.log('idRep',id);
   
+
+useEffect(() => {
+  // pour récuprer les domaines depuis stockage local
+  const domainesStorage = localStorage.getItem('domaines');
+
+if (domainesStorage) {
+setDomaines(JSON.parse(domainesStorage));
+} else {
+axios.get('http://localhost:3002/api/features')
+  .then(response => {
+    // Récupération des données de l'API
+    const domainesData = response.data;
+
+    // Extraction des propriétés _id et class de chaque domaine
+    const domainesProcessed = domainesData.map(domaine => ({
+      _id: domaine._id,
+      class: domaine.class,
+      code:domaine.code,
+      similar_skill:domaine.similar_skill
+
+      
+    }));
+
+    // Mise à jour de l'état avec les domaines traités
+    setDomaines(domainesProcessed);
+
+    // Stockage des domaines traités dans localStorage
+    localStorage.setItem('domaines', JSON.stringify(domainesProcessed));
+    setSelectedDomaine(null);
+  })
+  .catch(error => {
+    console.error('Erreur lors de la récupération des domaines :', error);
+  });
+}
+
+
+  // Récupérer les compétences depuis le stockage local
+  const competencesStorage = localStorage.getItem('competences');
+  if (competencesStorage) {
+    setCompetences(JSON.parse(competencesStorage));
+  } else {
+    axios.get('http://localhost:3002/api/features')
+      .then(response => {
+        const competencesData=response.data;
+        const competencesProcessed= competencesData.map(competence=>({
+          _id:competence._id,
+          skill:competence.skill,
+          code:competence.code,
+          similar_skill:competence.similar_skill
+        }));
+        setCompetences(competencesProcessed);
+        // Stocker les compétences dans le stockage local
+        localStorage.setItem('competences', JSON.stringify(competencesProcessed));
+        setSelectedCompetence(null);
+      })
+      .catch(error => {
+        console.error('Erreur lors de la récupération des compétences :', error);
+      });
+  }
+}, []);
+console.log(domaines);
+
+const filteredObjects = domaines.filter((obj, index, self) =>
+    index === self.findIndex((o) => (
+      o.class === obj.class
+    ))
+  );
+  console.log(filteredObjects);
  
   
 
@@ -170,9 +299,29 @@ function Modifier(props) {
     newReponses.splice(index, 1);
     setReponses(newReponses);
   };
- 
+  const handleDomaineChange = (value) => {
+    setSelectedDomaine(value);
+    console.log(value);
+  };
 
+  const handleCancelSelection = () => {
+    setSelectedDomaine(null); // Réinitialise la sélection
+  };
+ 
+//unique pour domaines
+const uniqueClasses = new Set(domaines.map(domaine => domaine.class));
+// Créer des options à partir des noms de classe uniques
+const classOptions = Array.from(uniqueClasses).map(className => ({ 
+  value: className,
+  label: className
+}));
+console.log(classOptions);
   
+//  onSearch function
+const onSearch = (value) => {
+  console.log('Searched:', value);
+};
+
 
   return (
     <Container maxWidth="md">
@@ -249,24 +398,30 @@ function Modifier(props) {
           {/* Sélection du domaine */}
         <Paper className={classes.section}>
           <Grid container spacing={2} className={`${classes.spacing}`}>
-           
-            
-            <Grid item xs={4}>
-              <FormControl className={`${classes.formControl} ${classes.spacing}`} fullWidth>
-                <Typography variant="subtitle1" className={`${classes.label}`}>Domaine<span className={classes.redAsterisk}>*</span></Typography>
+          <Grid item xs={12} sm={4}>
+                <Typography variant="h8" className={`${classes.label}`} >Domaine<span className={classes.redAsterisk}>*</span></Typography>
                 <Select
-                  value={selectedDomaine}
-                  onChange={handleDomaineChange}
-                  displayEmpty
-                  inputProps={{ 'aria-label': 'Domaine' }}
-                >
-                  <MenuItem value="" disabled>Choisissez un domaine</MenuItem>
-                  <MenuItem value="programmation">Programmation</MenuItem>
-                  <MenuItem value="design">Design</MenuItem>
-                  <MenuItem value="gestion_projet">Gestion de projet</MenuItem>
-                </Select>
-              </FormControl>
-            </Grid>
+                    showSearch
+                    style={{ width: "250px" }}
+                    placeholder="Choisir Domaine"
+                    optionFilterProp="children"
+                    onChange={handleDomaineChange}
+                    onSearch={onSearch}
+                    filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
+                  >
+                    <Option key="null" value={null} onClick={handleCancelSelection}>
+                      Aucun domaines
+                    </Option>
+                    
+                                {Object.keys(classifiedData).map(name => (
+                                    <div key={name}>
+                                      <strong>{name}</strong>
+                                      
+                                    </div>
+                                    
+                                  ))}
+                  </Select>
+                 </Grid>
             {/* Sélection de la compétence */}
             <Grid item xs={4}>
               <FormControl className={`${classes.formControl} ${classes.spacing}`} fullWidth>
@@ -365,21 +520,21 @@ function Modifier(props) {
                   <MenuItem value="image">Image</MenuItem>
                   <MenuItem value="text">text</MenuItem>
               </Select>
-              {/* Afficher les champs de réponse en fonction du type sélectionné */}
-              {selectedResponseType !== "image" && (
+               {/* Afficher les champs de réponse en fonction du type sélectionné */}
+               {selectedResponseType !== "image" && (
             <>
-                        {reponses.map((reponse, index) => (
+                        {reponse.map((reponse, index) => (
                           <div key={index} className={classes.responseContainer}>
                             <TextField
-                              label={`Réponse ${index + 1}*`}
+                              label={`reponse ${index + 1}*`}
                               multiline
                               rows={2}
                               variant="outlined"
                               fullWidth
-                              value={reponse.question_fr}
-                              onChange={(e) => handleReponseChange(index, e)}
+                              value={reponse.answer_fr}
+                              onChange={(e) => handleReponseChange(e,'reponse')}
                               className={`${classes.formControl} ${classes.spacing}`}
-                              aria-label={`Réponse ${index + 1}`}
+                              aria-label={`reponse ${index + 1}`}
                             />
                             <Switch
                               checked={reponse.isCorrect}
