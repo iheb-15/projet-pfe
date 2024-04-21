@@ -423,13 +423,9 @@ console.log(skillOptions);
                                     </div>
                                     
                                   ))}
-                         
-                  
-             
                   </Select>
-                  
-               
                  </Grid>
+                 
                 <Grid item xs={12} sm={4}>
                 <Typography variant="h8" className={`${classes.label}`} >Compétence<span className={classes.redAsterisk}>*</span></Typography>
                 <Select
