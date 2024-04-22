@@ -2,12 +2,14 @@ import React, { useState,useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../AjoutQuestion.css';
 import {  useHistory } from 'react-router-dom';
-import { Container, Typography, TextField, Button, Select, MenuItem, FormControl, Grid, IconButton, Paper, Switch } from '@material-ui/core';
+import { Container, Typography, TextField, Button, MenuItem, FormControl, Grid, IconButton, Paper, Switch } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from '@material-ui/core/styles';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { Select } from 'antd';
 
+const { Option } = Select;
 const useStyles = makeStyles((theme) => ({
   paper: {
     padding: theme.spacing(3),
@@ -83,15 +85,13 @@ function Modifier(props) {
   const [idFromUrl, setIdFromUrl] = useState(null);
   const classes = useStyles();
   const history = useHistory();
-  // const [selectedDomaine, setSelectedDomaine] = useState('');
   const [selectedSkill, setSelectedSkill] = useState('');
   const [question, setQuestion] = useState('');
   const [reponses, setReponses] = useState([{ text: '', isCorrect: false }]);
   const [selectedType, setSelectedType] = useState('');
-  const [points, setPoints] = useState(0);
-  const [temps, setTemps] = useState({ minutes: 0, secondes: 0 });
+  const [points, setPoints] = useState('');
+  const [temps, setTemps] = useState({ minutes: '', secondes: '' });
   const [niveau, setNiveau] = useState('');;
-  // const handleDomaineChange = (e) => setSelectedDomaine(e.target.value);
   const handleSkillChange = (e) => setSelectedSkill(e.target.value);
   const handleQuestionChange = (e) => setQuestion(e.target.value);
   const [selectedResponseType, setSelectedResponseType] = useState(""); 
@@ -103,8 +103,8 @@ function Modifier(props) {
   const [domaines, setDomaines] = useState([]);
   const [reponse, setReponse] = useState('');
   const { Option } = Select;
+  const [competences, setCompetences] = useState([]);
   
-
 
 
   const {id}=useParams();
@@ -115,6 +115,167 @@ function Modifier(props) {
     setIdFromUrl(id);
   }, [id]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`http://localhost:3002/api/questions/${id}`);
+        const { level, points, time } = response.data;
+        const minutes = Math.floor(time / 60);
+        const secondes = time % 60;
+         // Convertir level en texte correspondant
+      let levelText = "";
+      switch(level) {
+        case 0:
+          levelText = "Junior";
+          break;
+        case 1:
+          levelText = "Intermédiaire";
+          break;
+        case 2:
+          levelText = "Senior";
+          break;
+        case 3:
+          levelText = "Expert";
+          break;
+        default:
+          levelText = "";
+      }
+        setNiveau(levelText);
+        setPoints(points);
+        setTemps({ minutes, secondes });
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchData();
+  }, [id]);
+
+  const handleNiveauChange = (event) => {
+    setNiveau(event.target.value);
+  };
+
+  const handlePointsChange = (event) => {
+    setPoints(event.target.value);
+  };
+
+  const handleMinutesChange = (event) => {
+    setTemps({ ...temps, minutes: event.target.value });
+  };
+
+  const handleSecondesChange = (event) => {
+    setTemps({ ...temps, secondes: event.target.value });
+  };
+
+
+
+
+// pour data classified 
+useEffect(() => {
+  // Fonction pour récupérer les données depuis l'API
+  const fetchData = async () => {
+    try {
+      const response = await fetch('http://localhost:3002/api/features');
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+      const data = await response.json();
+      // Classer les données récupérées par nom
+      const classified = {};
+      data.forEach(item => {
+        if (!classified[item.class]) {
+          classified[item.class] = [item.code];
+        } else {
+          classified[item.class].push(item.code);
+        }
+      });
+      console.log('Data classified:', classified);
+      // Mettre à jour l'état avec les données classées
+      setClassifiedData(classified);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  
+  fetchData();
+}, []);
+                                                           
+
+useEffect(() => {
+  // pour récuprer les domaines depuis stockage local
+  const domainesStorage = localStorage.getItem('domaines');
+
+if (domainesStorage) {
+setDomaines(JSON.parse(domainesStorage));
+} else {
+axios.get('http://localhost:3002/api/features')
+  .then(response => {
+    // Récupération des données de l'API
+    const domainesData = response.data;
+
+    // Extraction des propriétés _id et class de chaque domaine
+    const domainesProcessed = domainesData.map(domaine => ({
+      _id: domaine._id,
+      class: domaine.class,
+      code:domaine.code,
+      similar_skill:domaine.similar_skill
+
+      
+    }));
+
+    // Mise à jour de l'état avec les domaines traités
+    setDomaines(domainesProcessed);
+
+    // Stockage des domaines traités dans localStorage
+    localStorage.setItem('domaines', JSON.stringify(domainesProcessed));
+    setSelectedDomaine(null);
+  })
+  .catch(error => {
+    console.error('Erreur lors de la récupération des domaines :', error);
+  });
+}
+
+
+  // Récupérer les compétences depuis le stockage local
+  const competencesStorage = localStorage.getItem('competences');
+  if (competencesStorage) {
+    setCompetences(JSON.parse(competencesStorage));
+  } else {
+    axios.get('http://localhost:3002/api/features')
+      .then(response => {
+        const competencesData=response.data;
+        const competencesProcessed= competencesData.map(competence=>({
+          _id:competence._id,
+          skill:competence.skill,
+          code:competence.code,
+          similar_skill:competence.similar_skill
+        }));
+        setCompetences(competencesProcessed);
+        // Stocker les compétences dans le stockage local
+        localStorage.setItem('competences', JSON.stringify(competencesProcessed));
+        setSelectedCompetence(null);
+      })
+      .catch(error => {
+        console.error('Erreur lors de la récupération des compétences :', error);
+      });
+  }
+}, [selectedDomaine, selectedCompetence,]);
+console.log(domaines);
+
+const filteredObjects = domaines.filter((obj, index, self) =>
+    index === self.findIndex((o) => (
+      o.class === obj.class
+    ))
+  );
+  console.log(filteredObjects);
+
+  const handleCompetenceChange =  async(value) => {
+    setSelectedCompetence(value);
+    console.log(value);
+  };
+  const handleCancelSelections = () => {
+    setSelectedCompetence(null); // Réinitialise la sélection
+  };
 
   useEffect(() => {
     // Fonction pour récupérer la question
@@ -123,7 +284,9 @@ function Modifier(props) {
         const response = await axios.get(`http://localhost:3002/api/questions/${id}`);
         console.log(response);
         setQuestion(response.data);
-        
+        console.log('Level:', response.data.level);
+      console.log('Point:', response.data.points);
+      console.log('Time:', response.data.time);
       } catch (error) {
         console.error(error);
       }
@@ -150,16 +313,11 @@ function Modifier(props) {
     }
   }, [id]);
 
-console.log('idRep',id);
-  
+  console.log('idRep',id);
 
-
- 
-  
 
   const handleImageUpload = (event) => {
     const file = event.target.files[0]; 
-    
     console.log('Image uploaded:', file);
   };
   
@@ -178,15 +336,7 @@ console.log('idRep',id);
     setReponses(newReponses);
   };
   
-  // const handleCorrectChange = (index) => {
-  //   const newReponses = [...reponse];
-  //   // Vérifier si la réponse à cet index existe avant de changer la valeur de isCorrect
-  //   if (newReponses[index]) {
-  //     newReponses[index].isCorrect = !newReponses[index].isCorrect;
-  //     setReponse(newReponses);
-  //   }
-  // };
-
+ 
   const handleCorrectChange = (index) => {
     setReponse(prevReponse => {
       const updatedReponse = [...prevReponse];
@@ -198,12 +348,13 @@ console.log('idRep',id);
     });
   };
   const handleTypeChange = (e) => setSelectedType(e.target.value);
-  const handleNiveauChange = (e) => setNiveau(e.target.value);
-  const handlePointsChange = (e) => setPoints(e.target.value);
-  const handleMinutesChange = (e) => setTemps({ ...temps, minutes: e.target.value });
-  const handleSecondesChange = (e) => setTemps({ ...temps, secondes: e.target.value });
-
   
+
+  //  onSearch function
+const onSearch = (value) => {
+  console.log('Searched:', value);
+};
+
   
   const ajouterReponse = () => {
     setReponse(prevReponse => [
@@ -235,11 +386,18 @@ const classOptions = Array.from(uniqueClasses).map(className => ({
   label: className
 }));
 console.log(classOptions);
+
+//unique pour compétence
+const uniqueskill = new Set(competences.map(competence => competence.skill));
+const skillOptions = Array.from(uniqueskill).map(skillName => {
+  const competence = competences.find(competence => competence.skill === skillName);
+  return {
+    value: competence.code,
+    label: ` ${skillName}` 
+  };
+});
+console.log(skillOptions);
   
-//  onSearch function
-const onSearch = (value) => {
-  console.log('Searched:', value);
-};
 
 
   return (
@@ -262,10 +420,10 @@ const onSearch = (value) => {
                     variant="outlined"
                   >
                     <MenuItem value="" disabled>Choisissez un niveau</MenuItem>
-                    <MenuItem value="débutant">Débutant</MenuItem>
-                    <MenuItem value="intermédiaire">Intermédiaire</MenuItem>
-                    <MenuItem value="avancé">Avancé</MenuItem>
-                    <MenuItem value="expert">Expert</MenuItem>
+                    <MenuItem value="0">Junior</MenuItem>
+                    <MenuItem value="1">Intermédiaire</MenuItem>
+                    <MenuItem value="2">Senior</MenuItem>
+                    <MenuItem value="3">Expert</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
@@ -284,6 +442,7 @@ const onSearch = (value) => {
                 </FormControl>
               </Grid>
               {/* Saisie du temps */}
+              
               <Grid item xs={4}>
                 <FormControl className={`${classes.formControl} ${classes.spacing}`} fullWidth>
                   <Typography variant="subtitle1" className={`${classes.label}`}>Temps<span className={classes.redAsterisk}>*</span></Typography>
@@ -342,21 +501,30 @@ const onSearch = (value) => {
                   </Select>
                  </Grid>
             {/* Sélection de la compétence */}
-            <Grid item xs={4}>
-              <FormControl className={`${classes.formControl} ${classes.spacing}`} fullWidth>
-                <Typography variant="subtitle1" className={`${classes.label}`}>Compétence<span className={classes.redAredAsterisk}>*</span></Typography>
+            <Grid item xs={12} sm={4}>
+                <Typography variant="h8" className={`${classes.label}`} >Compétence<span className={classes.redAsterisk}>*</span></Typography>
                 <Select
-                  value={selectedSkill}
-                  onChange={handleSkillChange}
-                  displayEmpty
-                  inputProps={{ 'aria-label': 'Compétences' }}
-                  >
-                    <MenuItem value="" disabled>Choisissez une Compétence</MenuItem>
-                    <MenuItem value="communication">Communication</MenuItem>
-                    <MenuItem value="analyse">Analyse</MenuItem>
+                  showSearch
+                  style={{ width: "250px" }}
+                  placeholder="Choisir Compétence"
+                  optionFilterProp="children"
+                  onChange={handleCompetenceChange}
+                  onSearch={onSearch}
+                  filterOption={(input, option) => (option?.label ?? "").includes(input)}
+                  filterSort={(optionA, optionB) =>
+                    (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
+                  }
+                >
+                  <Option key="null" value={null} onClick={handleCancelSelections}>
+                    Aucune compétence 
+                  </Option>
+                  {skillOptions.map(option => (
+                    <Option key={option.value} value={option.value} label={option.label}>
+                      {option.label}
+                    </Option>
+                  ))}
                   </Select>
-                </FormControl>
-              </Grid>
+                </Grid>
             </Grid>
           </Paper>
           {/* Type de Question */}
@@ -388,7 +556,7 @@ const onSearch = (value) => {
                     
                         <Grid item xs={12}>
                             <TextField
-                                label="Question en français*"
+                                label={`Question en français*`}
                                 multiline
                                 rows={2}
                                 variant="outlined"
@@ -426,12 +594,12 @@ const onSearch = (value) => {
                 )}
             </Grid>
         </Paper>
-                      {/* Section pour les réponses */}
-                      <Paper elevation={3} className={`${classes.responseCard} ${classes.spacing}`}>
+              {/* Section pour les réponses */}
+              <Paper elevation={3} className={`${classes.responseCard} ${classes.spacing}`}>
               <Typography variant="subtitle1" gutterBottom>Type de Réponse</Typography>
               <Select
-                value={selectedResponseType} // Utiliser une variable distincte pour le type de réponse
-                onChange={handleResponseTypeChange} // Gérer le changement de type de réponse
+                value={selectedResponseType} 
+                onChange={handleResponseTypeChange} 
                 displayEmpty
                 inputProps={{ 'aria-label': 'Type de Réponse' }}
                 className={`${classes.select} ${classes.spacing}`}
@@ -442,60 +610,58 @@ const onSearch = (value) => {
                 <MenuItem value="image">Image</MenuItem>
                 <MenuItem value="text">text</MenuItem>
               </Select>
-              
-             
                {/* Afficher les champs de réponse en fonction du type sélectionné */}
                {reponse && selectedResponseType !== "image" && (
                               <>
                               {reponse.map((reponseItem, index) => (
-                <div key={index}>
-                  <div className={classes.responseContainer}>
-                    <TextField
-                      label={`réponse ${index + 1} (français)*`}
-                      multiline
-                      rows={2}
-                      variant="outlined"
-                      fullWidth
-                      value={reponseItem.answer_fr}
-                      onChange={(e) => handleReponseChange(e, 'reponse_fr', index)}
-                      className={`${classes.formControl} ${classes.spacing}`}
-                      aria-label={`réponse ${index + 1}`}
-                    />
-                     <Switch
-                      checked={reponseItem.isCorrect}
-                      onChange={() => handleCorrectChange(index)}
-                      color="primary"
-                      inputProps={{ 'aria-label': `Réponse correcte ${index + 1}` }}
-                    />
-                    <IconButton onClick={() => supprimerReponse(index)} aria-label={`Supprimer réponse ${index + 1}`}>
-                      <CloseIcon />
-                    </IconButton>
-                  </div>
-                  <br/>
-                  <div className={classes.responseContainer}>
-                    <TextField
-                      label={`réponse ${index + 1} (anglais)*`}
-                      multiline
-                      rows={2}
-                      variant="outlined"
-                      fullWidth
-                      value={reponseItem.answer_en}
-                      onChange={(e) => handleReponseChange(e, 'reponse_en', index)}
-                      className={`${classes.formControl} ${classes.spacing}`}
-                      aria-label={`réponse ${index + 1}`}
-                    />
-                    <Switch
-                      checked={reponseItem.isCorrect}
-                      onChange={() => handleCorrectChange(index)}
-                      color="primary"
-                      inputProps={{ 'aria-label': `Réponse correcte ${index + 1}` }}
-                    />
-                    <IconButton onClick={() => supprimerReponse(index)} aria-label={`Supprimer réponse ${index + 1}`}>
-                      <CloseIcon />
-                    </IconButton>
-                  </div>
-                </div>
-              ))}
+                                      <div key={index}>
+                                        <div className={classes.responseContainer}>
+                                          <TextField
+                                            label={`réponse ${index + 1} (français)*`}
+                                            multiline
+                                            rows={2}
+                                            variant="outlined"
+                                            fullWidth
+                                            value={reponseItem.answer_fr}
+                                            onChange={(e) => handleReponseChange(e, 'reponse_fr', index)}
+                                            className={`${classes.formControl} ${classes.spacing}`}
+                                            aria-label={`réponse ${index + 1}`}
+                                          />
+                                          <Switch
+                                            checked={reponseItem.isCorrect}
+                                            onChange={() => handleCorrectChange(index)}
+                                            color="primary"
+                                            inputProps={{ 'aria-label': `Réponse correcte ${index + 1}` }}
+                                          />
+                                          <IconButton onClick={() => supprimerReponse(index)} aria-label={`Supprimer réponse ${index + 1}`}>
+                                            <CloseIcon />
+                                          </IconButton>
+                                        </div>
+                                        <br/>
+                                        <div className={classes.responseContainer}>
+                                          <TextField
+                                            label={`réponse ${index + 1} (anglais)*`}
+                                            multiline
+                                            rows={2}
+                                            variant="outlined"
+                                            fullWidth
+                                            value={reponseItem.answer_en}
+                                            onChange={(e) => handleReponseChange(e, 'reponse_en', index)}
+                                            className={`${classes.formControl} ${classes.spacing}`}
+                                            aria-label={`réponse ${index + 1}`}
+                                          />
+                                          <Switch
+                                            checked={reponseItem.isCorrect}
+                                            onChange={() => handleCorrectChange(index)}
+                                            color="primary"
+                                            inputProps={{ 'aria-label': `Réponse correcte ${index + 1}` }}
+                                          />
+                                          <IconButton onClick={() => supprimerReponse(index)} aria-label={`Supprimer réponse ${index + 1}`}>
+                                            <CloseIcon />
+                                          </IconButton>
+                                        </div>
+                                      </div>
+                                    ))}
                                 {reponse.every(reponseItem => !reponseItem.isCorrect) && (
                                   <Typography variant="body2" style={{ color: 'red' }}>Au moins une réponse doit être correcte.</Typography>
                                 )}
