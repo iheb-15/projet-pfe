@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-
 import '../AjoutQuestion.css';
 
 import {  useHistory } from 'react-router-dom';
@@ -13,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(3),
     borderRadius: theme.spacing(2),
     [theme.breakpoints.down('sm')]: {
-      padding: theme.spacing(2), // Réduire le padding pour les écrans plus petits
+      padding: theme.spacing(2), 
     },
   },
   formControl: {
@@ -21,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(1),
     minWidth: 200,
     [theme.breakpoints.down('sm')]: {
-      minWidth: '100%', // Pour rendre les Select pleine largeur sur les petits écrans
+      minWidth: '100%', 
     },
   
   },
@@ -72,9 +71,9 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   subtitle: {
-    fontSize: theme.typography.pxToRem(14), // Réduire la taille de la police pour les sous-titres
+    fontSize: theme.typography.pxToRem(14), 
     [theme.breakpoints.down('sm')]: {
-      fontSize: theme.typography.pxToRem(12), // Réduire la taille de la police pour les écrans plus petits
+      fontSize: theme.typography.pxToRem(12), 
     },
   },
 }));
@@ -83,8 +82,7 @@ function Modifier() {
 
 
   const handleImageUpload = (event) => {
-    const file = event.target.files[0]; // Get the selected image file
-    // You can process the file here, for example, upload it to the server
+    const file = event.target.files[0]; 
     console.log('Image uploaded:', file);
   };
 
@@ -105,7 +103,7 @@ function Modifier() {
   const handleModifierQuestion = () => {
     
     window.confirm('Question modifiée avec succès !')
-    // Afficher la boîte de dialogue
+  
      };
 
   const handleReponseChange = (index, e) => {
@@ -137,10 +135,10 @@ function Modifier() {
       <Typography variant="h6" style={{ color: "#3987ee" }} align="center" gutterBottom>Modifier Question</Typography>
       <Paper elevation={3} className={`${classes.paper} ${classes.spacing}`}>
         <Typography variant="h7" className={`${classes.label}`} style={{ color: "#3987ee" }} gutterBottom>Paramètres de la Question<span className={classes.redAsterisk}>*</span></Typography>
-         {/* Section pour les niveaux, points et temps */}
+        
          <Paper className={classes.section}>
             <Grid container spacing={2} className={`${classes.spacing}`}>
-              {/* Sélection du niveau */}
+             
               <Grid item xs={4}>
                 <FormControl className={`${classes.formControl} ${classes.spacing}`} fullWidth>
                   <Typography variant="subtitle1" className={`${classes.label}`}>Niveau<span className={classes.redAsterisk}>*</span></Typography>
@@ -159,7 +157,7 @@ function Modifier() {
                   </Select>
                 </FormControl>
               </Grid>
-              {/* Saisie des points */}
+             
               <Grid item xs={4}>
                 <FormControl className={`${classes.formControl} ${classes.spacing}`} fullWidth>
                   <Typography variant="subtitle1" className={`${classes.label}`}>Points<span className={classes.redAsterisk}>*</span></Typography>
@@ -173,7 +171,7 @@ function Modifier() {
                   />
                 </FormControl>
               </Grid>
-              {/* Saisie du temps */}
+            
               <Grid item xs={4}>
                 <FormControl className={`${classes.formControl} ${classes.spacing}`} fullWidth>
                   <Typography variant="subtitle1" className={`${classes.label}`}>Temps<span className={classes.redAsterisk}>*</span></Typography>
@@ -207,7 +205,7 @@ function Modifier() {
         <Paper className={classes.section}>
           <Grid container spacing={2} className={`${classes.spacing}`}>
            
-            {/* Sélection du domaine */}
+         
             <Grid item xs={4}>
               <FormControl className={`${classes.formControl} ${classes.spacing}`} fullWidth>
                 <Typography variant="subtitle1" className={`${classes.label}`}>Domaine<span className={classes.redAsterisk}>*</span></Typography>
@@ -224,7 +222,7 @@ function Modifier() {
                 </Select>
               </FormControl>
             </Grid>
-            {/* Sélection de la compétence */}
+            
             <Grid item xs={4}>
               <FormControl className={`${classes.formControl} ${classes.spacing}`} fullWidth>
                 <Typography variant="subtitle1" className={`${classes.label}`}>Compétence<span className={classes.redAredAsterisk}>*</span></Typography>
@@ -244,7 +242,7 @@ function Modifier() {
           </Paper>
                 <Paper className={classes.section}>
         <Grid container spacing={2} className={`${classes.spacing}`}>
-          {/* Sélection du type de question */}
+         
           <Grid item xs={12}>
             <FormControl className={`${classes.formControl} ${classes.expandedTextField}`} fullWidth>
               <Typography variant="subtitle1" className={`${classes.label}`}>Type de Question<span className={classes.redAsterisk}>*</span></Typography>
@@ -259,11 +257,11 @@ function Modifier() {
                 <MenuItem value="" disabled>Choisissez un type</MenuItem>
                 <MenuItem value="vrai-faux">Vrai/Faux</MenuItem>
                 <MenuItem value="qcm">QCM</MenuItem>
-                <MenuItem value="image">Image</MenuItem> {/* Ajout de l'option Image */}
+                <MenuItem value="image">Image</MenuItem> 
               </Select>
             </FormControl>
           </Grid>
-          {/* Condition pour afficher soit le champ de saisie de question, soit le champ d'entrée de l'image */}
+        
           {selectedType !== "image" ? (
             <Grid item xs={12}>
               <TextField
@@ -273,8 +271,8 @@ function Modifier() {
                 fullWidth
                 value={question}
                 onChange={handleQuestionChange}
-                className={`${classes.formControl} ${classes.spacing} ${classes.expandedTextField}`}
-                aria-label="Question"
+              
+               
               />
             </Grid>
           ) : (
@@ -288,7 +286,7 @@ function Modifier() {
           )}
         </Grid>
       </Paper>
-          {/* Section pour les réponses */}
+       
           <Paper elevation={3} className={`${classes.responseCard} ${classes.spacing}`}>
       <Typography variant="subtitle1" gutterBottom>Type de Réponse<span className={classes.redAsterisk}>*</span></Typography>
       <Select
@@ -342,7 +340,7 @@ function Modifier() {
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) => handleImageUpload(index, e)} // Pass index to identify which image is being uploaded
+                onChange={(e) => handleImageUpload(index, e)}
               />
               <Switch
                 checked={reponse.isCorrect}
@@ -363,7 +361,7 @@ function Modifier() {
       )}
     </Paper>
          
-          {/* Bouton pour Modier la question */}
+        
           <Button
             variant="contained"
             style={{ color: '#fff', backgroundColor: '#3987ee', float: 'right', marginTop: '35px' }}
@@ -371,7 +369,7 @@ function Modifier() {
           >
             Modifier
           </Button>
-            {/* Bouton pour retourner */}
+          
             <Button
             variant="contained"
             style={{ color: '#fff', backgroundColor: '#3987ee', float: 'right', marginRight: '10px', marginTop: '35px' }}

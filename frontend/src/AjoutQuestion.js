@@ -1,25 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect  } from 'react';
+import axios from 'axios';
 import { Container, Typography,  Button,  FormControl, Grid, IconButton, Paper, Switch } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';
 import { Select as AntdSelect , Space, InputNumber, TimePicker,Input,Pagination} from 'antd';
+import { Upload } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
+import { message } from 'antd'; // Import message from Ant Design
 
 const { TextArea } = Input;
-
-
 const useStyles = makeStyles((theme) => ({
   paper: {
     padding: theme.spacing(3),
-    borderRadius: theme.spacing(2),
-    
+    borderRadius: theme.spacing(2), 
   },
   formControl: {
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
     minWidth: 200,
-    
-    
   },
   responseContainer: {
     marginTop: theme.spacing(1),
@@ -59,14 +58,50 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(2),
     color:"#3987ee",
   },
+ 
 }));
+
 function AjoutQuestion() {
+  
   const classes = useStyles();
   const history = useHistory();
   const [question, setQuestion] = useState('');
   const [reponses, setReponses] = useState([{ text: '', isCorrect: false }]);
+  const [domaines, setDomaines] = useState([]);
+  const [competences, setCompetences] = useState([]);
+  const [selectedResponseType, setSelectedResponseType] = useState('Texte'); // État pour suivre le type de réponse sélectionné
+
+  // Gestionnaire pour le changement du type de réponse
+  const handleQuestionTypeChange = (value) => {
+    setSelectedResponseType(value);
+  };
+
+  useEffect(() => {
+    // Récupérer les domaines
+    axios.get('http://localhost:3002/api/features/domaines')
+      .then(response => {
+        setDomaines(response.data);
+      })
+      .catch(error => {
+        console.error('Erreur lors de la récupération des domaines :', error);
+      });
+
+    // Récupérer les compétences
+    axios.get('http://localhost:3002/api/features/competences')
+      .then(response => {
+        setCompetences(response.data);
+      })
+      .catch(error => {
+        console.error('Erreur lors de la récupération des compétences :', error);
+      });
+  }, []);
  
-  const handleQuestionChange = (e) => setQuestion(e.target.value);
+  const handleQuestionChange = (e) => {
+    if (selectedResponseType !== 'Image') {
+      setQuestion(e.target.value);
+    }
+  };
+  
   const handleReponseChange = (index, e) => {
     const newReponses = [...reponses];
     newReponses[index].text = e.target.value;
@@ -100,9 +135,13 @@ const onChange = (value) => {
 const onSearch = (value) => {
   console.log('Searched:', value);
 };
-const filterOption = (input, option) => {
-  return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
+const filterOption = (input, options) => {
+  return (
+    options.children && options.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+  );
 };
+
+
 const [value, setValue] = useState(null); // Initialize value state and its setter function
 
 // Define onChange function for TimePicker
@@ -114,39 +153,52 @@ const onChangePage= (page) => {
   console.log(page);
   setCurrent(page);
 };
+// Définir une fonction de traitement du téléchargement
+const handleUpload = (info) => {
+  if (info.file.status !== 'uploading') {
+    console.log(info.file, info.fileList);
+  }
+  if (info.file.status === 'done') {
+    message.success(`${info.file.name} file uploaded successfully`);
+  } else if (info.file.status === 'error') {
+    message.error(`${info.file.name} file upload failed.`);
+  }
+}
+const CustomUpload = () => (
+  <Upload
+    action="/upload.do"
+    method="post"
+    beforeUpload={() => false} // Empêche le téléchargement automatique
+    onChange={handleUpload}
+    multiple={false} // Permettre le téléchargement de plusieurs fichiers
+    style={{justifyContent: 'center'}}
+  >
+    <Button icon={<UploadOutlined />}>Sélectionner un fichier</Button>
+  </Upload>
+);
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="lg">
       <Typography variant="h6" style={{ color: "#3987ee" }} align="center" gutterBottom>Ajouter une Question</Typography>
       <Paper elevation={3} className={`${classes.paper} ${classes.spacing}`}>
         <Typography variant="h7" className={`${classes.label}`} style={{ color: "#3987ee" }} gutterBottom>Paramètres de la Question<span className={classes.redAsterisk}>*</span></Typography>
         <Paper elevation={3} className={`${classes.responseCard} ${classes.spacing}`}>
-          <Grid container spacing={2} className={`${classes.spacing}`}>
-            {/* En-tête pour les paramètres */}
-            <Grid item xs={12} sm={12}>
+        <Grid container spacing={2} className={`${classes.spacing}`}>
+            <Grid item xs={12}>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={4}>
                 <Typography variant="h8" className={`${classes.label}`} >Langue<span className={classes.redAsterisk}>*</span></Typography>
-                <AntdSelect
-                placeholder="Choisir une Langue"
-                optionFilterProp="children"
-                onChange={onChange}
-                filterOption={filterOption}
-                style={{width:"250px"}}
-                options={[
-                  {
-                    value: 'Francais',
-                    label: 'Francais',
-                  },
-                  {
-                    value: 'Anglais',
-                    label: 'Anglais',
-                  },
-                  {
-                    value: 'Arabe',
-                    label: 'Arabe',
-                  },
-                ]}
-              />
+                  <AntdSelect
+                    placeholder="Choisir une Langue"
+                    optionFilterProp="children"
+                    onChange={onChange}
+                    filterOption={filterOption}
+                    style={{width:"100%"}}
+                    options={[
+                      { value: 'Francais', label: 'Francais' },
+                      { value: 'Anglais', label: 'Anglais' },
+                      { value: 'Arabe', label: 'Arabe' },
+                    ]}
+                  />
                 </Grid>
                 <Grid item xs={12} sm={4}>
                 <Typography variant="h8" className={`${classes.label}`} >Domaine<span className={classes.redAsterisk}>*</span></Typography>
@@ -157,21 +209,8 @@ const onChangePage= (page) => {
                 onChange={onChange}
                 onSearch={onSearch}
                 filterOption={filterOption}
-                style={{width:"250px"}}
-                options={[
-                  {
-                    value: 'Programmation',
-                    label: 'Programmation',
-                  },
-                  {
-                    value: 'Design',
-                    label: 'Design',
-                  },
-                  {
-                    value: 'Gestion Projet',
-                    label: 'Gestion Projet',
-                  },
-                ]}
+                style={{width:"100%"}}
+                options={domaines.map(domaine => ({ value: domaine, label: domaine }))}
               />
                 </Grid>
                 <Grid item xs={12} sm={4}>
@@ -183,22 +222,10 @@ const onChangePage= (page) => {
                 onChange={onChange}
                 onSearch={onSearch}
                 filterOption={filterOption}
-                style={{width:"250px"}}
-                options={[
-                  {
-                    value: 'Java',
-                    label: 'Java',
-                  },
-                  {
-                    value: 'Python ',
-                    label: 'Python ',
-                  },
-                  {
-                    value: 'Agile',
-                    label: 'Agile',
-                  },
-                ]}
-              />
+                style={{width:"100%"}}
+                options={competences.map(competence => ({ value: competence, label: competence }))}
+                  />
+              
                 </Grid>
               </Grid>
             </Grid>
@@ -213,7 +240,7 @@ const onChangePage= (page) => {
                 placeholder="Choisissez un niveau"
                 optionFilterProp="children"
                 onChange={onChange}
-                style={{width:"200px"}}
+                style={{width:"50%"}}
                 options={[
                   {
                     value: 'débutant',
@@ -239,7 +266,11 @@ const onChangePage= (page) => {
               <FormControl className={`${classes.formControl} ${classes.spacing}`} fullWidth>
                 <Typography variant="subtitle1" className={`${classes.label}`}>Points<span className={classes.redAsterisk}>*</span></Typography>
                 <Space wrap> 
-                    <InputNumber min={1} max={100000} defaultValue={1} onChange={onChange}  style={{width:200}}/>
+                    <InputNumber min={1}
+                     max={100000}
+                     defaultValue={1}
+                     onChange={onChange} 
+                     style={{width:"100%"}}/>
                     </Space>
          </FormControl>
             </Grid>
@@ -248,7 +279,9 @@ const onChangePage= (page) => {
                 <Typography variant="subtitle1" className={`${classes.label}`}>Temps<span className={classes.redAsterisk}>*</span></Typography>
                 <Grid container spacing={1}>
                   <Grid item xs={6}>
-                   <TimePicker value={value} onChange={onChangetime} style={{width:200}} />
+                   <TimePicker value={value}
+                    onChange={onChangetime} 
+                    style={{width:"100%"}} />
                   </Grid>
                 </Grid>
               </FormControl>
@@ -263,8 +296,8 @@ const onChangePage= (page) => {
                 <AntdSelect
                 placeholder="Choisir Type"
                 optionFilterProp="children"
-                onChange={onChange}
-                style={{width:"250px"}}
+                onChange={handleQuestionTypeChange}
+                style={{width:"30%"}} 
                 options={[
                   {
                     value: 'QCM',
@@ -286,16 +319,32 @@ const onChangePage= (page) => {
                 ]}
               />
             </Grid>
+              {/* Affichage du champ de téléchargement si "Image" est sélectionné comme type de question */}
+{selectedResponseType === 'Image' && (
+  <Paper elevation={3} className={`${classes.responseCard} ${classes.spacing}`}>
+    <Typography variant="subtitle1" className={`${classes.label}`}>Télécharger une image<span className={classes.redAsterisk}>*</span></Typography>
+    <CustomUpload />
+  </Paper>
+)}
             {/* Zone de saisie de la question */}
             <Grid item xs={12}>
-            <Typography variant="subtitle1" className={`${classes.label}`} >Question<span className={classes.redAsterisk}>*</span></Typography>
-            <TextArea rows={3} 
-            placeholder="Question"
-                value={question}
-                onChange={handleQuestionChange}
-                aria-label="Question"
-                />
-            </Grid>
+            <Typography
+  variant="subtitle1"
+  className={`${classes.label}`}
+  style={{ display: selectedResponseType === 'Image' ? 'none' : 'block' }}
+>
+  Question<span className={classes.redAsterisk}>*</span>
+</Typography>
+  <TextArea
+    rows={3}
+    placeholder="Question"
+    value={question}
+    onChange={handleQuestionChange}
+    aria-label="Question"
+    style={{ display: selectedResponseType === 'Image' ? 'none' : 'block' , width:"100%"}} // Condition pour masquer ou afficher la zone de texte
+  />
+</Grid>
+
           </Grid>
         {reponses.map((reponse, index) => (
   <Paper key={index} elevation={3} className={`${classes.responseCard} ${classes.spacing}`}>
@@ -308,16 +357,20 @@ const onChangePage= (page) => {
     <AntdSelect
       placeholder="Choisir Type"
       optionFilterProp="children"
-      onChange={onChange}
-      style={{width:"250px"}}
+      onChange={handleQuestionTypeChange}
+      style={{width:"30%"}} 
       options={[
-        { value: 'QCM', label: 'QCM' },
-        { value: 'Vrai/Faux', label: 'Vrai/Faux' },
         { value: 'Texte', label: 'Texte' },
-        { value: 'Code', label: 'Code' },
         { value: 'Image', label: 'Image' },
       ]}
-    />   
+    />  
+    {selectedResponseType === 'Image' && (
+  <Paper elevation={3} className={`${classes.responseCard} ${classes.spacing}`}>
+    <Typography variant="subtitle1" className={`${classes.label}`}>Télécharger une image<span className={classes.redAsterisk}>*</span></Typography>
+    <CustomUpload />
+  </Paper>
+)}
+ 
     <div className={classes.responseContainer}>
       <TextArea
         rows={2}
@@ -329,6 +382,7 @@ const onChangePage= (page) => {
         onChange={(e) => handleReponseChange(index, e)}
         className={`${classes.formControl} ${classes.spacing}`}
         aria-label={`Réponse ${index + 1}`}
+         style={{ display: selectedResponseType === 'Image' ? 'none' : 'block',width:"100%" }} 
       />
       <Switch
         checked={reponse.isCorrect}
@@ -336,7 +390,7 @@ const onChangePage= (page) => {
         color="primary"
         inputProps={{ 'aria-label': `Réponse correcte ${index + 1}` }}
       />
-      <IconButton onClick={() => supprimerReponse(index)} aria-label={`Supprimer réponse ${index + 1}`}>
+      <IconButton onClick={() => supprimerReponse(index)} aria-label={`Supprimer réponse ${index + 1}`} >
         <CloseIcon />
       </IconButton>
     </div>

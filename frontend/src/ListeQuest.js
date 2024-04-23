@@ -2,24 +2,20 @@ import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './AjoutQuestion.css';
 import { Table, Space, Modal, Select as AntdSelect  } from 'antd';
-import { EditOutlined, DeleteOutlined, SnippetsOutlined, PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons'; // Importez également l'icône de MinusCircleOutlined
+import { EditOutlined, DeleteOutlined, SnippetsOutlined, PlusCircleOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import {  useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Container, Typography, Grid, Paper , Button} from '@material-ui/core';
-
 
 const useStyles = makeStyles((theme) => ({
   paper: {
     padding: theme.spacing(3),
     borderRadius: theme.spacing(2),
-    
   },
   formControl: {
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
     minWidth: 200,
-    
-    
   },
   responseContainer: {
     marginTop: theme.spacing(1),
@@ -43,7 +39,6 @@ const useStyles = makeStyles((theme) => ({
   spacing: {
     marginTop: theme.spacing(1),
     marginBottom: theme.spacing(1),
-    
   },
   redAsterisk: {
     color: 'red',
@@ -114,16 +109,15 @@ function ListeQuest() {
   const handleAjouterQuestion = () => {
     history.push("/ajouter_question");
   };
+
   const onChange = (value) => {
     console.log(`Selected: ${value}`);
   };
   
-  // Define onSearch function
   const onSearch = (value) => {
     console.log('Searched:', value);
   };
   
-  // Define filterOption function
   const filterOption = (input, option) => {
     return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
   };
@@ -175,93 +169,62 @@ function ListeQuest() {
   ];
 
   return (
-    <Container maxWidth="md">
+    <Container maxWidth="lg">
       <Typography variant="h6" style={{ color: "#3987ee" }} align="center" gutterBottom>Liste de Question</Typography>
       <Paper elevation={3} className={`${classes.paper} ${classes.spacing}`}>
         <Typography variant="h7" className={`${classes.label}`} style={{ color: "#3987ee" }} gutterBottom>Paramètres de la Question<span className={classes.redAsterisk}>*</span></Typography>
         <Paper elevation={3} className={`${classes.responseCard} ${classes.spacing}`}>
-          
           <Grid container spacing={2} className={`${classes.spacing}`}>
-            {/* En-tête pour les paramètres */}
-            <Grid item xs={12} sm={12}>
+            <Grid item xs={12}>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={4}>
-                <Typography variant="h8" className={`${classes.label}`} >Langue<span className={classes.redAsterisk}>*</span></Typography>
-                <AntdSelect
-                placeholder="Choisir une Langue"
-                optionFilterProp="children"
-                onChange={onChange}
-                
-                filterOption={filterOption}
-                style={{width:"250px"}}
-                options={[
-                  {
-                    value: 'Francais',
-                    label: 'Francais',
-                  },
-                  {
-                    value: 'Anglais',
-                    label: 'Anglais',
-                  },
-                  {
-                    value: 'Arabe',
-                    label: 'Arabe',
-                  },
-                ]}
-              />
-
+                  <Typography variant="h8" className={`${classes.label}`} >Langue<span className={classes.redAsterisk}>*</span></Typography>
+                  <AntdSelect
+                    placeholder="Choisir une Langue"
+                    optionFilterProp="children"
+                    onChange={onChange}
+                    filterOption={filterOption}
+                    style={{width:"100%"}}
+                    options={[
+                      { value: 'Francais', label: 'Francais' },
+                      { value: 'Anglais', label: 'Anglais' },
+                      { value: 'Arabe', label: 'Arabe' },
+                    ]}
+                  />
                 </Grid>
                 <Grid item xs={12} sm={4}>
-                <Typography variant="h8" className={`${classes.label}`} >Domaine<span className={classes.redAsterisk}>*</span></Typography>
-                <AntdSelect
-                showSearch
-                placeholder="Choisir Domaine"
-                optionFilterProp="children"
-                onChange={onChange}
-                onSearch={onSearch}
-                filterOption={filterOption}
-                style={{width:"250px"}}
-                options={[
-                  {
-                    value: 'Programmation',
-                    label: 'Programmation',
-                  },
-                  {
-                    value: 'Design',
-                    label: 'Design',
-                  },
-                  {
-                    value: 'Gestion Projet',
-                    label: 'Gestion Projet',
-                  },
-                ]}
-              />
+                  <Typography variant="h8" className={`${classes.label}`} >Domaine<span className={classes.redAsterisk}>*</span></Typography>
+                  <AntdSelect
+                    showSearch
+                    placeholder="Choisir Domaine"
+                    optionFilterProp="children"
+                    onChange={onChange}
+                    onSearch={onSearch}
+                    filterOption={filterOption}
+                    style={{width:"100%"}}
+                    options={[
+                      { value: 'Programmation', label: 'Programmation' },
+                      { value: 'Design', label: 'Design' },
+                      { value: 'Gestion Projet', label: 'Gestion Projet' },
+                    ]}
+                  />
                 </Grid>
                 <Grid item xs={12} sm={4}>
-                <Typography variant="h8" className={`${classes.label}`} >Compétence<span className={classes.redAsterisk}>*</span></Typography>
-                <AntdSelect
-                showSearch
-                placeholder="Choisir Compétence"
-                optionFilterProp="children"
-                onChange={onChange}
-                onSearch={onSearch}
-                filterOption={filterOption}
-                style={{width:"250px"}}
-                options={[
-                  {
-                    value: 'Java',
-                    label: 'Java',
-                  },
-                  {
-                    value: 'Python ',
-                    label: 'Python ',
-                  },
-                  {
-                    value: 'Agile',
-                    label: 'Agile',
-                  },
-                ]}
-              />
+                  <Typography variant="h8" className={`${classes.label}`} >Compétence<span className={classes.redAsterisk}>*</span></Typography>
+                  <AntdSelect
+                    showSearch
+                    placeholder="Choisir Compétence"
+                    optionFilterProp="children"
+                    onChange={onChange}
+                    onSearch={onSearch}
+                    filterOption={filterOption}
+                    style={{width:"100%"}}
+                    options={[
+                      { value: 'Java', label: 'Java' },
+                      { value: 'Python', label: 'Python' },
+                      { value: 'Agile', label: 'Agile' },
+                    ]}
+                  />
                 </Grid>
               </Grid>
             </Grid>

@@ -27,9 +27,6 @@ exports.filterQuestions = async (req, res) => {
     }
 };
 
-
-
-
 // exports.filterQuestions = async (req, res) => {
 //     try {
 //         const languageCode = req.query.lang; // Langue spécifiée dans la requête

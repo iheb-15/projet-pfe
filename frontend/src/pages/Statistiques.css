@@ -1,0 +1,21 @@
+/* Statistiques.css */
+
+.BarChart-container {
+  width: 100%;
+  max-width: 950px; /* Ajustez selon vos besoins */
+  margin: 10px auto;
+  padding: 20px;
+  background-color: var(--background-color);
+  border-radius: 5px; /* Coins arrondis */
+  box-shadow: var(--light-shadow);
+  margin-left: 18px;
+}
+
+.bar-chart-info {
+  margin-bottom: 20px;
+}
+
+.bar-chart-title {
+  font-size: 20px;
+  font-weight: bold;
+}
