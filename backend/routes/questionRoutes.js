@@ -17,4 +17,8 @@ router.get('/domaines', featureController.getAllClasses);
 router.get('/competences', featureController.getAllSkills);
 router.get('/questions/:id', questionController.getQuestionById);
 router.get('/reponse/:idQuestion', act.getReponseById);
+router.put('/questionsupdate/:id', questionController.updateQuestionById);
+router.put('/Reponseupdate/:id', questionController.updateResponseById);
+
+
 module.exports = router;

@@ -26,10 +26,10 @@ const App = () => {
     <Switch>
       {/* Route pour le composant 'App'  */}
       <Route exact  path="/" >
-       {(connected ==='0' || connected==='1')
+       {/* {(connected ==='0' || connected==='1')
         ?<Redirect to="/Dashboard"/>
         :<Redirect to="/login"  />
-      }
+      } */}
       </Route>
       <Route path="/login" component={Authentification} />
       <Route path="/motPasseOublie" component={MotPasseOublie} />

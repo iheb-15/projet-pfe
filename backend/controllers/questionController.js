@@ -164,3 +164,61 @@ exports.getQuestionById = async (req, res) => {
     }
 };
 
+exports.updateQuestionById = async (req, res) => {
+    try {
+        const { question_fr, question_en, time, level, points } = req.body;
+        const updatedFields = {};
+        console.log("body",req.body)
+        console.log("all",question_fr, question_en, time, level, points);
+        // Vérifiez qu'au moins une version de la question est fournie dans le corps de la requête
+        if (question_fr) updatedFields.question_fr = question_fr;
+        if (question_en) updatedFields.question_en = question_en;
+        if (time) updatedFields.time = time;
+        if (level) updatedFields.level = level;
+        if (points) updatedFields.points = points;
+        
+        const updatedQuestion = await RecinovQuestion.findOneAndUpdate(
+            { _id: req.params.id },
+            { $set: updatedFields }, // Utilise $set pour mettre à jour les champs spécifiés
+            { new: true } // Pour renvoyer la version mise à jour de l'objet
+        );
+        
+        if (!updatedQuestion) {
+            return res.status(404).json({ message: 'Question not found' });
+        }
+        
+        res.json(updatedQuestion);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message  });
+    }
+};
+
+exports.updateResponseById = async (req, res) => {
+    try {
+        const { answer_fr, answer_en, isCorrect } = req.body;
+        const updatedFields = {};
+
+        // Vérifiez qu'au moins une version de la réponse est fournie dans le corps de la requête
+        if (answer_fr) updatedFields.answer_fr = answer_fr;
+        if (answer_en) updatedFields.answer_en = answer_en;
+        if (typeof isCorrect === 'boolean') updatedFields.isCorrect = isCorrect;
+        
+        const updatedResponse = await RecinovAnswer.findOneAndUpdate(
+            { _id: req.params.id }, // Recherche par ID de réponse
+            { $set: updatedFields }, // Utilise $set pour mettre à jour les champs spécifiés
+            { new: true } // Pour renvoyer la version mise à jour de l'objet
+        );
+
+        // Vérifiez si la réponse a été mise à jour avec succès
+        if (!updatedResponse) {
+            return res.status(404).json({ message: 'Response not found' });
+        }
+
+        // Envoyer la réponse mise à jour au client
+        res.json(updatedResponse);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+};

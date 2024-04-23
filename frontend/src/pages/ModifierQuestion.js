@@ -9,7 +9,8 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Select } from 'antd';
 
-const { Option } = Select;
+
+
 const useStyles = makeStyles((theme) => ({
   paper: {
     padding: theme.spacing(3),
@@ -102,11 +103,14 @@ function Modifier(props) {
   const [classifiedData, setClassifiedData] = useState({});
   const [domaines, setDomaines] = useState([]);
   const [reponse, setReponse] = useState('');
+  const[questions,setQuestions]=useState('');
   const { Option } = Select;
   const [competences, setCompetences] = useState([]);
-  
-
-
+  const [isCorrect, setIsCorrect] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [question_fr, setQuestionFr] = useState('');
+  const [minutes, setMinutes]=useState(0);
+  const[secondes,setSecondes]=useState(0);
   const {id}=useParams();
   console.log('id',id)
   console.log("ID from URL:", idFromUrl);
@@ -122,7 +126,7 @@ function Modifier(props) {
         const { level, points, time } = response.data;
         const minutes = Math.floor(time / 60);
         const secondes = time % 60;
-         // Convertir level en texte correspondant
+        
       let levelText = "";
       switch(level) {
         case 0:
@@ -143,6 +147,8 @@ function Modifier(props) {
         setNiveau(levelText);
         setPoints(points);
         setTemps({ minutes, secondes });
+        setMinutes(minutes);
+        setSecondes(secondes);
       } catch (error) {
         console.error(error);
       }
@@ -200,9 +206,9 @@ useEffect(() => {
   fetchData();
 }, []);
                                                            
-
+// pour récuprer les domaines depuis stockage local
 useEffect(() => {
-  // pour récuprer les domaines depuis stockage local
+  
   const domainesStorage = localStorage.getItem('domaines');
 
 if (domainesStorage) {
@@ -276,17 +282,17 @@ const filteredObjects = domaines.filter((obj, index, self) =>
   const handleCancelSelections = () => {
     setSelectedCompetence(null); // Réinitialise la sélection
   };
-
+// Fonction pour récupérer la question
   useEffect(() => {
-    // Fonction pour récupérer la question
+    
     const fetchQuestion = async () => {
       try {
         const response = await axios.get(`http://localhost:3002/api/questions/${id}`);
         console.log(response);
         setQuestion(response.data);
         console.log('Level:', response.data.level);
-      console.log('Point:', response.data.points);
-      console.log('Time:', response.data.time);
+        console.log('Point:', response.data.points);
+        console.log('Time:', response.data.time);
       } catch (error) {
         console.error(error);
       }
@@ -315,7 +321,75 @@ const filteredObjects = domaines.filter((obj, index, self) =>
 
   console.log('idRep',id);
 
+  const handleChanges = (field, value) => {
+    setQuestion(prevQuestion => ({
+        ...prevQuestion,
+        [field]: value
+    }));
+};
 
+// const handleChanges = (field, value) => {
+//   let newValue = value; // Suppose que la valeur est déjà en secondes
+
+//   if (field === "time") {
+//       // Convertir le temps en minutes et secondes
+//       const minutes = Math.floor(value / 60);
+//       const seconds = value % 60;
+//       newValue = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+//   }
+
+//   setQuestion(prevQuestion => ({
+//       ...prevQuestion,
+//       [field]: newValue
+//   }));
+// };
+
+
+  const handleChange = (index, field, value) => {
+    const updatedResponses = reponse.map((response, idx) => {
+      if (idx === index) {
+        return { ...response, [field]: value };
+      }
+      return response;
+    });
+    setReponse(updatedResponses);
+  };
+ 
+// pour update answer 
+   
+  const handleUpdate = async () => {
+    try {
+        await Promise.all(
+            reponse.map(async (response) => {
+                
+                const updatedResponse = {
+                    ...response,
+                    isCorrect: response.isCorrect 
+                };
+               
+                // Envoyer une requête PUT pour mettre à jour la réponse
+                await axios.put(`http://localhost:3002/api/Reponseupdate/${response._id}`, updatedResponse);
+              })
+            );
+            console.log(minutes,secondes)
+            const tim = Number(minutes) * 60+ Number(secondes);
+            
+            console.log(tim)
+            setQuestion(prevState => ({
+              ...prevState,
+              time: tim
+          }));
+          
+                      
+            await axios.put(`http://localhost:3002/api/questionsupdate/${id}`, question);
+            console.log(question);
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour des réponses:', error);
+    }
+};
+
+
+ 
   const handleImageUpload = (event) => {
     const file = event.target.files[0]; 
     console.log('Image uploaded:', file);
@@ -347,6 +421,8 @@ const filteredObjects = domaines.filter((obj, index, self) =>
       return updatedReponse;
     });
   };
+ 
+
   const handleTypeChange = (e) => setSelectedType(e.target.value);
   
 
@@ -377,7 +453,7 @@ const onSearch = (value) => {
   const handleCancelSelection = () => {
     setSelectedDomaine(null); // Réinitialise la sélection
   };
- 
+  
 //unique pour domaines
 const uniqueClasses = new Set(domaines.map(domaine => domaine.class));
 // Créer des options à partir des noms de classe uniques
@@ -413,8 +489,9 @@ console.log(skillOptions);
                 <FormControl className={`${classes.formControl} ${classes.spacing}`} fullWidth>
                   <Typography variant="subtitle1" className={`${classes.label}`}>Niveau<span className={classes.redAsterisk}>*</span></Typography>
                   <Select
-                    value={niveau}
-                    onChange={handleNiveauChange}
+                    defaultValue={question.levelText}
+                    // onChange={handleNiveauChange}
+                    onChange={(event) => handleChanges('level', event.target.value)}
                     displayEmpty
                     inputProps={{ 'aria-label': 'Niveau' }}
                     variant="outlined"
@@ -433,8 +510,9 @@ console.log(skillOptions);
                   <Typography variant="subtitle1" className={`${classes.label}`}>Points<span className={classes.redAsterisk}>*</span></Typography>
                   <TextField
                     type="number"
-                    value={points}
-                    onChange={handlePointsChange}
+                    value={question.points}
+                    // onChange={handlePointsChange}
+                    onChange={(event) => handleChanges('points', event.target.value)}
                     variant="outlined"
                     fullWidth
                     inputProps={{ min: 0 }}
@@ -448,11 +526,22 @@ console.log(skillOptions);
                   <Typography variant="subtitle1" className={`${classes.label}`}>Temps<span className={classes.redAsterisk}>*</span></Typography>
                   <Grid container spacing={1}>
                     <Grid item xs={6}>
+                    {console.log(minutes,secondes) }
                       <TextField
                         type="number"
                         label="Min"
-                        value={temps.minutes}
-                        onChange={handleMinutesChange}
+                        value={minutes}
+                        
+                        
+
+                        onChange= {(event) =>{
+                          console.log(event)
+                          setMinutes(event.target.value)}
+                        } 
+                         
+
+                       
+                        
                         variant="outlined"
                         inputProps={{ min: 0 }}
                       />
@@ -461,8 +550,13 @@ console.log(skillOptions);
                       <TextField
                         type="number"
                         label="Sec"
-                        value={temps.secondes}
-                        onChange={handleSecondesChange}
+                        value={secondes}
+                        
+                        onChange={(event) =>{
+                          console.log(event)
+                          setSecondes(event.target.value)}
+                        }
+                          
                         variant="outlined"
                         inputProps={{ min: 0, max: 59 }}
                       />
@@ -553,21 +647,23 @@ console.log(skillOptions);
                 </Grid>
                 {selectedType !== "image" && (
                     <>
-                    
-                        <Grid item xs={12}>
-                            <TextField
-                                label={`Question en français*`}
-                                multiline
-                                rows={2}
-                                variant="outlined"
-                                fullWidth
-                                value={question.question_fr}
-                                onChange={(event) => handleQuestionChange(event, 'question')}
-                                className={`${classes.formControl} ${classes.spacing} `}
-                                aria-label="Question en français"
-                            />
+                       
+                    <Grid item xs={12}>
+                        <TextField
+                            label={`Question en français*`}
+                            multiline
+                            rows={2}
+                            variant="outlined"
+                            fullWidth
+                            value={question.question_fr}
                             
-                        </Grid>
+                            onChange={(event) => handleChanges('question_fr', event.target.value)}
+                            className={`${classes.formControl} ${classes.spacing} `}
+                            aria-label="Question en français"
+                        />
+                    </Grid>
+                    
+                        {/* question_en */}
                         <Grid item xs={12}>
                             <TextField
                                 label="Question en anglais*"
@@ -576,7 +672,8 @@ console.log(skillOptions);
                                 variant="outlined"
                                 fullWidth
                                 value={question.question_en}
-                                onChange={(event) => handleQuestionChange(event, 'question')}
+                                // onChange={(event) => handleQuestionChange(event, 'question')}
+                                onChange={(event) => handleChanges('question_en', event.target.value)}
                                 className={`${classes.formControl} ${classes.spacing}`}
                                 aria-label="Question en anglais"
                             />
@@ -614,7 +711,7 @@ console.log(skillOptions);
                {reponse && selectedResponseType !== "image" && (
                               <>
                               {reponse.map((reponseItem, index) => (
-                                      <div key={index}>
+                                      <div key={reponseItem}>
                                         <div className={classes.responseContainer}>
                                           <TextField
                                             label={`réponse ${index + 1} (français)*`}
@@ -623,7 +720,8 @@ console.log(skillOptions);
                                             variant="outlined"
                                             fullWidth
                                             value={reponseItem.answer_fr}
-                                            onChange={(e) => handleReponseChange(e, 'reponse_fr', index)}
+                                            
+                                            onChange={(e) => handleChange(index, 'answer_fr', e.target.value)}
                                             className={`${classes.formControl} ${classes.spacing}`}
                                             aria-label={`réponse ${index + 1}`}
                                           />
@@ -646,7 +744,8 @@ console.log(skillOptions);
                                             variant="outlined"
                                             fullWidth
                                             value={reponseItem.answer_en}
-                                            onChange={(e) => handleReponseChange(e, 'reponse_en', index)}
+                                            
+                                            onChange={(e) => handleChange(index, 'answer_en', e.target.value)}
                                             className={`${classes.formControl} ${classes.spacing}`}
                                             aria-label={`réponse ${index + 1}`}
                                           />
@@ -703,7 +802,8 @@ console.log(skillOptions);
           <Button
             variant="contained"
             style={{ color: '#fff', backgroundColor: '#3987ee', float: 'right', marginTop: '35px' }}
-            onClick={handleModifierQuestion}
+            // onClick={handleModifierQuestion}
+            onClick={handleUpdate}
           >
             Modifier
           </Button>

@@ -15,6 +15,9 @@ const recinovQuestionSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Language',
   },
+  level: Number,
+  points: Number,
+  time: Number
   
 }, { collection: 'recinovquestions', timestamps: true });
 
