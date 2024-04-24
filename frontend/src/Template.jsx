@@ -103,7 +103,7 @@ console.log("connected",connected)
       
       
       
-      {/* {(connected ==='0' || connected==='1') && <Redirect to="/Dashboard"/>} */}
+      {(connected ==='0' || connected==='1') && <Redirect to="/Dashboard"/>}
 
         <Sider trigger={null} collapsible collapsed={collapsed} style={{ background: '#3987ee' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column'  }}>

@@ -222,3 +222,30 @@ exports.updateResponseById = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+
+//     try {
+//         const { question_fr, question_en, time, level, points } = req.body;
+//         const newQuestionData = {};
+
+//         // Ajout des champs au nouvel objet s'ils sont fournis dans la requête
+//         if (question_fr) newQuestionData.question_fr = question_fr;
+//         if (question_en) newQuestionData.question_en = question_en;
+//         if (time) newQuestionData.time = time;
+//         if (level) newQuestionData.level = level;
+//         if (points) newQuestionData.points = points;
+
+//         // Log les données pour vérifier ce qui est envoyé à la base de données
+//         console.log("body", req.body);
+//         console.log("all", question_fr, question_en, time, level, points);
+
+//         // Création d'une nouvelle question dans la base de données
+//         const newQuestion = await RecinovQuestion.create(newQuestionData);
+
+//         // Renvoyer la question nouvellement créée
+//         res.json(newQuestion);
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ message: error.message });
+//     }
+// };

@@ -111,6 +111,7 @@ function Modifier(props) {
   const [question_fr, setQuestionFr] = useState('');
   const [minutes, setMinutes]=useState(0);
   const[secondes,setSecondes]=useState(0);
+  const [level, setLevel] = useState('');
   const {id}=useParams();
   console.log('id',id)
   console.log("ID from URL:", idFromUrl);
@@ -127,24 +128,8 @@ function Modifier(props) {
         const minutes = Math.floor(time / 60);
         const secondes = time % 60;
         
-      let levelText = "";
-      switch(level) {
-        case 0:
-          levelText = "Junior";
-          break;
-        case 1:
-          levelText = "Intermédiaire";
-          break;
-        case 2:
-          levelText = "Senior";
-          break;
-        case 3:
-          levelText = "Expert";
-          break;
-        default:
-          levelText = "";
-      }
-        setNiveau(levelText);
+      
+        setNiveau(level);
         setPoints(points);
         setTemps({ minutes, secondes });
         setMinutes(minutes);
@@ -156,22 +141,7 @@ function Modifier(props) {
     fetchData();
   }, [id]);
 
-  const handleNiveauChange = (event) => {
-    setNiveau(event.target.value);
-  };
-
-  const handlePointsChange = (event) => {
-    setPoints(event.target.value);
-  };
-
-  const handleMinutesChange = (event) => {
-    setTemps({ ...temps, minutes: event.target.value });
-  };
-
-  const handleSecondesChange = (event) => {
-    setTemps({ ...temps, secondes: event.target.value });
-  };
-
+  
 
 
 
@@ -328,22 +298,6 @@ const filteredObjects = domaines.filter((obj, index, self) =>
     }));
 };
 
-// const handleChanges = (field, value) => {
-//   let newValue = value; // Suppose que la valeur est déjà en secondes
-
-//   if (field === "time") {
-//       // Convertir le temps en minutes et secondes
-//       const minutes = Math.floor(value / 60);
-//       const seconds = value % 60;
-//       newValue = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-//   }
-
-//   setQuestion(prevQuestion => ({
-//       ...prevQuestion,
-//       [field]: newValue
-//   }));
-// };
-
 
   const handleChange = (index, field, value) => {
     const updatedResponses = reponse.map((response, idx) => {
@@ -380,6 +334,7 @@ const filteredObjects = domaines.filter((obj, index, self) =>
               time: tim
           }));
           
+            
                       
             await axios.put(`http://localhost:3002/api/questionsupdate/${id}`, question);
             console.log(question);
@@ -473,9 +428,10 @@ const skillOptions = Array.from(uniqueskill).map(skillName => {
   };
 });
 console.log(skillOptions);
-  
 
-
+const handleLevelChange = (event) => {
+  setLevel(event.target.value); // Mettre à jour le niveau avec la nouvelle valeur sélectionnée
+};
   return (
     <Container maxWidth="md">
       <Typography variant="h6" style={{ color: "#3987ee" }} align="center" gutterBottom>Modifier Question</Typography>
@@ -488,19 +444,29 @@ console.log(skillOptions);
               <Grid item xs={4}>
                 <FormControl className={`${classes.formControl} ${classes.spacing}`} fullWidth>
                   <Typography variant="subtitle1" className={`${classes.label}`}>Niveau<span className={classes.redAsterisk}>*</span></Typography>
+                  
                   <Select
-                    defaultValue={question.levelText}
-                    // onChange={handleNiveauChange}
-                    onChange={(event) => handleChanges('level', event.target.value)}
+
+                    // value={level} 
+                    onChange={ (e)=> {
+                      console.log(e)
+                      setQuestion(prevQuestion => ({
+                        ...prevQuestion,
+                        level: e
+                      }))
+                    } }
+                    value={question.level}
+                    
+                    
                     displayEmpty
                     inputProps={{ 'aria-label': 'Niveau' }}
                     variant="outlined"
                   >
                     <MenuItem value="" disabled>Choisissez un niveau</MenuItem>
-                    <MenuItem value="0">Junior</MenuItem>
-                    <MenuItem value="1">Intermédiaire</MenuItem>
-                    <MenuItem value="2">Senior</MenuItem>
-                    <MenuItem value="3">Expert</MenuItem>
+                    <MenuItem value={0}>Junior</MenuItem>
+                    <MenuItem value={1}>Intermédiaire</MenuItem>
+                    <MenuItem value={2}>Senior</MenuItem>
+                    <MenuItem value={3}>Expert</MenuItem>
                   </Select>
                 </FormControl>
               </Grid>
@@ -511,8 +477,9 @@ console.log(skillOptions);
                   <TextField
                     type="number"
                     value={question.points}
-                    // onChange={handlePointsChange}
+                    
                     onChange={(event) => handleChanges('points', event.target.value)}
+
                     variant="outlined"
                     fullWidth
                     inputProps={{ min: 0 }}

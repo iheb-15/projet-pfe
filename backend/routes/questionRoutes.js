@@ -20,5 +20,7 @@ router.get('/reponse/:idQuestion', act.getReponseById);
 router.put('/questionsupdate/:id', questionController.updateQuestionById);
 router.put('/Reponseupdate/:id', questionController.updateResponseById);
 
+// router.post('/ajoutquestions', questionController.addQuestion);
+
 
 module.exports = router;
