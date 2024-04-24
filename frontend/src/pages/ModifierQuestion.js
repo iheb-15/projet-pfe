@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
     padding: theme.spacing(3),
     borderRadius: theme.spacing(2),
     [theme.breakpoints.down('sm')]: {
-      padding: theme.spacing(2), // Réduire le padding pour les écrans plus petits
+      padding: theme.spacing(2), 
     },
   },
   formControl: {
@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: theme.spacing(1),
     minWidth: 200,
     [theme.breakpoints.down('sm')]: {
-      minWidth: '100%', // Pour rendre les Select pleine largeur sur les petits écrans
+      minWidth: '100%', 
     },
   
   },
@@ -75,15 +75,26 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   subtitle: {
-    fontSize: theme.typography.pxToRem(14), // Réduire la taille de la police pour les sous-titres
+    fontSize: theme.typography.pxToRem(14), 
     [theme.breakpoints.down('sm')]: {
-      fontSize: theme.typography.pxToRem(12), // Réduire la taille de la police pour les écrans plus petits
+      fontSize: theme.typography.pxToRem(12), 
     },
   },
 }));
 
+<<<<<<< HEAD
 function Modifier(props) {
   const [idFromUrl, setIdFromUrl] = useState(null);
+=======
+function Modifier() {
+
+
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0]; 
+    console.log('Image uploaded:', file);
+  };
+
+>>>>>>> 2a16c3f1642f1760398a8cb5d235cc408d136f96
   const classes = useStyles();
   const history = useHistory();
   const [selectedSkill, setSelectedSkill] = useState('');
@@ -356,7 +367,7 @@ const filteredObjects = domaines.filter((obj, index, self) =>
   const handleModifierQuestion = () => {
     
     window.confirm('Question modifiée avec succès !')
-    // Afficher la boîte de dialogue
+  
      };
 
   const handleReponseChange = (index, e) => {
@@ -437,10 +448,10 @@ const handleLevelChange = (event) => {
       <Typography variant="h6" style={{ color: "#3987ee" }} align="center" gutterBottom>Modifier Question</Typography>
       <Paper elevation={3} className={`${classes.paper} ${classes.spacing}`}>
         <Typography variant="h7" className={`${classes.label}`} style={{ color: "#3987ee" }} gutterBottom>Paramètres de la Question<span className={classes.redAsterisk}>*</span></Typography>
-         {/* Section pour les niveaux, points et temps */}
+        
          <Paper className={classes.section}>
             <Grid container spacing={2} className={`${classes.spacing}`}>
-              {/* Sélection du niveau */}
+             
               <Grid item xs={4}>
                 <FormControl className={`${classes.formControl} ${classes.spacing}`} fullWidth>
                   <Typography variant="subtitle1" className={`${classes.label}`}>Niveau<span className={classes.redAsterisk}>*</span></Typography>
@@ -470,7 +481,7 @@ const handleLevelChange = (event) => {
                   </Select>
                 </FormControl>
               </Grid>
-              {/* Saisie des points */}
+             
               <Grid item xs={4}>
                 <FormControl className={`${classes.formControl} ${classes.spacing}`} fullWidth>
                   <Typography variant="subtitle1" className={`${classes.label}`}>Points<span className={classes.redAsterisk}>*</span></Typography>
@@ -486,8 +497,12 @@ const handleLevelChange = (event) => {
                   />
                 </FormControl>
               </Grid>
+<<<<<<< HEAD
               {/* Saisie du temps */}
               
+=======
+            
+>>>>>>> 2a16c3f1642f1760398a8cb5d235cc408d136f96
               <Grid item xs={4}>
                 <FormControl className={`${classes.formControl} ${classes.spacing}`} fullWidth>
                   <Typography variant="subtitle1" className={`${classes.label}`}>Temps<span className={classes.redAsterisk}>*</span></Typography>
@@ -537,6 +552,7 @@ const handleLevelChange = (event) => {
           {/* Sélection du domaine */}
         <Paper className={classes.section}>
           <Grid container spacing={2} className={`${classes.spacing}`}>
+<<<<<<< HEAD
           <Grid item xs={12} sm={4}>
                 <Typography variant="h8" className={`${classes.label}`} >Domaine<span className={classes.redAsterisk}>*</span></Typography>
                 <Select
@@ -547,6 +563,35 @@ const handleLevelChange = (event) => {
                     onChange={handleDomaineChange}
                     onSearch={onSearch}
                     filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
+=======
+           
+         
+            <Grid item xs={4}>
+              <FormControl className={`${classes.formControl} ${classes.spacing}`} fullWidth>
+                <Typography variant="subtitle1" className={`${classes.label}`}>Domaine<span className={classes.redAsterisk}>*</span></Typography>
+                <Select
+                  value={selectedDomaine}
+                  onChange={handleDomaineChange}
+                  displayEmpty
+                  inputProps={{ 'aria-label': 'Domaine' }}
+                >
+                  <MenuItem value="" disabled>Choisissez un domaine</MenuItem>
+                  <MenuItem value="programmation">Programmation</MenuItem>
+                  <MenuItem value="design">Design</MenuItem>
+                  <MenuItem value="gestion_projet">Gestion de projet</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            
+            <Grid item xs={4}>
+              <FormControl className={`${classes.formControl} ${classes.spacing}`} fullWidth>
+                <Typography variant="subtitle1" className={`${classes.label}`}>Compétence<span className={classes.redAredAsterisk}>*</span></Typography>
+                <Select
+                  value={selectedSkill}
+                  onChange={handleSkillChange}
+                  displayEmpty
+                  inputProps={{ 'aria-label': 'Compétences' }}
+>>>>>>> 2a16c3f1642f1760398a8cb5d235cc408d136f96
                   >
                     <Option key="null" value={null} onClick={handleCancelSelection}>
                       Aucun domaines
@@ -588,6 +633,7 @@ const handleLevelChange = (event) => {
                 </Grid>
             </Grid>
           </Paper>
+<<<<<<< HEAD
           {/* Type de Question */}
           <Paper className={classes.section}>
             <Grid container spacing={2} className={classes.spacing}>
@@ -661,6 +707,14 @@ const handleLevelChange = (event) => {
               {/* Section pour les réponses */}
               <Paper elevation={3} className={`${classes.responseCard} ${classes.spacing}`}>
               <Typography variant="subtitle1" gutterBottom>Type de Réponse</Typography>
+=======
+                <Paper className={classes.section}>
+        <Grid container spacing={2} className={`${classes.spacing}`}>
+         
+          <Grid item xs={12}>
+            <FormControl className={`${classes.formControl} ${classes.expandedTextField}`} fullWidth>
+              <Typography variant="subtitle1" className={`${classes.label}`}>Type de Question<span className={classes.redAsterisk}>*</span></Typography>
+>>>>>>> 2a16c3f1642f1760398a8cb5d235cc408d136f96
               <Select
                 value={selectedResponseType} 
                 onChange={handleResponseTypeChange} 
@@ -671,6 +725,7 @@ const handleLevelChange = (event) => {
                 <MenuItem value="" disabled>Choisissez un type</MenuItem>
                 <MenuItem value="vrai-faux">Vrai/Faux</MenuItem>
                 <MenuItem value="qcm">QCM</MenuItem>
+<<<<<<< HEAD
                 <MenuItem value="image">Image</MenuItem>
                 <MenuItem value="text">text</MenuItem>
               </Select>
@@ -764,8 +819,113 @@ const handleLevelChange = (event) => {
 
 
             </Paper>
+=======
+                <MenuItem value="image">Image</MenuItem> 
+              </Select>
+            </FormControl>
+          </Grid>
+        
+          {selectedType !== "image" ? (
+            <Grid item xs={12}>
+              <TextField
+                label="Question*"
+                multiline
+                variant="outlined"
+                fullWidth
+                value={question}
+                onChange={handleQuestionChange}
+              
+               
+              />
+            </Grid>
+          ) : (
+            <Grid item xs={12}>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageUpload}
+              />
+            </Grid>
+          )}
+        </Grid>
+      </Paper>
+       
+          <Paper elevation={3} className={`${classes.responseCard} ${classes.spacing}`}>
+      <Typography variant="subtitle1" gutterBottom>Type de Réponse<span className={classes.redAsterisk}>*</span></Typography>
+      <Select
+        value={selectedType}
+        onChange={handleTypeChange}
+        displayEmpty
+        inputProps={{ 'aria-label': 'Type de Réponse' }}
+        className={`${classes.select} ${classes.spacing}`}
+      >
+        <MenuItem value="" disabled>Choisissez un type</MenuItem>
+        <MenuItem value="vrai-faux">Vrai/Faux</MenuItem>
+        <MenuItem value="qcm">QCM</MenuItem>
+        <MenuItem value="image">Image</MenuItem>
+      </Select>
+      {selectedType !== "image" && (
+        <>
+          {reponses.map((reponse, index) => (
+            <div key={index} className={classes.responseContainer}>
+              <TextField
+                label={`Réponse ${index + 1}*`}
+                multiline
+                rows={2}
+                variant="outlined"
+                fullWidth
+                value={reponse.text}
+                onChange={(e) => handleReponseChange(index, e)}
+                className={`${classes.formControl} ${classes.spacing}`}
+                aria-label={`Réponse ${index + 1}`}
+              />
+              <Switch
+                checked={reponse.isCorrect}
+                onChange={() => handleCorrectChange(index)}
+                color="primary"
+                inputProps={{ 'aria-label': `Réponse correcte ${index + 1}` }}
+              />
+              <IconButton onClick={() => supprimerReponse(index)} aria-label={`Supprimer réponse ${index + 1}`}>
+                <CloseIcon />
+              </IconButton>
+            </div>
+          ))}
+          {selectedType !== "image" && reponses.every(reponse => !reponse.isCorrect) && (
+            <Typography variant="body2" style={{ color: 'red' }}>Au moins une réponse doit être correcte.</Typography>
+          )}
+          <Button variant="contained" style={{ color: '#fff', backgroundColor: '#3987ee' }} onClick={ajouterReponse} className={classes.addButton} aria-label="Ajouter réponse">Ajouter Réponse</Button>
+        </>
+      )}
+      {selectedType === "image" && (
+        <>
+          {reponses.map((reponse, index) => (
+            <div key={index} className={classes.responseContainer}>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => handleImageUpload(index, e)}
+              />
+              <Switch
+                checked={reponse.isCorrect}
+                onChange={() => handleCorrectChange(index)}
+                color="primary"
+                inputProps={{ 'aria-label': `Réponse correcte ${index + 1}` }}
+              />
+              <IconButton onClick={() => supprimerReponse(index)} aria-label={`Supprimer réponse ${index + 1}`}>
+                <CloseIcon />
+              </IconButton>
+            </div>
+          ))}
+          {selectedType === "image" && reponses.every(reponse => !reponse.isCorrect) && (
+            <Typography variant="body2" style={{ color: 'red' }}>Au moins une réponse doit être correcte.</Typography>
+          )}
+          <Button variant="contained" style={{ color: '#fff', backgroundColor: '#3987ee' }} onClick={ajouterReponse} className={classes.addButton} aria-label="Ajouter réponse">Ajouter Image</Button>
+        </>
+      )}
+    </Paper>
+>>>>>>> 2a16c3f1642f1760398a8cb5d235cc408d136f96
          
-          {/* Bouton pour Modier la question */}
+        
           <Button
             variant="contained"
             style={{ color: '#fff', backgroundColor: '#3987ee', float: 'right', marginTop: '35px' }}
@@ -774,7 +934,7 @@ const handleLevelChange = (event) => {
           >
             Modifier
           </Button>
-            {/* Bouton pour retourner */}
+          
             <Button
             variant="contained"
             style={{ color: '#fff', backgroundColor: '#3987ee', float: 'right', marginRight: '10px', marginTop: '35px' }}

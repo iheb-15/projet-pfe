@@ -1,0 +1,21 @@
+.user-data-container {
+    width: 100%;
+    max-width: 500px;
+    margin: 10px auto;
+    padding: 20px;
+    background-color: var(--background-color);
+    border-radius: 5px;
+    box-shadow: var(--light-shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: 18px;
+  }
+  
+  .chart-title {
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: 700;
+    color: black;
+  }
+  

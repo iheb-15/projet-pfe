@@ -20,6 +20,7 @@ exports.filterQuestions = async (req, res) => {
     }
 };
 
+<<<<<<< HEAD
 
 
 exports.getAllClasses = async (req, res) => {
@@ -39,6 +40,12 @@ exports.getAllSkills = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 }; 
+=======
+// exports.filterQuestions = async (req, res) => {
+//     try {
+//         const languageCode = req.query.lang; // Langue spécifiée dans la requête
+//         let questionField = ''; // Initialiser la variable pour contenir le champ à sélectionner
+>>>>>>> 2a16c3f1642f1760398a8cb5d235cc408d136f96
 
 exports.getAllAnswers = async (req, res) => {
     try {

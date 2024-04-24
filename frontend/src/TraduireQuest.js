@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Container, Typography, TextField, Button, Select, MenuItem, FormControl, Grid, IconButton, Paper, Switch , Snackbar } from '@material-ui/core';
+import { Container, Typography, Button, Grid, IconButton, Paper, Switch} from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from '@material-ui/core/styles';
 import { toast } from 'react-toastify';
@@ -62,13 +62,10 @@ const useStyles = makeStyles((theme) => ({
 }));
 function TraduireQuest() {
     const classes = useStyles();
-    const [selectedDomaine, setSelectedDomaine] = useState('');
-    const [selectedSkill, setSelectedSkill] = useState('');
     const [question, setQuestion] = useState('');
     const [reponses, setReponses] = useState([{ text: '', isCorrect: false }]);
-    const [selectedType, setSelectedType] = useState('');
+
     const handleQuestionChange = (e) => setQuestion(e.target.value);
-   
     const handleReponseChange = (index, e) => {
       const newReponses = [...reponses];
       newReponses[index].text = e.target.value;
@@ -79,7 +76,6 @@ function TraduireQuest() {
       newReponses[index].isCorrect = !newReponses[index].isCorrect;
       setReponses(newReponses);
     };
-    const ajouterReponse = () => setReponses([...reponses, { text: '', isCorrect: false }]);
     const supprimerReponse = (index) => {
       const newReponses = [...reponses];
       newReponses.splice(index, 1);
@@ -100,130 +96,22 @@ function TraduireQuest() {
 const onChange = (value) => {
   console.log(`Selected: ${value}`);
 };
-
-// Define onSearch function
-const onSearch = (value) => {
-  console.log('Searched:', value);
-};
-
-// Define filterOption function
-const filterOption = (input, option) => {
-  return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
-};
     return  (
         <Container maxWidth="md">
           <Typography variant="h6" style={{ color: "#3987ee" }} align="center" gutterBottom>Ajouter une Question</Typography>
           <Paper elevation={3} className={`${classes.paper} ${classes.spacing}`}>
             <Typography variant="h7" className={`${classes.label}`} style={{ color: "#3987ee" }} gutterBottom>Traduire Question<span className={classes.redAsterisk}>*</span></Typography>
-            <Paper elevation={3} className={`${classes.responseCard} ${classes.spacing}`}>
-          
-          <Grid container spacing={2} className={`${classes.spacing}`}>
-            {/* En-tête pour les paramètres */}
-            <Grid item xs={12} sm={12}>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={4}>
-                <Typography variant="h8" className={`${classes.label}`} >Langue<span className={classes.redAsterisk}>*</span></Typography>
-                <AntdSelect
-                placeholder="Choisir une Langue"
-                optionFilterProp="children"
-                onChange={onChange}
-                
-                filterOption={filterOption}
-                style={{width:"250px"}}
-                options={[
-                  {
-                    value: 'Francais',
-                    label: 'Francais',
-                  },
-                  {
-                    value: 'Anglais',
-                    label: 'Anglais',
-                  },
-                  {
-                    value: 'Arabe',
-                    label: 'Arabe',
-                  },
-                ]}
-              />
-
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                <Typography variant="h8" className={`${classes.label}`} >Domaine<span className={classes.redAsterisk}>*</span></Typography>
-                <AntdSelect
-                showSearch
-                placeholder="Choisir Domaine"
-                optionFilterProp="children"
-                onChange={onChange}
-                onSearch={onSearch}
-                filterOption={filterOption}
-                style={{width:"250px"}}
-                options={[
-                  {
-                    value: 'Programmation',
-                    label: 'Programmation',
-                  },
-                  {
-                    value: 'Design',
-                    label: 'Design',
-                  },
-                  {
-                    value: 'Gestion Projet',
-                    label: 'Gestion Projet',
-                  },
-                ]}
-              />
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                <Typography variant="h8" className={`${classes.label}`} >Compétence<span className={classes.redAsterisk}>*</span></Typography>
-                <AntdSelect
-                showSearch
-                placeholder="Choisir Compétence"
-                optionFilterProp="children"
-                onChange={onChange}
-                onSearch={onSearch}
-                filterOption={filterOption}
-                style={{width:"250px"}}
-                options={[
-                  {
-                    value: 'Java',
-                    label: 'Java',
-                  },
-                  {
-                    value: 'Python ',
-                    label: 'Python ',
-                  },
-                  {
-                    value: 'Agile',
-                    label: 'Agile',
-                  },
-                ]}
-              />
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-        </Paper>
         <Paper elevation={3} className={`${classes.responseCard} ${classes.spacing}`}>
           <Grid container spacing={2} className={`${classes.spacing}`}>
             {/* Sélection du type de question */}
             <Grid item xs={12}>
-             
                 <Typography variant="subtitle1" className={`${classes.label}`} >Type de Question<span className={classes.redAsterisk}>*</span></Typography>
                 <AntdSelect
-                
                 placeholder="Choisir Type"
                 optionFilterProp="children"
                 onChange={onChange}
                 style={{width:"250px"}}
                 options={[
-                  {
-                    value: 'QCM',
-                    label: 'QCM',
-                  },
-                  {
-                    value: 'Vrai/Faux',
-                    label: 'Vrai/Faux',
-                  },
                   {
                     value: 'Texte',
                     label: 'Texte',
@@ -243,8 +131,48 @@ const filterOption = (input, option) => {
             <Grid item xs={12}>
             <Typography variant="subtitle1" className={`${classes.label}`} >Question<span className={classes.redAsterisk}>*</span></Typography>
             <TextArea rows={3} 
-            
-            placeholder="Question"
+                placeholder="Question"
+                value={question}
+                onChange={handleQuestionChange}
+                aria-label="Question"
+                />
+            </Grid>
+          </Grid>
+         </Paper>
+        </Paper> 
+          <Paper elevation={3} className={`${classes.paper} ${classes.spacing}`} style={{marginTop:50}}>
+            <Typography variant="h7" className={`${classes.label}`} style={{ color: "#3987ee" }} gutterBottom>Traduire Question<span className={classes.redAsterisk}>*</span></Typography>
+          <Paper elevation={3} className={`${classes.responseCard} ${classes.spacing}`}>
+          <Grid container spacing={2} className={`${classes.spacing}`}>
+            {/* Sélection du type de question */}
+            <Grid item xs={12}>
+                <Typography variant="subtitle1" className={`${classes.label}`} >Type de Question<span className={classes.redAsterisk}>*</span></Typography>
+                <AntdSelect
+                placeholder="Choisir Type"
+                optionFilterProp="children"
+                onChange={onChange}
+                style={{width:"250px"}}
+                options={[
+                  {
+                    value: 'Texte',
+                    label: 'Texte',
+                  },
+                  {
+                    value: 'Code',
+                    label: 'Code',
+                  },
+                  {
+                    value: 'Image',
+                    label: 'Image',
+                  },
+                ]}
+              />
+            </Grid>
+            {/* Zone de saisie de la question */}
+            <Grid item xs={12}>
+            <Typography variant="subtitle1" className={`${classes.label}`} >Question<span className={classes.redAsterisk}>*</span></Typography>
+            <TextArea rows={3} 
+                placeholder="Question"
                 value={question}
                 onChange={handleQuestionChange}
                 aria-label="Question"
@@ -298,7 +226,7 @@ const filterOption = (input, option) => {
     </div>
   </Paper>
 ))}
-                  <Button variant="contained" style={{ color: '#fff', backgroundColor: '#3987ee' }}  className={classes.addButton} aria-label="Ajouter réponse" onClick={handleAjouterReponse}>Ajouter Réponse</Button>
+              <Button variant="contained" style={{ color: '#fff', backgroundColor: '#3987ee', width:180 }}  className={classes.addButton} aria-label="Ajouter réponse" onClick={handleAjouterReponse}>Ajouter Réponse</Button>
               </Paper> 
               <Button
             variant="contained"
@@ -307,12 +235,7 @@ const filterOption = (input, option) => {
           >
             Traduire
           </Button>
-             
-                
-
               </Container>
-
  );  
 }
-
 export default TraduireQuest;

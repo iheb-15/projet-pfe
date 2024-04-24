@@ -45,6 +45,9 @@ app.use('/api',questionRoutes);
 // app.use('/', recinovAnswerRoutes);
 
 
+const featureRoutes = require("./routes/featureRoutes");
+app.use('/api/features', featureRoutes);
+
 const port = process.env.PORT || 3002;
 app.listen(port, () => {
     console.log(`App is running at http://localhost:${port}`);
