@@ -10,10 +10,7 @@ import axios from 'axios';
 import { BrowserRouter as Router, Route, Link,Redirect } from 'react-router-dom';
 import { Select } from 'antd';
 
-<<<<<<< HEAD
 const { Option } = Select;
-=======
->>>>>>> 2a16c3f1642f1760398a8cb5d235cc408d136f96
 const useStyles = makeStyles((theme) => ({
   paper: {
     padding: theme.spacing(3),
@@ -320,7 +317,6 @@ if (domainesStorage) {
  
 
 
-<<<<<<< HEAD
   
 //unique pour domaines
   const uniqueClasses = new Set(domaines.map(domaine => domaine.class));
@@ -338,22 +334,6 @@ const skillOptions = Array.from(uniqueskill).map(skillName => {
   return {
     value: competence.code,
     label: ` ${skillName}` 
-=======
-  const handleAjouterQuestion = () => {
-    history.push("/ajouter_question");
-  };
-
-  const onChange = (value) => {
-    console.log(`Selected: ${value}`);
-  };
-  
-  const onSearch = (value) => {
-    console.log('Searched:', value);
-  };
-  
-  const filterOption = (input, option) => {
-    return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
->>>>>>> 2a16c3f1642f1760398a8cb5d235cc408d136f96
   };
 });
 console.log(skillOptions);
@@ -398,7 +378,6 @@ console.log(skillOptions);
             <Grid item xs={12}>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={4}>
-<<<<<<< HEAD
                 <Typography variant="h8" className={`${classes.label}`} >Langue<span className={classes.redAsterisk}>*</span></Typography>
                 <AntdSelect
                 showSearch
@@ -466,55 +445,6 @@ console.log(skillOptions);
                   </Select>
            
               
-=======
-                  <Typography variant="h8" className={`${classes.label}`} >Langue<span className={classes.redAsterisk}>*</span></Typography>
-                  <AntdSelect
-                    placeholder="Choisir une Langue"
-                    optionFilterProp="children"
-                    onChange={onChange}
-                    filterOption={filterOption}
-                    style={{width:"100%"}}
-                    options={[
-                      { value: 'Francais', label: 'Francais' },
-                      { value: 'Anglais', label: 'Anglais' },
-                      { value: 'Arabe', label: 'Arabe' },
-                    ]}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <Typography variant="h8" className={`${classes.label}`} >Domaine<span className={classes.redAsterisk}>*</span></Typography>
-                  <AntdSelect
-                    showSearch
-                    placeholder="Choisir Domaine"
-                    optionFilterProp="children"
-                    onChange={onChange}
-                    onSearch={onSearch}
-                    filterOption={filterOption}
-                    style={{width:"100%"}}
-                    options={[
-                      { value: 'Programmation', label: 'Programmation' },
-                      { value: 'Design', label: 'Design' },
-                      { value: 'Gestion Projet', label: 'Gestion Projet' },
-                    ]}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <Typography variant="h8" className={`${classes.label}`} >Compétence<span className={classes.redAsterisk}>*</span></Typography>
-                  <AntdSelect
-                    showSearch
-                    placeholder="Choisir Compétence"
-                    optionFilterProp="children"
-                    onChange={onChange}
-                    onSearch={onSearch}
-                    filterOption={filterOption}
-                    style={{width:"100%"}}
-                    options={[
-                      { value: 'Java', label: 'Java' },
-                      { value: 'Python', label: 'Python' },
-                      { value: 'Agile', label: 'Agile' },
-                    ]}
-                  />
->>>>>>> 2a16c3f1642f1760398a8cb5d235cc408d136f96
                 </Grid>
               </Grid>
             </Grid>

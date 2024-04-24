@@ -139,13 +139,8 @@ console.log("connected",connected)
           </Header>
           <Content className="site-layout-background" style={{ margin: '24px 16px', padding: 24, minHeight: 280,  }}>
            <PrivateRoute path="/gest_utilisateur" style={{ background: '#3987ee' }} component={Gest} allowedRoles={['0']} userRole={connected} />
-<<<<<<< HEAD
-
               <Route path="/ajouter_question" style={{ background: '#3987ee' }} component={AjoutQuestion} />
               <Route path="/ModifierQuestion/:id" style={{ background: '#3987ee' }} component={Question} />
-=======
-              <Route path="/ModifierQuestion" style={{ background: '#3987ee' }} component={Question} />
->>>>>>> 2a16c3f1642f1760398a8cb5d235cc408d136f96
               <Route path="/filtrer_Question" style={{ background: '#3987ee' }} component={Filter} />
               <Route path="/ajouter_question" style={{ background: '#3987ee'}} component={AjoutQuestion} />
               <Route path="/traduire_quest" component={TraduireQuest} />
