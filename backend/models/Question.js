@@ -8,6 +8,9 @@ const { promisify } = require('util');
 
 
 const recinovQuestionSchema = new mongoose.Schema({
+  skill:
+  String,
+  //  { type: String, required: true },
   question_en: String,
   question_fr: String,
   reponse: String,

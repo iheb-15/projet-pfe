@@ -20,9 +20,6 @@ exports.filterQuestions = async (req, res) => {
     }
 };
 
-
-
-
 exports.getAllClasses = async (req, res) => {
     try {
         const classes = await Feature.find().distinct('class');
@@ -226,3 +223,123 @@ exports.updateResponseById = async (req, res) => {
 };
 
 
+
+// exports.addQuestion = async (req, res) => {
+
+//     const {
+    
+//       skill,
+//       question_en,
+//       question_fr,
+    
+//       level,
+//       points,
+//       time
+//     } = req.body;
+  
+//     try {
+//       const newQuestion = new RecinovQuestion({
+        
+//         skill,
+//         question_en,
+//         question_fr,
+        
+//         level,
+//         points,
+//         time
+//       });
+      
+//       await newQuestion.save();
+//       res.status(201).json({ message: 'Question added successfully', question: newQuestion });
+//     } catch (error) {
+//       res.status(500).json({ message: 'Error adding question', error: error.message });
+//     }
+//   };
+
+exports.addQuestion = async (req, res) => {
+    const {
+      className,
+      skillName,
+      question_en,
+      question_fr,
+      level,
+      points,
+      time
+    } = req.body;
+  
+    try {
+      
+      let classFeature = await Feature.findOne({ name: className });
+      if (!classFeature) {
+        classFeature = new Feature({ name: className });
+        await classFeature.save();
+      }
+  
+     
+      let skillFeature = await Feature.findOne({ name: skillName });
+      if (!skillFeature) {
+        skillFeature = new Feature({ name: skillName });
+        await skillFeature.save();
+      }
+  
+      
+      const newQuestion = new RecinovQuestion({
+        class: classFeature._id,
+        skill: skillFeature._id,
+        question_en,
+        question_fr,
+        level,
+        points,
+        time
+      });
+  
+      await newQuestion.save();
+      res.status(201).json({ message: 'Question added successfully', question: newQuestion });
+    } catch (error) {
+      res.status(500).json({ message: 'Error adding question', error: error.message });
+    }
+  };
+
+  exports.ajouterFeature = async (req, res) => {
+    try {
+      const nouvelleFeature = new Feature(req.body);
+      await nouvelleFeature.save();
+      res.status(201).json({ success: true, message: 'Feature ajoutée avec succès' });
+    } catch (error) {
+      res.status(500).json({ success: false, message: 'Erreur lors de l\'ajout de la feature', error: error.message });
+    }
+  };
+
+  
+  exports.createFeatureAndAddQuestion = async (req, res) => {
+    try {
+      const { class: className, skill, ref, question_en, question_fr, level, points, time } = req.body;
+  
+      // Create and save the new feature
+      const feature = new Feature({ class: className, skill, ref });
+      await feature.save();
+  
+      // Create the question entry using the newly generated code from the feature
+      const reqinovQuestion = new RecinovQuestion({
+        skill: feature.code, // assuming the code is generated and stored correctly in feature
+        question_en,
+        question_fr,
+        level,
+        points,
+        time
+      });
+  
+      await reqinovQuestion.save();
+      res.status(201).send({
+        feature: feature,
+        question: reqinovQuestion
+      });
+  
+    } catch (error) {
+      res.status(500).send({ message: 'Error processing combined request', error: error.message });
+    }
+  };
+  
+  
+  
+  

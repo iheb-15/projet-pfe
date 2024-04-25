@@ -8,7 +8,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Select } from 'antd';
-
+import Snackbar from '@material-ui/core/Snackbar';
 
 
 const useStyles = makeStyles((theme) => ({
@@ -83,6 +83,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Modifier(props) {
+  const [openSnackbar, setOpenSnackbar] = useState(false);
   const [idFromUrl, setIdFromUrl] = useState(null);
   const classes = useStyles();
   const history = useHistory();
@@ -92,7 +93,7 @@ function Modifier(props) {
   const [selectedType, setSelectedType] = useState('');
   const [points, setPoints] = useState('');
   const [temps, setTemps] = useState({ minutes: '', secondes: '' });
-  const [niveau, setNiveau] = useState('');;
+  const [niveau, setNiveau] = useState('');
   const handleSkillChange = (e) => setSelectedSkill(e.target.value);
   const handleQuestionChange = (e) => setQuestion(e.target.value);
   const [selectedResponseType, setSelectedResponseType] = useState(""); 
@@ -338,13 +339,16 @@ const filteredObjects = domaines.filter((obj, index, self) =>
                       
             await axios.put(`http://localhost:3002/api/questionsupdate/${id}`, question);
             console.log(question);
+            setOpenSnackbar(true); 
     } catch (error) {
         console.error('Erreur lors de la mise à jour des réponses:', error);
     }
 };
 
 
- 
+const handleCloseSnackbar = () => {
+  setOpenSnackbar(false);
+};
   const handleImageUpload = (event) => {
     const file = event.target.files[0]; 
     console.log('Image uploaded:', file);
@@ -769,12 +773,19 @@ const handleLevelChange = (event) => {
           <Button
             variant="contained"
             style={{ color: '#fff', backgroundColor: '#3987ee', float: 'right', marginTop: '35px' }}
-            // onClick={handleModifierQuestion}
+            
             onClick={handleUpdate}
+            
           >
             Modifier
           </Button>
-          
+          <Snackbar
+            anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+            open={openSnackbar}
+            autoHideDuration={6000}
+            onClose={handleCloseSnackbar}
+            message="Mise à jour effectuée avec succès!"
+          />
             <Button
             variant="contained"
             style={{ color: '#fff', backgroundColor: '#3987ee', float: 'right', marginRight: '10px', marginTop: '35px' }}

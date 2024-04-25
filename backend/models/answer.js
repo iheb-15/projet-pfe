@@ -5,7 +5,7 @@ const recinovAnswerSchema = new mongoose.Schema({
   question: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'RecinovQuestion',
-    required: true
+    // required: true
   },
   idQuestion: {
     type: mongoose.Schema.Types.ObjectId,

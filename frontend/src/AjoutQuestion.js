@@ -95,6 +95,32 @@ function AjoutQuestion() {
         console.error('Erreur lors de la récupération des compétences :', error);
       });
   }, []);
+  const [formData, setFormData] = useState({
+    className: '',
+    skill: '',
+    ref: '',
+    question_en: '',
+    question_fr: '',
+    level: '',
+    points: '',
+    time: ''
+  });
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post('http://localhost:3002/api/transferCode', formData);
+      console.log(response.data);
+      // Vous pouvez gérer la réponse ici, par exemple afficher un message de succès à l'utilisateur
+    } catch (error) {
+      console.error('Error:', error.response.data);
+      // Vous pouvez gérer les erreurs ici, par exemple afficher un message d'erreur à l'utilisateur
+    }
+  };
  
   const handleQuestionChange = (e) => {
     if (selectedResponseType !== 'Image') {
