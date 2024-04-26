@@ -1,6 +1,6 @@
 import React, { useState,useEffect  } from 'react';
 import axios from 'axios';
-import { Container, Typography,  Button,  FormControl, Grid, IconButton, Paper, Switch } from '@material-ui/core';
+// import { Container, Typography,  Button,  FormControl, Grid, IconButton, Paper, Switch } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';
@@ -8,7 +8,9 @@ import { Select as AntdSelect , Space, InputNumber, TimePicker,Input,Pagination}
 import { Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { message } from 'antd'; // Import message from Ant Design
-
+import { Container, Typography, TextField, Button, MenuItem, FormControl, Grid, IconButton, Paper, Switch } from '@material-ui/core';
+import { Select } from 'antd';
+const { Option } = Select;
 const { TextArea } = Input;
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -63,6 +65,7 @@ const useStyles = makeStyles((theme) => ({
 
 function AjoutQuestion() {
   
+  const [selectedLanguage, setSelectedLanguage] = useState('');
   const classes = useStyles();
   const history = useHistory();
   const [question, setQuestion] = useState('');
@@ -96,37 +99,42 @@ function AjoutQuestion() {
       });
   }, []);
   const [formData, setFormData] = useState({
-    className: '',
+    class: '',
     skill: '',
-    ref: '',
+    // ref: '',
     question_en: '',
     question_fr: '',
     level: '',
     points: '',
     time: ''
   });
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
+      
+      if (selectedLanguage === 'Anglais') {
+        formData.question_en = formData.question;
+      } else if (selectedLanguage === 'Francais') {
+        formData.question_fr = formData.question;
+      }
+
+      
       const response = await axios.post('http://localhost:3002/api/transferCode', formData);
       console.log(response.data);
-      // Vous pouvez gérer la réponse ici, par exemple afficher un message de succès à l'utilisateur
+      
     } catch (error) {
       console.error('Error:', error.response.data);
-      // Vous pouvez gérer les erreurs ici, par exemple afficher un message d'erreur à l'utilisateur
+      
     }
   };
  
-  const handleQuestionChange = (e) => {
-    if (selectedResponseType !== 'Image') {
-      setQuestion(e.target.value);
-    }
-  };
+  // const handleQuestionChange = (e) => {
+  //   if (selectedResponseType !== 'Image') {
+  //     setQuestion(e.target.value);
+  //   }
+  // };
   
   const handleReponseChange = (index, e) => {
     const newReponses = [...reponses];
@@ -166,14 +174,69 @@ const filterOption = (input, options) => {
     options.children && options.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
   );
 };
+const [domaineValue, setDomaineValue] = useState('');
+  const [competenceValue, setCompetenceValue] = useState('');
 
+  // Fonctions pour gérer les changements de valeurs des champs de texte
+  const handleDomaineChange = (event) => {
+    
+    setFormData({
+      ...formData,
+      class: event.target.value
+    });
+  };
 
-const [value, setValue] = useState(null); // Initialize value state and its setter function
+  const handleCompetenceChange = (event) => {
+    setFormData({
+      ...formData,
+      skill: event.target.value
+    });
+  };
 
-// Define onChange function for TimePicker
-const onChangetime = (time) => {
-  setValue(time);
+  
+  const handleSelectChange = (value) => {
+    setSelectedLanguage(value);
+  };
+  const handleSelectChanges = (value) => {
+    // Mettez à jour le champ level dans formData avec la valeur sélectionnée
+    setFormData({
+      ...formData,
+      level: value
+    });
+  };
+
+  const handleQuestionChange = (e) => {
+    setFormData({
+      ...formData,
+      question: e.target.value
+    });
+  };
+
+const [value, setValue] = useState(null); 
+
+const onChangePoints = (value) => {
+  setFormData({
+    ...formData,
+    points: value
+  });
 };
+const onChangetime = (value) => {
+  setFormData({
+    ...formData,
+    time: value
+  });
+};
+// const onChangetime = (value) => {
+//   const hours = value.hours();
+//   const minutes = value.minutes();
+//   const seconds = value.seconds();
+//   const timeInSeconds = hours * 3600 + minutes * 60 + seconds;
+//   setFormData({
+//     ...formData,
+//     time: timeInSeconds
+//   });
+// };
+
 const [current, setCurrent] = useState('');
 const onChangePage= (page) => {
   console.log(page);
@@ -194,9 +257,9 @@ const CustomUpload = () => (
   <Upload
     action="/upload.do"
     method="post"
-    beforeUpload={() => false} // Empêche le téléchargement automatique
+    beforeUpload={() => false} 
     onChange={handleUpload}
-    multiple={false} // Permettre le téléchargement de plusieurs fichiers
+    multiple={false} 
     style={{justifyContent: 'center'}}
   >
     <Button icon={<UploadOutlined />}>Sélectionner un fichier</Button>
@@ -213,44 +276,33 @@ const CustomUpload = () => (
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={4}>
                 <Typography variant="h8" className={`${classes.label}`} >Langue<span className={classes.redAsterisk}>*</span></Typography>
-                  <AntdSelect
+                <AntdSelect
                     placeholder="Choisir une Langue"
-                    optionFilterProp="children"
-                    onChange={onChange}
-                    filterOption={filterOption}
-                    style={{width:"100%"}}
-                    options={[
-                      { value: 'Francais', label: 'Francais' },
-                      { value: 'Anglais', label: 'Anglais' },
-                      { value: 'Arabe', label: 'Arabe' },
-                    ]}
-                  />
+                    onChange={handleSelectChange}
+                    style={{ width: "100%" }}
+                  >
+                    <Option value="Francais">Francais</Option>
+                    <Option value="Anglais">Anglais</Option>
+                    <Option value="Arabe"disabled>Arabe</Option>
+                  </AntdSelect>
                 </Grid>
                 <Grid item xs={12} sm={4}>
                 <Typography variant="h8" className={`${classes.label}`} >Domaine<span className={classes.redAsterisk}>*</span></Typography>
-                <AntdSelect
-                showSearch
-                placeholder="Choisir Domaine"
-                optionFilterProp="children"
-                onChange={onChange}
-                onSearch={onSearch}
-                filterOption={filterOption}
-                style={{width:"100%"}}
-                options={domaines.map(domaine => ({ value: domaine, label: domaine }))}
-              />
+                <Input 
+                      placeholder="Choisir Domaine" 
+                      style={{ width: "100%" }} 
+                      value={formData.className} 
+                      onChange={handleDomaineChange} 
+                    />
                 </Grid>
                 <Grid item xs={12} sm={4}>
                 <Typography variant="h8" className={`${classes.label}`} >Compétence<span className={classes.redAsterisk}>*</span></Typography>
-                <AntdSelect
-                showSearch
-                placeholder="Choisir Compétence"
-                optionFilterProp="children"
-                onChange={onChange}
-                onSearch={onSearch}
-                filterOption={filterOption}
-                style={{width:"100%"}}
-                options={competences.map(competence => ({ value: competence, label: competence }))}
-                  />
+                <Input 
+                      placeholder="Choisir Compétence" 
+                      style={{ width: "100%" }} 
+                      value={formData.skill} 
+                      onChange={handleCompetenceChange} 
+                    />
               
                 </Grid>
               </Grid>
@@ -263,29 +315,16 @@ const CustomUpload = () => (
               <FormControl className={`${classes.formControl} ${classes.spacing}`} fullWidth>
                 <Typography variant="subtitle1" className={`${classes.label}`}>Niveau<span className={classes.redAsterisk}>*</span></Typography>
                 <AntdSelect
-                placeholder="Choisissez un niveau"
-                optionFilterProp="children"
-                onChange={onChange}
-                style={{width:"50%"}}
-                options={[
-                  {
-                    value: 'débutant',
-                    label: 'Débutant',
-                  },
-                 {
-                  value:"intermédiaire",
-                  label: 'Intermédiaire',
-                 },
-                 {
-                   value:"avancé",
-                  label:' Avancé',
-                 },
-                 {
-                   value:"expert",
-                   label:'Expert',
-                 },
-                ]}
-                />
+                    placeholder="Choisissez un niveau"
+                    optionFilterProp="children"
+                    onChange={handleSelectChanges}
+                    style={{ width: "50%" }}
+                  >
+                    <Option value={0}>Débutant</Option>
+                    <Option value={1}>Intermédiare</Option>
+                    <Option value={2}>Avancé</Option>
+                    <Option value={3}>Expert</Option>
+                  </AntdSelect>
               </FormControl>
             </Grid>
             <Grid item xs={12} sm={4}>
@@ -294,8 +333,8 @@ const CustomUpload = () => (
                 <Space wrap> 
                     <InputNumber min={1}
                      max={100000}
-                     defaultValue={1}
-                     onChange={onChange} 
+                     value={formData.points}
+                     onChange={onChangePoints} 
                      style={{width:"100%"}}/>
                     </Space>
          </FormControl>
@@ -305,7 +344,8 @@ const CustomUpload = () => (
                 <Typography variant="subtitle1" className={`${classes.label}`}>Temps<span className={classes.redAsterisk}>*</span></Typography>
                 <Grid container spacing={1}>
                   <Grid item xs={6}>
-                   <TimePicker value={value}
+                   <TimePicker 
+                   value={formData.time}
                     onChange={onChangetime} 
                     style={{width:"100%"}} />
                   </Grid>
@@ -361,15 +401,23 @@ const CustomUpload = () => (
 >
   Question<span className={classes.redAsterisk}>*</span>
 </Typography>
-  <TextArea
+  {/* <TextArea
     rows={3}
     placeholder="Question"
     value={question}
     onChange={handleQuestionChange}
     aria-label="Question"
     style={{ display: selectedResponseType === 'Image' ? 'none' : 'block' , width:"100%"}} // Condition pour masquer ou afficher la zone de texte
-  />
-</Grid>
+  /> */}
+                  <Input.TextArea
+                        rows={3}
+                        placeholder="Question"
+                        value={formData.question}
+                        onChange={handleQuestionChange}
+                        aria-label="Question"
+                        style={{ display: 'block', width: "100%" }}
+                      />
+                </Grid>
 
           </Grid>
         {reponses.map((reponse, index) => (
@@ -438,7 +486,8 @@ const CustomUpload = () => (
       <Button
           variant="contained"
           style={{ color: '#fff', backgroundColor: '#3987ee', float: 'right', marginTop: '10px' , width:100 }}
-          onClick={handleAjouterQuestion}
+          // onClick={handleAjouterQuestion}
+            onClick={handleSubmit}
         >
           Ajouter
         </Button>
