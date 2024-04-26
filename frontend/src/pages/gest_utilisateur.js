@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Modal, Input, Select } from 'antd';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Table, Modal, Input, Select, Button } from 'antd';
+import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 
@@ -185,17 +185,25 @@ function Gest() {
       title: 'Actions',
       render: (record) => (
         <>
-          <EditOutlined
+          <Button
+            type="primary"
+            icon={<EditOutlined />}
             onClick={() => {
               onEditUtilisateur(record);
             }}
-          />
-          <DeleteOutlined
+          >
+            Edit
+          </Button>
+          <Button
+            type="danger"
+            icon={<DeleteOutlined />}
             onClick={() => {
               onDeleteUtilisateur(record);
             }}
-            style={{ color: 'red', marginLeft: 12 }}
-          />
+            style={{ marginLeft: 8 }}
+          >
+            Delete
+          </Button>
         </>
       ),
     },
@@ -223,101 +231,120 @@ function Gest() {
             style={{ width: '200px' }}
           />
         </div>
-        <Link to="/ajouter-utilisateur" onClick={(e) => { e.preventDefault(); onAddUtilisateur(); }} className="ajouter-link" >
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={onAddUtilisateur}
+          style={{width:200 }}
+        >
           Ajouter Utilisateur
-        </Link>
+        </Button>
 
         <Table columns={columns} dataSource={filteredDataSource} className="responsive-table"></Table>
 
         <Modal
-          title="Edit Utilisateur"
+          title="Modifier Utilisateur"
           visible={isEditing}
-          okText="Save"
+          okText="Enregistrer"
           onCancel={resetEditing}
-          onOk={handleSaveEdit} // Utilisation de la fonction handleSaveEdit
+          onOk={handleSaveEdit}
         >
-          <h5>name</h5>
-          <Input
-            value={editingUtilisateur?.name}
-            onChange={(e) => {
-              setEditingUtilisateur((prev) => ({ ...prev, name: e.target.value }));
-            }}
-          />
-          <h5>lastname</h5>
-          <Input
-            value={editingUtilisateur?.lastname}
-            onChange={(e) => setEditingUtilisateur(prev => ({ ...prev, lastname: e.target.value }))}
-          />
-          <h5>email</h5>
-          <Input
-            value={editingUtilisateur?.email}
-            onChange={(e) => setEditingUtilisateur(prev => ({ ...prev, email: e.target.value }))}
-          />
-          <h5>password</h5>
-          <Input
-            value={editingUtilisateur?.password}
-            onChange={(e) => setEditingUtilisateur(prev => ({ ...prev, password: e.target.value }))}
-          />
-          <h5>role</h5>
-          <Select
-            style={{ width: '100%' }}
-            value={editingUtilisateur?.role}
-            onChange={handleChange}
-          >
-            <Option value="0">super admin</Option>
-            <Option value="1">simple admin</Option>
-          </Select>
+          <div className="modal-content">
+            <div className="modal-item">
+              <h5>Nom</h5>
+              <Input
+                value={editingUtilisateur?.name}
+                onChange={(e) => {
+                  setEditingUtilisateur((prev) => ({ ...prev, name: e.target.value }));
+                }}
+              />
+            </div>
+            <div className="modal-item">
+              <h5>Prénom</h5>
+              <Input
+                value={editingUtilisateur?.lastname}
+                onChange={(e) => setEditingUtilisateur(prev => ({ ...prev, lastname: e.target.value }))}
+              />
+            </div>
+            <div className="modal-item">
+              <h5>Email</h5>
+              <Input
+                value={editingUtilisateur?.email}
+                onChange={(e) => setEditingUtilisateur(prev => ({ ...prev, email: e.target.value }))}
+              />
+            </div>
+            <div className="modal-item">
+              <h5>Mot de passe</h5>
+              <Input
+                value={editingUtilisateur?.password}
+                onChange={(e) => setEditingUtilisateur(prev => ({ ...prev, password: e.target.value }))}
+              />
+            </div>
+            <div className="modal-item">
+              <h5>Rôle</h5>
+              <Select
+                style={{ width: '100%' }}
+                value={editingUtilisateur?.role}
+                onChange={handleChange}
+              >
+                <Option value="0">Super Admin</Option>
+                <Option value="1">Simple Admin</Option>
+              </Select>
+            </div>
+          </div>
         </Modal>
         <Modal
-          title="Ajouter nouvelle Utilisateur"
+          title="Ajouter Nouvel Utilisateur"
           visible={isAdding}
           okText="Ajouter"
           onCancel={() => setIsAdding(false)}
           onOk={addUtilisateur}
         >
-          <div style={{ marginBottom: 10 }}>
-          <h5>name</h5>
-            <Input
-              placeholder="Name"
-              value={newUtilisateur.name}
-              onChange={(e) => setNewUtilisateur({ ...newUtilisateur, name: e.target.value })}
-            />
-          </div>
-          <div style={{ marginBottom: 10 }}>
-          <h5>lastname</h5>
-            <Input
-              placeholder="Lastname"
-              value={newUtilisateur.lastname}
-              onChange={(e) => setNewUtilisateur({ ...newUtilisateur, lastname: e.target.value })}
-            />
-          </div>
-          <div style={{ marginBottom: 10 }}>
-          <h5>email</h5>
-            <Input
-              placeholder="Email"
-              value={newUtilisateur.email}
-              onChange={(e) => setNewUtilisateur({ ...newUtilisateur, email: e.target.value })}
-            />
-          </div>
-          <div style={{ marginBottom: 10 }}>
-          <h5>password</h5>
-            <Input
-              placeholder="password"
-              value={newUtilisateur.password}
-              onChange={(e) => setNewUtilisateur({ ...newUtilisateur, password: e.target.value })}
-            />
-          </div>
-          <div style={{ marginBottom: 10 }}>
-          <h5>role</h5>
-            <Select
-              style={{ width: '100%' }}
-              placeholder="Role"
-              value={newUtilisateur.role}
-              onChange={(value) => setNewUtilisateur({ ...newUtilisateur, role: value })}
-            >
-              <Option value="0">super admin</Option>
-              <Option value="1">simple admin</Option>
-            </Select>
+          <div className="modal-content">
+            <div className="modal-item">
+              <h5>Nom</h5>
+              <Input
+                placeholder="Nom"
+                value={newUtilisateur.name}
+                onChange={(e) => setNewUtilisateur({ ...newUtilisateur, name: e.target.value })}
+              />
+            </div>
+            <div className="modal-item">
+              <h5>Prénom</h5>
+              <Input
+                placeholder="Prénom"
+                value={newUtilisateur.lastname}
+                onChange={(e) => setNewUtilisateur({ ...newUtilisateur, lastname: e.target.value })}
+              />
+            </div>
+            <div className="modal-item">
+              <h5>Email</h5>
+              <Input
+                placeholder="Email"
+                value={newUtilisateur.email}
+                onChange={(e) => setNewUtilisateur({ ...newUtilisateur, email: e.target.value })}
+              />
+            </div>
+            <div className="modal-item">
+              <h5>Mot de passe</h5>
+              <Input
+                placeholder="Mot de passe"
+                value={newUtilisateur.password}
+                onChange={(e) => setNewUtilisateur({ ...newUtilisateur, password: e.target.value })}
+              />
+            </div>
+            <div className="modal-item">
+              <h5>Rôle</h5>
+              <Select
+                style={{ width: '100%' }}
+                placeholder="Rôle"
+                value={newUtilisateur.role}
+                onChange={(value) => setNewUtilisateur({ ...newUtilisateur, role: value })}
+              >
+                <Option value="0">Super Admin</Option>
+                <Option value="1">Simple Admin</Option>
+              </Select>
+            </div>
           </div>
         </Modal>
       </header>

@@ -128,4 +128,40 @@
    color: rgba(204, 204, 204, 0);
    transition: all 0.3s ease;
   }
+  .gestion-header {
+    padding: 20px;
+    background-color: #f0f2f5;
+  }
+  
+  .modal-content {
+    padding: 20px;
+  }
+  
+  .modal-item {
+    margin-bottom: 20px;
+  }
+  
+  .modal-item h5 {
+    margin-bottom: 10px;
+  }
+  
+  .responsive-table {
+    margin-top: 20px;
+  }
+  
+  .ant-input,
+  .ant-select-selection-search-input {
+    border-radius: 5px;
+  }
+  
+  .ant-modal-footer {
+    border-top: none;
+  }
+  
+
+  
+  .ant-table-tbody > tr > td {
+    border-bottom: 1px solid #e8e8e8;
+  }
+  
   
