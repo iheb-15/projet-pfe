@@ -52,3 +52,32 @@ exports.addQuestion = async (req, res) => {
         res.status(400).json({ message: err.message });
     }
 };
+
+
+
+
+
+
+
+
+
+
+exports.createFeature = async (req, res) => {
+  try {
+    const { class: className, skill, ref } = req.body;
+    const feature = new Feature({ class: className, skill, ref });
+    await feature.save();
+    res.status(201).send(feature);
+  } catch (error) {
+    res.status(500).send({ message: 'Error creating feature', error: error.message });
+  }
+};
+
+exports.getFeature = async (req, res) => {
+  try {
+    const features = await Feature.find();
+    res.status(200).send(features);
+  } catch (error) {
+    res.status(500).send({ message: 'Error fetching features', error: error.message });
+  }
+};

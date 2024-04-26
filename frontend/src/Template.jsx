@@ -99,7 +99,7 @@ handlename();
 console.log("connected",connected)
   return (
     <Layout style={{ minHeight: '100vh'  }}>
-      {(connected ==='0' || connected==='1') && <Redirect to="/Dashboard"/>}
+      {/* {(connected ==='0' || connected==='1') && <Redirect to="/Dashboard"/>} */}
         <Sider trigger={null} collapsible collapsed={collapsed} style={{ background: '#3987ee' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column'  }}>
             <img src={logo1} alt="Logo" style={{ width: '50px', height: 'auto', margin: '20px' }} />
@@ -139,9 +139,9 @@ console.log("connected",connected)
           </Header>
           <Content className="site-layout-background" style={{ margin: '24px 16px', padding: 24, minHeight: 280,  }}>
            <PrivateRoute path="/gest_utilisateur" style={{ background: '#3987ee' }} component={Gest} allowedRoles={['0']} userRole={connected} />
-              <Route path="/ModifierQuestion" style={{ background: '#3987ee' }} component={Question} />
+              <Route path="/ajouter_question" style={{ background: '#3987ee' }} component={AjoutQuestion} />
+              <Route path="/ModifierQuestion/:id" style={{ background: '#3987ee' }} component={Question} />
               <Route path="/filtrer_Question" style={{ background: '#3987ee' }} component={Filter} />
-              <Route path="/ajouter_question" style={{ background: '#3987ee'}} component={AjoutQuestion} />
               <Route path="/traduire_quest" component={TraduireQuest} />
               <Route path="/liste_question"  style={{ background: '#3987ee' }} component={ListeQuest} />
               <Route path="/dashboard"  style={{ background: '#3987ee' }} component={Dashboard} />

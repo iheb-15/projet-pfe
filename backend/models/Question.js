@@ -6,16 +6,23 @@ const bcrypt = require("bcryptjs");
 const { promisify } = require('util');
 
 
-  const recinovQuestionSchema = new mongoose.Schema({
-    question_en: String,
-    question_fr: String,
-  
-    reponse: String,
-    langue: {
+
+const recinovQuestionSchema = new mongoose.Schema({
+  skill:
+  String,
+  //  { type: String, required: true },
+  question_en: String,
+  question_fr: String,
+  reponse: String,
+  langue: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Language',
-    }
-  }, { collection: 'recinovquestions', timestamps: true });
-  module.exports = mongoose.model('recinovQuestion', recinovQuestionSchema);
+  },
+  level: Number,
+  points: Number,
+  time: Number
   
+}, { collection: 'recinovquestions', timestamps: true });
+
+module.exports = mongoose.model('RecinovQuestion', recinovQuestionSchema);
 
