@@ -502,18 +502,11 @@ const handleLevelChange = (event) => {
                         type="number"
                         label="Min"
                         value={minutes}
-                        
-                        
-
                         onChange= {(event) =>{
                           console.log(event)
                           setMinutes(event.target.value)}
                         } 
-                         
-
-                       
-                        
-                        variant="outlined"
+                       variant="outlined"
                         inputProps={{ min: 0 }}
                       />
                     </Grid>
