@@ -1,11 +1,12 @@
 
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Container, Typography, Button, Grid, IconButton, Paper, Switch} from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from '@material-ui/core/styles';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Select as AntdSelect , Input} from 'antd';
+import axios from 'axios';
 const { TextArea } = Input;
 
 const useStyles = makeStyles((theme) => ({
@@ -95,7 +96,19 @@ function TraduireQuest() {
     // Define onChange function
 const onChange = (value) => {
   console.log(`Selected: ${value}`);
+  const AfficherQuestion = ({ location }) => {
+    const [question, setQuestion] = useState(null);
+
+    useEffect(() => {
+        const fetchQuestion = async () => {
+            const response = await axios.get(`http://localhost:3002/api/question/${location.state.id}`);
+            setQuestion(response.data);
+        };
+
+        fetchQuestion();
+    }, [location.state.id]);
 };
+}
     return  (
         <Container maxWidth="md">
           <Typography variant="h6" style={{ color: "#3987ee" }} align="center" gutterBottom>Ajouter une Question</Typography>

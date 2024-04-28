@@ -313,33 +313,47 @@ exports.addQuestion = async (req, res) => {
   
   exports.createFeatureAndAddQuestion = async (req, res) => {
     try {
-      const { class: className, skill, ref, question_en, question_fr, level, points, time } = req.body;
+      const { class: className, skill, ref, question_en, question_fr, level, points, time, answers } = req.body;
   
-      // Create and save the new feature
+      // Création et sauvegarde de la nouvelle fonctionnalité
       const feature = new Feature({ class: className, skill, ref });
       await feature.save();
-  
-      // Create the question entry using the newly generated code from the feature
-      const reqinovQuestion = new RecinovQuestion({
-        skill: feature.code, // assuming the code is generated and stored correctly in feature
+    
+      // Création de l'entrée pour la question avec le code généré pour la fonctionnalité
+      const recinovQuestion = new RecinovQuestion({
+        skill: feature.code,
         question_en,
         question_fr,
         level,
         points,
         time
       });
+      await recinovQuestion.save();
   
-      await reqinovQuestion.save();
+      // Création et sauvegarde des réponses associées à la question
+      let savedAnswers = [];
+      for (const answer of answers) {
+        const recinovAnswer = new RecinovAnswer({
+          idQuestion: recinovQuestion._id,
+          isCorrect: answer.isCorrect,
+          answer_en: answer.answer_en,
+          answer_fr: answer.answer_fr
+        });
+        await recinovAnswer.save();
+        savedAnswers.push(recinovAnswer);
+      }
+  
+      // Réponse du serveur avec les objets créés
       res.status(201).send({
         feature: feature,
-        question: reqinovQuestion
+        question: recinovQuestion,
+        answers: savedAnswers
       });
   
     } catch (error) {
       res.status(500).send({ message: 'Error processing combined request', error: error.message });
     }
   };
-  
   
   
   
