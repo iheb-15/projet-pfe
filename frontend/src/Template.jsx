@@ -34,6 +34,7 @@ const Template = () => {
   const { Header, Sider, Content } = Layout;
   const { SubMenu } = Menu;
   const history = useHistory();
+  const [userName, setUserName] = useState('');
 //changer par Auth user
 const [connected, setConnected] = useState(localStorage.getItem("userrole")?localStorage.getItem("userrole"):'3')
 
@@ -48,45 +49,58 @@ useEffect(() => {
   };
 
   const handleLogout = () => {
-    localStorage.clear(); // Effacer toutes les données du localStorage
-    fetch('http://localhost:3002/api/signout', {
-        method: 'GET',
-        credentials: 'include',
-    })
-    .then(response => {
-        if (response.ok) {
-            // Redirection vers la page de connexion
-            history.push('/login'); // Utilisation de history pour la redirection
-        } else {
-            console.error('Erreur lors de la déconnexion:', response.statusText);
-        }
-    })
-    .catch(error => {
-        console.error('Erreur lors de la déconnexion :', error);
-    });
-};
-const handlename= () => {
-  fetch('http://localhost:3002/api/name', {
-      method: 'GET',
-      credentials: 'include',
-  })
-  .then(response => {
-      if (response.ok) {
-          return response.json();
-      } else {
-          throw new Error('Erreur lors de la récupération des informations de l\'utilisateur');
-      }
-  })
-  .then(data => {
-      // Afficher le nom de l'utilisateur récupéré dans votre interface utilisateur
-      console.log('Nom de l\'utilisateur:', data.name);
-  })
-  .catch(error => {
-      console.error('Erreur:', error.message);
-  });
-};
+      localStorage.clear();
+      history.push('/login'); 
+  };
+//   useEffect(() => {
+//     // Récupérer le token JWT depuis localStorage
+//     const token = localStorage.getItem('token');
+
+//     // Si le token existe, faire une requête au backend pour obtenir les informations de l'utilisateur
+//     if (token) {
+//         fetch('http://localhost:3002/api/name', {
+//             method: 'GET',
+//             headers: {
+//                 'Authorization': `Bearer ${token}`
+//             }
+//         })
+//         .then(response => response.json())
+//         .then(data => {
+//             if (data.name) {
+//                 setUserName(data.name);
+//             } else {
+//                 // Gérer les erreurs, par exemple si le token est invalide
+//                 console.error('Erreur lors de la récupération du nom de l\'utilisateur');
+//             }
+//         })
+//         .catch(error => {
+//             console.error('Erreur lors de la récupération du nom de l\'utilisateur :', error);
+//         });
+//     }
+// }, []);
+// const handlename= () => {
+//   fetch('http://localhost:3002/api/name', {
+//       method: 'GET',
+//       credentials: 'include',
+//   })
+//   .then(response => {
+//       if (response.ok) {
+//           return response.json();
+//       } else {
+//           throw new Error('Erreur lors de la récupération des informations de l\'utilisateur');
+//       }
+//   })
+//   .then(data => {
+//       // Afficher le nom de l'utilisateur récupéré dans votre interface utilisateur
+//       console.log('Nom de l\'utilisateur:', data.name);
+//   })
+//   .catch(error => {
+//       console.error('Erreur:', error.message);
+//   });
+// };
+
 // Appelez cette fonction pour récupérer les informations de l'utilisateur une fois que l'utilisateur est connecté
-handlename();
+// handlename();
   const userMenu = (
     <Menu>
       <Menu.Item key="1">
@@ -136,6 +150,7 @@ console.log("connected",connected)
                 {user.name} <DownOutlined />
               </Link>
             </Dropdown>
+            
           </Header>
           <Content className="site-layout-background" style={{ margin: '24px 16px', padding: 24, minHeight: 280,  }}>
            <PrivateRoute path="/gest_utilisateur" style={{ background: '#3987ee' }} component={Gest} allowedRoles={['0']} userRole={connected} />
