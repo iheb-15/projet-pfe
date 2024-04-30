@@ -224,37 +224,8 @@ exports.updateResponseById = async (req, res) => {
 
 
 
-// exports.addQuestion = async (req, res) => {
 
-//     const {
-    
-//       skill,
-//       question_en,
-//       question_fr,
-    
-//       level,
-//       points,
-//       time
-//     } = req.body;
-  
-//     try {
-//       const newQuestion = new RecinovQuestion({
-        
-//         skill,
-//         question_en,
-//         question_fr,
-        
-//         level,
-//         points,
-//         time
-//       });
-      
-//       await newQuestion.save();
-//       res.status(201).json({ message: 'Question added successfully', question: newQuestion });
-//     } catch (error) {
-//       res.status(500).json({ message: 'Error adding question', error: error.message });
-//     }
-//   };
+
 
 exports.addQuestion = async (req, res) => {
     const {
@@ -355,5 +326,15 @@ exports.addQuestion = async (req, res) => {
     }
   };
   
-  
+  exports.deleteQuestion = async (req, res) => {
+    try {
+      const result = await RecinovQuestion.findByIdAndRemove(req.params.id);
+      if (!result) {
+        return res.status(404).send('No question found with that ID');
+      }
+      res.send('Question deleted successfully');
+    } catch (error) {
+      res.status(500).send('Error deleting question: ' + error.message);
+    }
+  };
   

@@ -10,6 +10,7 @@ import axios from 'axios';
 import { BrowserRouter as Router, Route, Link,Redirect } from 'react-router-dom';
 import { Select } from 'antd';
 
+
 const { Option } = Select;
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -78,7 +79,8 @@ function ListeQuest() {
   const [selectedDomaine, setSelectedDomaine] = useState(null);
   const [selectedCompetence, setSelectedCompetence] = useState(null);
   const [selectedLanguage, setSelectedLanguage] = useState('fr');
-  
+
+
   useEffect(() => {
     
     fetchQuestions();
@@ -204,7 +206,8 @@ if (domainesStorage) {
             const response = await axios.get(`${endpoint}?skill=${item}`);
             console.log("Response for item", item, ":", response);
             return response.data.map(q => ({
-              id: q.id,
+              //recupération de données d'aprées domaines
+              id: q._id,
               question: {
                 fr: q.question_fr,
                 en: q.question_en
@@ -225,6 +228,7 @@ if (domainesStorage) {
         const response = await axios.get(endpoint);
         console.log("Response from API:", response);
         const questionsFromAPI = response.data.map(q => ({
+          //recupération de donnes d'aprées compétence
           id: q._id,
           question: {
             fr: q.question_fr,
@@ -243,8 +247,7 @@ if (domainesStorage) {
       }
     };
     console.log(fetchQuestions);
-      
-         
+  
 
   useEffect(() => {
     // Récupération des questions du localStorage lors du chargement initial de la page
@@ -298,21 +301,32 @@ if (domainesStorage) {
   };
 
   
-
   const handleDelete = (record) => {
     Modal.confirm({
       title: 'Confirmation',
-      content: `Êtes-vous sûr de vouloir supprimer la question: "${record.question}" ?`,
-      onOk() {
-        const filteredQuestions = questions.filter((q) => q.id !== record.id);
-        setQuestions(filteredQuestions);
+      content: `Êtes-vous sûr de vouloir supprimer la question: "${record.id}" ?`,
+      onOk: async () => {
+        try {
+          
+          await axios.delete(`http://localhost:3002/api/${record.id}`);
+          
+          // Mettre à jour l'état local après la suppression réussie
+          const filteredQuestions = questions.filter((q) => q.id !== record.id);
+          setQuestions(filteredQuestions);
+        } catch (error) {
+          
+          console.error('Failed to delete the question:', error);
+          Modal.error({
+            title: 'Erreur',
+            content: 'La suppression de la question a échoué. Veuillez réessayer plus tard.',
+          });
+        }
       },
       onCancel() {
-        console.log('Annuler');
+        console.log('Annulation de la suppression.');
       },
     });
   };
-
  
  
 

@@ -609,7 +609,6 @@ const CustomUpload = () => (
          Nouvelle Question 
         </Button>
       </div>
-      {/* <Pagination current={current} onChange={onChangePage} total={50}  style={{textAlign: 'center',  marginTop: '20px' }}/> */}
     </Container>
     
   );

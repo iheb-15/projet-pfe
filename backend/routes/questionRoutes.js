@@ -10,6 +10,7 @@ const tt = require('../controllers/questionController');
 const featureControllers=require('../controllers/featureController');
 const ajouter = require('../controllers/questionController');
 const recinovAnswer = require('../controllers/answersContriller');
+const deletes = require('../controllers/questionController');
 
 router.get('/questions/answers', getQuestionWithAnswers);
 router.get('/questions', recinovQuestionController.filterQuestions);
@@ -36,4 +37,7 @@ router.post('/transferCode', ajouter.createFeatureAndAddQuestion);
 router.post('/recinovanswers', recinovAnswer.createAnswer);
 router.get('/recinovanswers', recinovAnswer.getAnswers);
 
+
+
+router.delete('/:id', deletes.deleteQuestion);
 module.exports = router;
