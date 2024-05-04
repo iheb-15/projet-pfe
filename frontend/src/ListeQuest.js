@@ -354,11 +354,7 @@ console.log(skillOptions);
 
 
   const columns = [
-    // {
-    //   title: 'ID',
-    //   dataIndex: 'id',
-    //   key: 'id',
-    // },
+    
     {
       title: 'Question',
       dataIndex: 'question',
@@ -406,8 +402,6 @@ console.log(skillOptions);
                   <Option value="fr">Français</Option>
                    <Option value="en">Anglais</Option>
                 </AntdSelect>
-
-              
                 </Grid>
                 <Grid item xs={12} sm={4}>
                 <Typography variant="h8" className={`${classes.label}`} >Domaine<span className={classes.redAsterisk}>*</span></Typography>
@@ -465,20 +459,6 @@ console.log(skillOptions);
           </Grid>
         </Paper>
         <div className={classes.tableContainer} style={{marginTop:"40px"}}>
-          {/* <Button
-            variant="contained"
-            style={{ color: '#fff', backgroundColor: '#3987ee', marginBottom: '15px', float:"right" }}
-            onClick={handleAjouterQuestion}
-          >
-            Ajouter
-          </Button>
-          <Button
-            variant="contained"
-            style={{ color: '#fff', backgroundColor: '#3987ee', marginBottom: '15px', float:"right" }}
-            onClick={fetchQuestions}
-          >
-            filter
-          </Button> */}
           <Table
             dataSource={questions}
             columns={columns}

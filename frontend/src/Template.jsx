@@ -28,6 +28,7 @@ import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import CreateIcon from '@material-ui/icons/Create';
 import PersonIcon from '@material-ui/icons/Person';
 import CréerTest from './CréerTest';
+import testFormulaire from './pages/testviaformulaire';
 
 
 const Template = () => {
@@ -136,9 +137,18 @@ console.log("connected",connected)
                 <Link to="/ajouter_question" style={{ color: 'white', fontSize:"13px" }}> Créer Question</Link>
               </Menu.Item>
             </SubMenu>
+            <SubMenu  icon={<HighlightOutlined style={{ color: 'white' }} />} title={<span style={{ color: 'white', fontSize:"13px" }}>CréerTest</span>}>
             <Menu.Item key="4" icon={<CreateIcon  style={{ color: 'white' }} />} style={{backgroundColor: '#3987ee'}} >
-                <Link to="/creer_test" style={{ color: 'white', fontSize:"13px" }}> Créer Test </Link>
+                <Link to="/creer_test" style={{ color: 'white', fontSize:"13px" }}> VIA BD </Link>
               </Menu.Item>
+              <Menu.Item key="4" icon={<CreateIcon  style={{ color: 'white' }} />} style={{backgroundColor: '#3987ee'}} >
+                <Link to="/test_formulaire" style={{ color: 'white', fontSize:"13px" }}> via formulaire</Link>
+              </Menu.Item>
+            </SubMenu>
+
+
+
+            
 
           </Menu>
           <Button className="btn" onClick={handleCollapse} style={{ border: "none", backgroundColor: "#1271ec" }}>
@@ -167,7 +177,7 @@ console.log("connected",connected)
               <Route path="/liste_question"  style={{ background: '#3987ee' }} component={ListeQuest} />
               <Route path="/dashboard"  style={{ background: '#3987ee' }} component={Dashboard} />
               <Route path="/creer_test"  style={{ background: '#3987ee' }} component={CréerTest} />
-
+              <Route path="/test_formulaire"  style={{ background: '#3987ee' }} component={testFormulaire} />
           </Content>
         </Layout>
       </Layout>
