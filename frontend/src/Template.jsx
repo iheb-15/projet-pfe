@@ -27,6 +27,8 @@ import HomeIcon from '@material-ui/icons/Home' ;
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import CreateIcon from '@material-ui/icons/Create';
 import PersonIcon from '@material-ui/icons/Person';
+import CréerTest from './CréerTest';
+
 
 const Template = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -134,6 +136,10 @@ console.log("connected",connected)
                 <Link to="/ajouter_question" style={{ color: 'white', fontSize:"13px" }}> Créer Question</Link>
               </Menu.Item>
             </SubMenu>
+            <Menu.Item key="4" icon={<CreateIcon  style={{ color: 'white' }} />} style={{backgroundColor: '#3987ee'}} >
+                <Link to="/creer_test" style={{ color: 'white', fontSize:"13px" }}> Créer Test </Link>
+              </Menu.Item>
+
           </Menu>
           <Button className="btn" onClick={handleCollapse} style={{ border: "none", backgroundColor: "#1271ec" }}>
             {collapsed ? <RightOutlined /> : <LeftOutlined />}
@@ -160,6 +166,8 @@ console.log("connected",connected)
               <Route path="/traduire_quest" component={TraduireQuest} />
               <Route path="/liste_question"  style={{ background: '#3987ee' }} component={ListeQuest} />
               <Route path="/dashboard"  style={{ background: '#3987ee' }} component={Dashboard} />
+              <Route path="/creer_test"  style={{ background: '#3987ee' }} component={CréerTest} />
+
           </Content>
         </Layout>
       </Layout>
