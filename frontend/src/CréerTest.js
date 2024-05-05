@@ -8,7 +8,7 @@ import { Typography,  Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import {   Select as AntdSelect  } from 'antd';
 
-
+const { Step } = Steps;
 const { Option } = Select;
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -68,8 +68,7 @@ const useStyles = makeStyles((theme) => ({
   }));
   
 function CréerTest() {
-    const classes = useStyles();
-    
+  const classes = useStyles();
   const [language, setLanguage] = useState('');
   const [experience, setExperience] = useState('');
   const [title, setTitle] = useState('');
@@ -84,7 +83,7 @@ function CréerTest() {
   const [classifiedData, setClassifiedData] = useState({});
   const [selectedDomaine, setSelectedDomaine] = useState(null);
   const [selectedLanguage, setSelectedLanguage] = useState('fr');
-
+  const [formData, setFormData] = useState({});
 
   useEffect(() => {
     
@@ -94,7 +93,7 @@ function CréerTest() {
 
 
   // pour data classified 
-  useEffect(() => {
+   useEffect(() => {
     // Fonction pour récupérer les données depuis l'API
     const fetchData = async () => {
       try {
@@ -315,11 +314,8 @@ const columns = [
   };
   const hasSelected = selectedRowKeys.length > 0;
   //*****************paramètre du tableau************* */
-  const steps = [
-    {
-      title: 'Paramètre du test',
-      content: (
-        <>
+  const renderStep1 = () => (
+<>
          <div>
       <Input
         placeholder="Titre du test"
@@ -356,81 +352,86 @@ const columns = [
       </Select>
     </div>
         </>
-      ),
-    },
+  );
+  const renderStep2=()=>(
+    <div> 
+    <Grid container spacing={2}>
+   <Grid item xs={12} sm={4}>
+       <Typography variant="h8" className={`${classes.label}`} >Langue<span className={classes.redAsterisk}>*</span></Typography>
+       <AntdSelect
+       showSearch
+       placeholder="Choisir une Langue"
+       optionFilterProp="children"
+       onChange={handleLangueChange}
+       onSearch={onSearch}
+       filterOption={filterOption}
+       style={{width:"250px"}}
+      
+       >
+         <Option value="fr">Français</Option>
+          <Option value="en">Anglais</Option>
+       </AntdSelect>
+       </Grid>
+  <Grid item xs={12} sm={4}>
+  <Typography variant="h8" className={`${classes.label}`} >Compétence<span className={classes.redAsterisk}>*</span></Typography>
+   <Select
+       showSearch
+       style={{ width: "250px" }}
+       placeholder="Choisir Compétence"
+       optionFilterProp="children"
+       onChange={handleCompetenceChange}
+       onSearch={onSearch}
+       filterOption={(input, option) =>
+       (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+       }
+       >
+           <Option key="null" value={null} onClick={handleCancelSelections}>
+               Aucune compétence 
+           </Option>
+           {skillOptions.map(option => (
+               <Option key={option.value} value={option.value} label={option.label}>
+               {option.label}
+               </Option>
+           ))}
+       
+   </Select>
+</Grid> 
+</Grid>
+<div
+style={{
+marginBottom: 16,
+marginTop: 16,
+}}
+>
+<Button type="primary" onClick={start} disabled={!hasSelected} loading={loading}>
+Reload
+</Button>
+<span
+style={{
+ marginLeft: 8,
+}}
+>
+{hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
+</span>
+</div>
+<Table rowSelection={rowSelection}rowKey="id" columns={columns} dataSource={questions} />
+</div>
+
+  );
+  const steps = [
+    {title: 'Paramètre du test', content: renderStep1()},
+    {title: 'Ajouter test', content: renderStep2()},
     {
-      title: 'Ajouter test',
+      title: 'apreçu_test',
       content: (
-        
-        <div> 
-             <Grid container spacing={2}>
-            <Grid item xs={12} sm={4}>
-                <Typography variant="h8" className={`${classes.label}`} >Langue<span className={classes.redAsterisk}>*</span></Typography>
-                <AntdSelect
-                showSearch
-                placeholder="Choisir une Langue"
-                optionFilterProp="children"
-                onChange={handleLangueChange}
-                onSearch={onSearch}
-                filterOption={filterOption}
-                style={{width:"250px"}}
-               
-                >
-                  <Option value="fr">Français</Option>
-                   <Option value="en">Anglais</Option>
-                </AntdSelect>
-                </Grid>
-           <Grid item xs={12} sm={4}>
-           <Typography variant="h8" className={`${classes.label}`} >Compétence<span className={classes.redAsterisk}>*</span></Typography>
-            <Select
-                showSearch
-                style={{ width: "250px" }}
-                placeholder="Choisir Compétence"
-                optionFilterProp="children"
-                onChange={handleCompetenceChange}
-                onSearch={onSearch}
-                filterOption={(input, option) =>
-                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
-                }
-                >
-                    <Option key="null" value={null} onClick={handleCancelSelections}>
-                        Aucune compétence 
-                    </Option>
-                    {skillOptions.map(option => (
-                        <Option key={option.value} value={option.value} label={option.label}>
-                        {option.label}
-                        </Option>
-                    ))}
-                
-            </Select>
-         </Grid> 
-         </Grid>
-    <div
-      style={{
-        marginBottom: 16,
-        marginTop: 16,
-      }}
-    >
-      <Button type="primary" onClick={start} disabled={!hasSelected} loading={loading}>
-        Reload
-      </Button>
-      <span
-        style={{
-          marginLeft: 8,
-        }}
-      >
-        {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
-      </span>
-    </div>
-    <Table rowSelection={rowSelection}rowKey="id" columns={columns} dataSource={questions} />
-  </div>
-        
-        
+        ""
+        // <div>
+        //   
+        //   <p>Contenu de l'étape 1: {steps[0].content}</p>
+        //   <p>Contenu de l'étape 2: {steps[1].content}</p>
+        //   
+        // </div>
       ),
-    },
-    {
-      title: 'Last',
-      content: 'Last-content',
     },
   ];
   const next = () => {
@@ -445,6 +446,7 @@ const columns = [
     key: item.title,
     title: item.title,
   }));
+  
 
   return (
     <>
