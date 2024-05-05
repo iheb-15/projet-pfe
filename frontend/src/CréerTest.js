@@ -7,7 +7,7 @@ import axios from 'axios';
 import { Typography,  Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import {   Select as AntdSelect  } from 'antd';
-
+import { useParams } from 'react-router-dom';
 const { Step } = Steps;
 const { Option } = Select;
 const useStyles = makeStyles((theme) => ({
@@ -84,7 +84,76 @@ function CréerTest() {
   const [selectedDomaine, setSelectedDomaine] = useState(null);
   const [selectedLanguage, setSelectedLanguage] = useState('fr');
   const [formData, setFormData] = useState({});
+  const [firstContent, setFirstContent] = useState('');
+  const [secondContent, setSecondContent] = useState('');
+  const [timeLeft, setTimeLeft] = useState(300); 
+  const [isQuizStarted,setIsQuizStarted]=useState(false);
+  const [idFromUrl, setIdFromUrl] = useState(null);
+  const {id}=useParams();
+  const [reponse, setReponse] = useState('');
+  const [question, setQuestion] = useState(null);
+  const [responses, setResponses] = useState([]);
+  
+  useEffect(() => {
+    setIdFromUrl(id);
+  }, [id]);
+  useEffect(() => {
+    let interval = null;
 
+    if (isQuizStarted && timeLeft > 0) {
+      interval = setInterval(() => {
+        setTimeLeft(timeLeft - 1);
+      }, 1000);
+    } else if (timeLeft === 0) {
+      clearInterval(interval);
+      alert('Time is up!');
+    }
+
+    return () => clearInterval(interval);
+  }, [isQuizStarted, timeLeft]);
+
+  const handleStartQuiz = () => {
+    setIsQuizStarted(true);
+    setTimeLeft(300); // Reset timer each time the quiz is started
+  };
+
+  const formatTime = () => {
+    const minutes = Math.floor(timeLeft / 60);
+    const seconds = timeLeft % 60;
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  };
+
+  const handleStopQuiz = () => {
+    setIsQuizStarted(false); // Reset quiz start state
+    setTimeLeft(300);  // Optionally reset the timer to initial state
+    // Any additional cleanup can be done here
+  };
+  const onSelectChange = selectedRowKeys => {
+    setSelectedRowKeys(selectedRowKeys);
+  };
+
+  // Fonction pour récupérer les questions sélectionnées
+  const getSelectedQuestions = () => {
+    // Filtrer les questions en fonction des clés des lignes sélectionnées
+    const selectedQuestions = questions.filter(question =>
+      selectedRowKeys.includes(question.id)
+    );
+    
+    // Vérifier la langue sélectionnée et récupérer le texte approprié de la question
+    const selectedQuestionsText = selectedQuestions.map(question => ({
+      id: question.id,
+      text: language === 'fr' ? question.question.fr : question.question.en
+    }));
+    
+    return selectedQuestionsText;
+  };
+  const onChangeFirstContent = (e) => {
+    setFirstContent(e.target.value);
+  };
+
+  const onChangeSecondContent = (e) => {
+    setSecondContent(e.target.value);
+  };
   useEffect(() => {
     
     fetchQuestions();
@@ -192,7 +261,40 @@ if (domainesStorage) {
     );
     console.log(filteredObjects);
       //******************récupération du question**************** */   
-    const fetchQuestions = async () => {
+    // Fonction pour récupérer la question
+ // Fetch question details
+ useEffect(() => {
+  const fetchQuestion = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3002/api/questions/${id}`);
+      setQuestion(response.data);
+    } catch (error) {
+      console.error('Failed to fetch question:', error);
+    }
+  };
+
+  if (id) {
+    fetchQuestion();
+  }
+}, [id]);
+
+// Fetch responses related to the question
+useEffect(() => {
+  const fetchResponses = async () => {
+    try {
+      const response = await axios.get(`http://localhost:3002/api/reponse/${id}`);
+      setResponses(response.data);
+    } catch (error) {
+      console.error('Error fetching responses:', error);
+    }
+  };
+
+  if (id) {
+    fetchResponses();
+  }
+}, [id]);
+    
+      const fetchQuestions = async () => {
       try {
         
         let endpoint = `http://localhost:3002/api/questions`;
@@ -304,10 +406,10 @@ const columns = [
       setLoading(false);
     }, 1000);
   };
-  const onSelectChange = (newSelectedRowKeys) => {
-    console.log('selectedRowKeys changed: ', newSelectedRowKeys);
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
+  // const onSelectChange = (newSelectedRowKeys) => {
+  //   console.log('selectedRowKeys changed: ', newSelectedRowKeys);
+  //   setSelectedRowKeys(newSelectedRowKeys);
+  // };
   const rowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
@@ -316,41 +418,44 @@ const columns = [
   //*****************paramètre du tableau************* */
   const renderStep1 = () => (
 <>
-         <div>
-      <Input
-        placeholder="Titre du test"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        style={{ marginBottom: '1rem' }}
-      />
-      <Input.TextArea
-        placeholder="Description"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-        autoSize={{ minRows: 4 }}
-        style={{ marginBottom: '1rem' }}
-      />
-      <Select
-        placeholder="Langue"
-        value={language}
-        onChange={(value) => setLanguage(value)}
-        style={{ width: '100%', marginBottom: '1rem' }}
-      >
-        <Option value="fr">Français</Option>
-        <Option value="en">Anglais</Option>
-        <Option value="es">Espagnol</Option>
-      </Select>
-      <Select
-        placeholder="Expérience"
-        value={experience}
-        onChange={(value) => setExperience(value)}
-        style={{ width: '100%', marginBottom: '1rem' }}
-      >
-        <Option value="beginner">Débutant</Option>
-        <Option value="intermediate">Intermédiaire</Option>
-        <Option value="advanced">Avancé</Option>
-      </Select>
-    </div>
+    
+<div>
+    <Input
+      placeholder="Titre du test"
+      value={title}
+      onChange={(e) => setTitle(e.target.value)}
+      style={{ marginBottom: '1rem' }}
+    />
+    <Input.TextArea
+      placeholder="Description"
+      value={description}
+      onChange={(e) => setDescription(e.target.value)}
+      autoSize={{ minRows: 4 }}
+      style={{ marginBottom: '1rem' }}
+    />
+    <Select
+      placeholder="Langue"
+      value={language}
+      onChange={(value) => setLanguage(value)}
+      style={{ width: '100%', marginBottom: '1rem' }}
+    >
+      <Select.Option value="fr">Français</Select.Option>
+      <Select.Option value="en">Anglais</Select.Option>
+      <Select.Option value="es">Espagnol</Select.Option>
+    </Select>
+    <Select
+      placeholder="Expérience"
+      value={experience}
+      onChange={(value) => setExperience(value)}
+      style={{ width: '100%', marginBottom: '1rem' }}
+    >
+      <Select.Option value="beginner">Débutant</Select.Option>
+      <Select.Option value="intermediate">Intermédiaire</Select.Option>
+      <Select.Option value="advanced">Avancé</Select.Option>
+    </Select>
+  </div>
+    
+    
         </>
   );
   const renderStep2=()=>(
@@ -395,44 +500,75 @@ const columns = [
            ))}
        
    </Select>
-</Grid> 
-</Grid>
-<div
-style={{
-marginBottom: 16,
-marginTop: 16,
-}}
->
-<Button type="primary" onClick={start} disabled={!hasSelected} loading={loading}>
-Reload
-</Button>
-<span
-style={{
- marginLeft: 8,
-}}
->
-{hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
-</span>
-</div>
-<Table rowSelection={rowSelection}rowKey="id" columns={columns} dataSource={questions} />
-</div>
+  </Grid> 
+  </Grid>
+  <div
+  style={{
+  marginBottom: 16,
+  marginTop: 16,
+  }}
+  >
+  <Button type="primary" onClick={start} disabled={!hasSelected} loading={loading}>
+  Reload
+  </Button>
+  <span
+  style={{
+  marginLeft: 8,
+  }}
+  >
+  {hasSelected ? `Selected ${selectedRowKeys.length} items` : ''}
+  </span>
+  </div>
+  <Table rowSelection={rowSelection}rowKey="id" columns={columns} dataSource={questions} />
+  </div>
 
   );
+
+  const previewContent = () => (
+    <div>
+      <p>Title: {title}</p>
+      <p>Description: {description}</p>
+      <p>Language: {language}</p>
+      <p>Experience: {experience}</p>
+      <ol>
+            {getSelectedQuestions().map(question => (
+              <li key={question.id}>{question.text}</li>
+            ))}
+          </ol>
+          
+      <Button type="primary" onClick={handleStartQuiz} disabled={isQuizStarted}>
+        Start Quiz
+      </Button>
+      {isQuizStarted && (
+        <div>
+          <p>Title: {title}</p>
+           <p>Description: {description}</p>
+      <p>Language: {language}</p>
+      <p>Experience: {experience}</p>
+          <h3>Timer: {formatTime()}</h3>
+          <h3>Quiz Questions:</h3>
+          <ol>
+            {getSelectedQuestions().map(question => (
+              <li key={question.id}>{question.text}</li>
+            ))}
+          </ol>
+          
+          <Button type="danger" onClick={handleStopQuiz}>
+            Stop Quiz
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+  
   const steps = [
     {title: 'Paramètre du test', content: renderStep1()},
     {title: 'Ajouter test', content: renderStep2()},
     {
       title: 'apreçu_test',
-      content: (
-        ""
-        // <div>
-        //   
-        //   <p>Contenu de l'étape 1: {steps[0].content}</p>
-        //   <p>Contenu de l'étape 2: {steps[1].content}</p>
-        //   
-        // </div>
-      ),
+      content: ( previewContent()),
     },
+    
   ];
   const next = () => {
     setCurrent(current + 1);
@@ -450,25 +586,26 @@ style={{
 
   return (
     <>
-      <Steps current={current} items={items} />
+     <div>
+      <Steps current={current}>
+        {steps.map(item => (
+          <Step key={item.title} title={item.title} />
+        ))}
+      </Steps>
       <div className="steps-content">{steps[current].content}</div>
       <div className="steps-action">
         {current < steps.length - 1 && (
-          <Button type="primary" onClick={next}>
+          <Button type="primary" onClick={() => next()}>
             Next
           </Button>
         )}
-        {current === steps.length - 1 && (
-          <Button type="primary" onClick={() => message.success('Processing complete!')}>
-            Done
-          </Button>
-        )}
         {current > 0 && (
-          <Button style={{ margin: '0 8px' }} onClick={prev}>
+          <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
             Previous
           </Button>
         )}
       </div>
+    </div>
     </>
   );
 }
