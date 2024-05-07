@@ -35,18 +35,13 @@ app.use('/api',userRoutes)
 
 const questionRoutes =require("./routes/questionRoutes")
 app.use('/api',questionRoutes);
-// const recinovQuestionRoutes = require('./routes/questionRoutes');
-// app.use('/api/recinovquestions', recinovQuestionRoutes);
-
-// const languageRoutes  = require('./routes/questionRoutes');
-// app.use('/api/languages', languageRoutes);
-
-// const recinovAnswerRoutes = require('./routes/questionRoutes');
-// app.use('/', recinovAnswerRoutes);
 
 
 const featureRoutes = require("./routes/featureRoutes");
 app.use('/api/features', featureRoutes);
+
+const companyRoutes = require('./routes/companyRoutes');
+app.use('/api', companyRoutes);
 
 const port = process.env.PORT || 3002;
 app.listen(port, () => {

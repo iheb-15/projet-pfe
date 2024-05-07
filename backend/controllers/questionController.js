@@ -224,37 +224,8 @@ exports.updateResponseById = async (req, res) => {
 
 
 
-// exports.addQuestion = async (req, res) => {
 
-//     const {
-    
-//       skill,
-//       question_en,
-//       question_fr,
-    
-//       level,
-//       points,
-//       time
-//     } = req.body;
-  
-//     try {
-//       const newQuestion = new RecinovQuestion({
-        
-//         skill,
-//         question_en,
-//         question_fr,
-        
-//         level,
-//         points,
-//         time
-//       });
-      
-//       await newQuestion.save();
-//       res.status(201).json({ message: 'Question added successfully', question: newQuestion });
-//     } catch (error) {
-//       res.status(500).json({ message: 'Error adding question', error: error.message });
-//     }
-//   };
+
 
 exports.addQuestion = async (req, res) => {
     const {
@@ -313,26 +284,41 @@ exports.addQuestion = async (req, res) => {
   
   exports.createFeatureAndAddQuestion = async (req, res) => {
     try {
-      const { class: className, skill, ref, question_en, question_fr, level, points, time } = req.body;
+      const { class: className, skill, ref, question_en, question_fr, level, points, time, answers } = req.body;
   
-      // Create and save the new feature
+      // Création et sauvegarde de la nouvelle fonctionnalité
       const feature = new Feature({ class: className, skill, ref });
       await feature.save();
-  
-      // Create the question entry using the newly generated code from the feature
-      const reqinovQuestion = new RecinovQuestion({
-        skill: feature.code, // assuming the code is generated and stored correctly in feature
+    
+      // Création de l'entrée pour la question avec le code généré pour la fonctionnalité
+      const recinovQuestion = new RecinovQuestion({
+        skill: feature.code,
         question_en,
         question_fr,
         level,
         points,
         time
       });
+      await recinovQuestion.save();
   
-      await reqinovQuestion.save();
+      // Création et sauvegarde des réponses associées à la question
+      let savedAnswers = [];
+      for (const answer of answers) {
+        const recinovAnswer = new RecinovAnswer({
+          idQuestion: recinovQuestion._id,
+          isCorrect: answer.isCorrect,
+          answer_en: answer.answer_en,
+          answer_fr: answer.answer_fr
+        });
+        await recinovAnswer.save();
+        savedAnswers.push(recinovAnswer);
+      }
+  
+      // Réponse du serveur avec les objets créés
       res.status(201).send({
         feature: feature,
-        question: reqinovQuestion
+        question: recinovQuestion,
+        answers: savedAnswers
       });
   
     } catch (error) {
@@ -340,6 +326,15 @@ exports.addQuestion = async (req, res) => {
     }
   };
   
-  
-  
+  exports.deleteQuestion = async (req, res) => {
+    try {
+      const result = await RecinovQuestion.findByIdAndRemove(req.params.id);
+      if (!result) {
+        return res.status(404).send('No question found with that ID');
+      }
+      res.send('Question deleted successfully');
+    } catch (error) {
+      res.status(500).send('Error deleting question: ' + error.message);
+    }
+  };
   

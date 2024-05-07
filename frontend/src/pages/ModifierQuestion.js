@@ -730,7 +730,7 @@ const handleLevelChange = (event) => {
                                 )}
                                 <Button variant="contained" style={{ color: '#fff', backgroundColor: '#3987ee' }} onClick={ajouterReponse} className={classes.addButton} aria-label="Ajouter réponse">Ajouter Réponse</Button>
                               </>
-                            )}
+                )}
                             {reponse && selectedResponseType === "image" && (
                               <>
                                 {reponse.map((reponseItem, index) => (

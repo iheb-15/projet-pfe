@@ -13,10 +13,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';  // Import Bootstrap styles
 import { ToastContainer } from 'react-toastify';
 import AjoutQuestion from './AjoutQuestion';
 
-
 import CodeOTP from './CodeOTP';
 import NouveauxMotPasse from './NouveauxMotPasse';
 import Gest from './pages/gest_utilisateur';
+import Test from './CréerTest';
 
 
 
