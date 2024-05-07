@@ -92,8 +92,10 @@ function CréerTest() {
   const {id}=useParams();
   const [reponse, setReponse] = useState('');
   const [question, setQuestion] = useState(null);
-  const [responses, setResponses] = useState([]);
-  
+  const [response, setResponse] = useState([]);
+  const [questionResponses, setQuestionResponses] = useState([]);
+  // const [questions, setQuestions] = useState([]);
+const [responses, setResponses] = useState([]); 
   useEffect(() => {
     setIdFromUrl(id);
   }, [id]);
@@ -133,20 +135,33 @@ function CréerTest() {
   };
 
   // Fonction pour récupérer les questions sélectionnées
+ 
   const getSelectedQuestions = () => {
     // Filtrer les questions en fonction des clés des lignes sélectionnées
     const selectedQuestions = questions.filter(question =>
       selectedRowKeys.includes(question.id)
     );
+    console.log(selectedQuestions)
     
     // Vérifier la langue sélectionnée et récupérer le texte approprié de la question
     const selectedQuestionsText = selectedQuestions.map(question => ({
       id: question.id,
       text: language === 'fr' ? question.question.fr : question.question.en
+      
     }));
     
+    console.log(selectedQuestionsText)
+
     return selectedQuestionsText;
   };
+
+
+
+  
+  
+
+  
+
   const onChangeFirstContent = (e) => {
     setFirstContent(e.target.value);
   };
@@ -261,95 +276,87 @@ if (domainesStorage) {
     );
     console.log(filteredObjects);
       //******************récupération du question**************** */   
-    // Fonction pour récupérer la question
- // Fetch question details
- useEffect(() => {
-  const fetchQuestion = async () => {
-    try {
-      const response = await axios.get(`http://localhost:3002/api/questions/${id}`);
-      setQuestion(response.data);
-    } catch (error) {
-      console.error('Failed to fetch question:', error);
-    }
-  };
-
-  if (id) {
-    fetchQuestion();
-  }
-}, [id]);
-
-// Fetch responses related to the question
-useEffect(() => {
-  const fetchResponses = async () => {
-    try {
-      const response = await axios.get(`http://localhost:3002/api/reponse/${id}`);
-      setResponses(response.data);
-    } catch (error) {
-      console.error('Error fetching responses:', error);
-    }
-  };
-
-  if (id) {
-    fetchResponses();
-  }
-}, [id]);
+  
+      // Fonction pour récupérer la question    
+const fetchQuestions = async () => {
+  try {
+    let endpoint = `http://localhost:3002/api/questions`;
+    console.log("Endpoint:", endpoint);
     
-      const fetchQuestions = async () => {
-      try {
-        
-        let endpoint = `http://localhost:3002/api/questions`;
-        console.log("Endpoint:", endpoint);
-        if (selectedDomaine === null) {
-          endpoint += `?skill=${selectedCompetence}`;
-          console.log("Selected Domaine is null. Updated endpoint:", endpoint);
-        } else {
-          const selectedItems = classifiedData[selectedDomaine];
-          console.log("Selected items:", selectedItems);
-          const responses = await Promise.all(selectedItems.map(async (item) => {
-            const response = await axios.get(`${endpoint}?skill=${item}`);
-            console.log("Response for item", item, ":", response);
-            return response.data.map(q => ({
-              //recupération de données d'aprées domaines
-              id: q._id,
-              question: {
-                fr: q.question_fr,
-                en: q.question_en
-              },
-              reponseId: q.reponse_id,
-              class: q.domaine, 
-              skill: q.competence ? q.competence.code : '',
-            }));
-          }));
-          console.log(" responses:", responses);
-          const questionsFromAPI = responses.reduce((accumulator, currentValue) => accumulator.concat(currentValue), []);
-          console.log("Questions from API:", questionsFromAPI);
-          setQuestions(questionsFromAPI);
-          localStorage.setItem('questions', JSON.stringify(questionsFromAPI));
-          console.log("Questions set and stored in local storage.");
-          return;
-        }
-        const response = await axios.get(endpoint);
-        console.log("Response from API:", response);
-        const questionsFromAPI = response.data.map(q => ({
-          //recupération de donnes d'aprées compétence
+    if (selectedDomaine === null) {
+      endpoint += `?skill=${selectedCompetence}`;
+      console.log("Selected Domaine is null. Updated endpoint:", endpoint);
+    } else {
+      const selectedItems = classifiedData[selectedDomaine];
+      console.log("Selected items:", selectedItems);
+      const responses = await Promise.all(selectedItems.map(async (item) => {
+        const response = await axios.get(`${endpoint}?skill=${item}`);
+        console.log("Response for item", item, ":", response);
+        return response.data.map(q => ({
           id: q._id,
           question: {
             fr: q.question_fr,
             en: q.question_en
           },
-          reponseId: q.id,
+          reponseId: q.reponse_id,
           class: q.domaine, 
           skill: q.competence ? q.competence.code : '',
         }));
-        console.log("Questions from API:", questionsFromAPI);
-        setQuestions(questionsFromAPI);
-        localStorage.setItem('questions', JSON.stringify(questionsFromAPI));
-        console.log("Questions set and stored in local storage.");
+      }));
+      console.log(" responses:", responses);
+      const questionsFromAPI = responses.reduce((accumulator, currentValue) => accumulator.concat(currentValue), []);
+      console.log("Questions from API:", questionsFromAPI);
+      setQuestions(questionsFromAPI);
+      localStorage.setItem('questions', JSON.stringify(questionsFromAPI));
+      console.log("Questions set and stored in local storage.");
+      return;
+    }
+    
+    const response = await axios.get(endpoint);
+    console.log("Response from API:", response);
+    const questionsFromAPI = response.data.map(q => ({
+      id: q._id,
+      question: {
+        fr: q.question_fr,
+        en: q.question_en
+      },
+      reponseId: q.id,
+      class: q.domaine, 
+      skill: q.competence ? q.competence.code : '',
+    }));
+    
+    console.log("Questions from API:", questionsFromAPI);
+    setQuestions(questionsFromAPI);
+    
+    
+    const questionRep = await Promise.all(questionsFromAPI.map(async(item) => {
+      try {
+        const response = await axios.get(`http://localhost:3002/api/reponse/${item.id}`);
+        return { question: item, response: response.data };
       } catch (error) {
-        console.error('Error fetching questions:', error);
+        
+        console.error(`Error fetching response for question ${item.id}:`, error);
+        return { question: item, response: null };
       }
-    };
-    console.log(fetchQuestions);
+    }));
+    
+    console.log('R2ponse',questionRep);
+    localStorage.setItem('questions', JSON.stringify(questionsFromAPI));
+    console.log("Questions set and stored in local storage.");
+  } catch (error) {
+    console.error('Error fetching questions:', error);
+  }
+};
+console.log(fetchQuestions);
+
+
+
+
+useEffect(() => {
+  fetchQuestions();
+}, []);
+
+
 
 
   const onChange = (value) => {
@@ -526,15 +533,61 @@ const columns = [
 
   const previewContent = () => (
     <div>
+
+
+{/* <ol>
+  {getSelectedQuestions().map(question => {
+    console.log("Question:", question);
+    return (
+      <li key={question.id}>
+        {question.text}
+        <ul>
+          {responses
+            .filter(response => {
+              console.log("Response:", response);
+              return response.idQuestion === question.id;
+            })
+            .map((response, index) => {
+              console.log("Response index:", index);
+              return (
+                <li key={response._id}>
+                  {index + 1}. {response.answer_fr}
+                </li>
+              );
+            })}
+        </ul>
+      </li>
+    );
+  })}
+</ol>
+
+
+<p>/////////////////</p> */}
+
+
+
+
+
+          <ol>
+            {getSelectedQuestions().map(question => (
+              <li key={question.id}>{question.text}</li>
+              
+            ))}
+          </ol>
+
+
       <p>Title: {title}</p>
       <p>Description: {description}</p>
       <p>Language: {language}</p>
       <p>Experience: {experience}</p>
-      <ol>
+        <ol>
             {getSelectedQuestions().map(question => (
               <li key={question.id}>{question.text}</li>
+              
             ))}
           </ol>
+
+    
           
       <Button type="primary" onClick={handleStartQuiz} disabled={isQuizStarted}>
         Start Quiz
