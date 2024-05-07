@@ -153,7 +153,6 @@ function AjoutQuestion() {
       ]
     });
   };
-  
   const ajouterReponses = () => {
     setFormData(prevState => ({
       ...prevState,
@@ -163,7 +162,6 @@ function AjoutQuestion() {
       ]
     }));
   };
-
   const handleAjouterQuestion = (questionId) => {
     console.log('Question ajoutée avec succès !');
     toast.success('Question ajoutée avec succès !', {
@@ -177,28 +175,21 @@ function AjoutQuestion() {
         // history.push("/Dashboard");
     }, 3000); // Temps d'attente pour 'autoClose'
 };
-
 const onChange = (value) => {
   console.log(`Selected: ${value}`);
 };
-
-  
   const handleDomaineChange = (event) => {
-    
     setFormData({
       ...formData,
       class: event.target.value
     });
   };
-
   const handleCompetenceChange = (event) => {
     setFormData({
       ...formData,
       skill: event.target.value
     });
   };
-
-  
   const handleSelectChange = (value) => {
     setSelectedLanguage(value);
   };

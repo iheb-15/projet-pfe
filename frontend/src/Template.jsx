@@ -17,13 +17,13 @@ import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import CreateIcon from '@material-ui/icons/Create';
 import PersonIcon from '@material-ui/icons/Person';
 
+import CréerTest from './CréerTest';
+import testFormulaire from './pages/testviaformulaire';
 import { HighlightOutlined, RightOutlined, LeftOutlined } from '@ant-design/icons';
 import TemplateHeader from "./components/TemlplateHeader";
 const { Header, Sider, Content } = Layout;
 const { SubMenu } = Menu;
 
-import CréerTest from './CréerTest';
-import testFormulaire from './pages/testviaformulaire';
 
 const Template = () => {
   const [collapsed, setCollapsed] = useState(false);
