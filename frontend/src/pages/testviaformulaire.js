@@ -66,6 +66,10 @@ const useStyles = makeStyles((theme) => ({
       marginBottom: theme.spacing(2),
       color:"#3987ee",
     },
+    paper: {
+      padding: theme.spacing(3),
+      borderRadius: theme.spacing(2), 
+    },
   }));
 
 
@@ -183,13 +187,19 @@ const filterOption = (input, option) => {
   ////******paramètres de affichage content************ */
   const renderStep1 = () => (
     <>
-             <div>
+           <Container maxWidth="lg">
+           
+           <Paper elevation={3} className={`${classes.paper} ${classes.spacing}`} style={{marginTop:80}}>
+            
+           <Typography variant="h8" className={`${classes.label}`} >Titre de test<span className={classes.redAsterisk}>*</span></Typography>
           <Input
             placeholder="Titre du test"
+            label="titre"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             style={{ marginBottom: '1rem' }}
           />
+           <Typography variant="h8" className={`${classes.label}`} >Description<span className={classes.redAsterisk}>*</span></Typography>
           <Input.TextArea
             placeholder="Description"
             value={description}
@@ -197,152 +207,125 @@ const filterOption = (input, option) => {
             autoSize={{ minRows: 4 }}
             style={{ marginBottom: '1rem' }}
           />
+           <Typography variant="h8" className={`${classes.label}`} >Langue<span className={classes.redAsterisk}>*</span></Typography>
           <Select
             placeholder="Langue"
             value={language}
             onChange={(value) => setLanguage(value)}
             style={{ width: '100%', marginBottom: '1rem' }}
           >
+            <Option value="" disabled>Choisir Langue</Option>
             <Option value="fr">Français</Option>
             <Option value="en">Anglais</Option>
             <Option value="es">Espagnol</Option>
           </Select>
+          <Typography variant="h8" className={`${classes.label}`} >Expérience<span className={classes.redAsterisk}>*</span></Typography>
           <Select
             placeholder="Expérience"
             value={experience}
             onChange={(value) => setExperience(value)}
             style={{ width: '100%', marginBottom: '1rem' }}
           >
+            <Option value="" disabled>Choisir  Expérience</Option>
             <Option value="beginner">Débutant</Option>
             <Option value="intermediate">Intermédiaire</Option>
             <Option value="advanced">Avancé</Option>
           </Select>
-        </div>
+         </Paper>
+        </Container>
             </>
       );
       const renderStep2 = () => (
-        <Container maxWidth="xl">
+        <Container maxWidth="lg">
+    <Paper elevation={3} className={`${classes.paper} ${classes.spacing}`} style={{marginTop:80}}>
         {formulaires[currentPage].map((num, index) => (
             <div key={index}>
-                <h2>Formulaire numéro {num}</h2>
-                <Typography variant="h6" style={{ color: "#3987ee" }} align="center" gutterBottom>Ajouter une Question</Typography>
-                <Paper elevation={3}>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12} sm={4}>
-                            <FormControl fullWidth>
-                                <Typography variant="subtitle1">Niveau</Typography>
+                <h4 style={{textAlign:'center'}}>Formulaire numéro {num}</h4>
+              
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={4}>
+                        <FormControl fullWidth>
+                        <Typography variant="h8" className={`${classes.label}`} >Niveau<span className={classes.redAsterisk}>*</span></Typography>
+                            <Select
+                              placeholder="choisir Niveau"
+                                value={level}
+                                onChange={(e) => setLevel(e.target.value)}
+                                fullWidth
+                                style={{width:200}}
+                            >
+                               <MenuItem value="" disabled>Choisissez un Niveau</MenuItem>
+                                <MenuItem value="beginner">Débutant</MenuItem>
+                                <MenuItem value="intermediate">Intermédiaire</MenuItem>
+                                <MenuItem value="advanced">Avancé</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <FormControl fullWidth>
+                        <Typography variant="h8" className={`${classes.label}`} >Points<span className={classes.redAsterisk}>*</span></Typography>
+                            <InputNumber 
+                                min={1} max={100000}
+                                defaultValue={1} 
+                                onChange={onChange}  
+                                style={{width:200}}
+                            />
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <FormControl fullWidth>
+                        <Typography variant="h8" className={`${classes.label}`} >Temps<span className={classes.redAsterisk}>*</span></Typography>
+                            <TimePicker 
+                                onChange={onChanges}
+                                defaultOpenValue={moment('00:00:00', 'HH:mm:ss')} 
+                                format='HH:mm:ss'
+                                style={{width:200}}
+                            />
+                        </FormControl>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <Typography variant="h8" className={`${classes.label}`} >Compétence<span className={classes.redAsterisk}>*</span></Typography>
+                        <Select
+                            showSearch
+                            style={{ width: "250px" }}
+                            placeholder="Choisir Compétence"
+                            optionFilterProp="children"
+                            onChange={""}
+                            onSearch={""}
+                            filterOption={(input, option) => (option?.label ?? "").includes(input)}
+                            filterSort={(optionA, optionB) =>
+                                (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
+                            }
+                        >
+                        </Select>
+                    </Grid>
+                    
+                    <Grid container spacing={2} className={classes.spacing}>
+                        <Grid item xs={12}>
+                            <FormControl className={`${classes.formControl} ${classes.expandedTextField}`} fullWidth>
+                                <Typography variant="subtitle1" className={classes.label}>
+                                    Type de Question<span className={classes.redAsterisk}>*</span>
+                                </Typography>
                                 <Select
-                                    value={level}
-                                    onChange={(e) => setLevel(e.target.value)}
-                                    fullWidth
+                                    value={selectedType}
+                                    onChange={handleTypeChange}
+                                    displayEmpty
+                                    style={{ width: "250px" }}
+                                    inputProps={{ 'aria-label': 'Type de Question' }}
+                                    className={`${classes.select} ${classes.spacing}`}
                                 >
-                                    <MenuItem value="beginner">Débutant</MenuItem>
-                                    <MenuItem value="intermediate">Intermédiaire</MenuItem>
-                                    <MenuItem value="advanced">Avancé</MenuItem>
+                                    <MenuItem value="" disabled>Choisissez un type</MenuItem>
+                                    <MenuItem value="vrai-faux">Vrai/Faux</MenuItem>
+                                    <MenuItem value="qcm">QCM</MenuItem>
+                                    <MenuItem value="image">Image</MenuItem> 
+                                    <MenuItem value="text">Texte</MenuItem>
                                 </Select>
                             </FormControl>
-                        </Grid>
-                        <Grid item xs={12} sm={4}>
-                            <FormControl fullWidth>
-                                <Typography variant="subtitle1">Points</Typography>
-                                <InputNumber 
-                                    min={1} max={100000}
-                                    defaultValue={1} 
-                                    onChange={onChange}  
-                                    style={{width:200}}
-                                />
-                            </FormControl>
-                        </Grid>
-                        <Grid item xs={12} sm={4}>
-                            <FormControl fullWidth>
-                                <Typography variant="subtitle1">Temps</Typography>
-                                <TimePicker 
-                                    onChange={onChanges}
-                                    defaultOpenValue={moment('00:00:00', 'HH:mm:ss')} 
-                                    format='HH:mm:ss'
-                                />
-                            </FormControl>
-                        </Grid>
-                        <Grid item xs={12} sm={4}>
-                          <Typography variant="h8" className={`${classes.label}`} >Compétence<span className={classes.redAsterisk}>*</span></Typography>
-                            <Select
-                              showSearch
-                              style={{ width: "250px" }}
-                              placeholder="Choisir Compétence"
-                              optionFilterProp="children"
-                              onChange={""}
-                              onSearch={""}
-                              filterOption={(input, option) => (option?.label ?? "").includes(input)}
-                              filterSort={(optionA, optionB) =>
-                                (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
-                              }
-                            >
-                              </Select>
+                            
                         </Grid>
                         
-                        <Grid container spacing={2} className={classes.spacing}>
-                            <Grid item xs={12}>
-                                <FormControl className={`${classes.formControl} ${classes.expandedTextField}`} fullWidth>
-                                    <Typography variant="subtitle1" className={classes.label}>
-                                        Type de Question<span className={classes.redAsterisk}>*</span>
-                                    </Typography>
-                                    <Select
-                                        value={selectedType}
-                                        onChange={handleTypeChange}
-                                        displayEmpty
-                                        style={{ width: "200px" }}
-                                        inputProps={{ 'aria-label': 'Type de Question' }}
-                                        className={`${classes.select} ${classes.spacing}`}
-                                    >
-                                        <MenuItem value="" disabled>Choisissez un type</MenuItem>
-                                        <MenuItem value="vrai-faux">Vrai/Faux</MenuItem>
-                                        <MenuItem value="qcm">QCM</MenuItem>
-                                        <MenuItem value="image">Image</MenuItem> 
-                                        <MenuItem value="text">Texte</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                            </Grid>
-                        </Grid>
-                        {/* Zone de saisie de la question
-                            <Grid item xs={12}>
-                            <Typography variant="subtitle1" className={`${classes.label}`} >Question<span className={classes.redAsterisk}>*</span></Typography>
-                            <TextArea rows={3} 
-                                placeholder="Question"
-                                
-                                value={selectedLanguage === 'Francais' ? formData.question_en : formData.question_fr}
-                                onChange={handleQuestionChanges}
-                                aria-label="Question"
-                                />
-                            </Grid>
-                            <div className={classes.responseContainer}>
-                            <TextArea
-                            rows={2}
-                            multiline
-                            variant="outlined"
-                            placeholder={`Réponse ${index + 1}*`} 
-                            fullWidth
-                            value={selectedLanguage === 'Francais' ? answers.answer_en : answer.answer_fr}
-                            onChange={(e) => handleReponseChangess(index, e)}
-                            className={`${classes.formControl} ${classes.spacing}`}
-                            aria-label={`Réponse ${index + 1}`}
-                            style={{ display: selectedResponseType === 'Image' ? 'none' : 'block', width: "100%" }} 
-                            />
-                        <IconButton onClick={() => supprimerReponse(index)} aria-label={`Supprimer réponse ${index + 1}`}>
-                            <CloseIcon />
-                            </IconButton>
-                        </div>
-                        {formData.answers.every(answer => !answer.isCorrect) && (
-                            <Typography variant="subtitle1" className={`${classes.label}`} style={{ color: 'red' }}>
-                            Veuillez sélectionner au moins une réponse correcte.
-                            </Typography>
-                        )}
-                        
-                        
-                        <Button variant="contained" style={{ color: '#fff', backgroundColor: '#3987ee',width:180  }} 
-                        className={classes.addButton} aria-label="Ajouter réponse" onClick={ajouterReponses} >Ajouter Réponse
-                        </Button> */}
-                </Paper>
+                    </Grid>
+                    
+                </Grid>
                 <div style={{ textAlign: 'center', marginTop: '20px' }}>
                     <Button
                         variant="contained"
@@ -351,19 +334,22 @@ const filterOption = (input, option) => {
                         Nouvelle Question 
                     </Button>
                 </div>
+              
             </div>
+           
         ))}
-        <Pagination count={formulaires.length} page={currentPage + 1} onChange={(event, value) => setCurrentPage(value - 1)} />
-        <Button
-            variant="contained"
-            style={{ color: '#fff', backgroundColor: '#3987ee', float: 'right', marginTop: '10px', width: 100 }}
-            onClick={ajouterFormulaire}
-        >
-            Ajouter
-        </Button>
-    </Container>
-    );
-    
+      </Paper>
+    <Pagination count={formulaires.length} page={currentPage + 1} onChange={(event, value) => setCurrentPage(value - 1)} />
+    <Button
+        variant="contained"
+        style={{ color: '#fff', backgroundColor: '#3987ee', float: 'right', marginTop: '10px', width: 100,textAlign: 'center' }}
+        onClick={ajouterFormulaire}
+    >
+        Ajouter
+    </Button>
+</Container>
+
+    );  
   const steps = [
     { title: 'Paramètre du test', content: renderStep1() },
     { title: 'Ajouter test', content: renderStep2() },
@@ -392,16 +378,16 @@ const filterOption = (input, option) => {
   };
 
   return (
-    <div>
+    <Container maxWidth="lg">
       <Steps current={currentStep}>
         {steps.map(item => (
           <Step key={item.title} title={item.title} />
         ))}
       </Steps>
-      <div className="steps-content">{steps[currentStep].content}</div>
+      <div>{steps[currentStep].content}</div>
       <div className="steps-action">
         {currentStep < steps.length - 1 && (
-          <Button type="primary" onClick={handleNext}>
+          <Button type="primary" onClick={handleNext} >
             Suivant
           </Button>
         )}
@@ -416,7 +402,7 @@ const filterOption = (input, option) => {
           </Button>
         )}
       </div>
-    </div>
+   </Container>
   );
 };
 

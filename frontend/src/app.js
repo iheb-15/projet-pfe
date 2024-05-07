@@ -8,7 +8,7 @@ import MotPasseOublie from './MotPasseOublie';
 import CodeOTP from './CodeOTP';
 import NouveauxMotPasse from './NouveauxMotPasse';
 import { ToastContainer } from 'react-toastify';
-
+import TemplateHeader from "./components/TemlplateHeader";
 const App = () => {
  
 //changer par Auth user
@@ -35,9 +35,10 @@ const App = () => {
       <Route path="/motPasseOublie" component={MotPasseOublie} />
       <Route path="/CodeOTP" component={CodeOTP}/>
       <Route path="/nouveauMotPasse" component={NouveauxMotPasse}/>
-
+      
       {/* //template */}
        <Template />
+       <TemplateHeader/>
     </Switch>
     <ToastContainer/>
   </Router>
@@ -45,4 +46,3 @@ const App = () => {
 };
 
 export default App;
-
