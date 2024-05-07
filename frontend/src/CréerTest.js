@@ -96,6 +96,7 @@ function CréerTest() {
   const [questionResponses, setQuestionResponses] = useState([]);
   // const [questions, setQuestions] = useState([]);
 const [responses, setResponses] = useState([]); 
+const [responseData,setReponseData]=useState([]);
   useEffect(() => {
     setIdFromUrl(id);
   }, [id]);
@@ -155,10 +156,47 @@ const [responses, setResponses] = useState([]);
     return selectedQuestionsText;
   };
 
+//   const getSelectedQuestions = () => {
+//     // Filtrer les questions en fonction des clés des lignes sélectionnées
+//     const selectedQuestions = questions.filter(question =>
+//         selectedRowKeys.includes(question.id)
+//     );
+//     console.log("Questions sélectionnées :", selectedQuestions);
+
+//     // Vérifier la langue sélectionnée et récupérer le texte approprié de la question
+//     const selectedQuestionsText = selectedQuestions.map(question => ({
+//         id: question.id,
+//         text: language === 'fr' ? question.question.fr : question.question.en
+//     }));
+
+//     console.log("Texte des questions sélectionnées :", selectedQuestionsText);
+
+//     // Maintenant, récupérez les données appropriées de responseData pour chaque question
+//     const selectedQuestionsWithData = selectedQuestionsText.map(question => {
+//         try {
+//             const responseDataItem = responseData.find(responseDataItem => responseDataItem.idQuestion === question.id);
+//             return {
+//                 ...question,
+//                 responseData: responseDataItem ? responseDataItem.data.map(responseData => ({
+//                     id: responseData.idQuestion,
+//                     text: language === 'fr' ? responseData.answer.fr : responseData.answer.en
+//                 })) : null
+//             };
+//         } catch (error) {
+//             console.error("Erreur lors de la recherche dans responseData :", error);
+//             return {
+//                 ...question,
+//                 responseData: null
+//             };
+//         }
+//     });
+
+//     console.log("Questions sélectionnées avec données :", selectedQuestionsWithData);
+
+//     return selectedQuestionsWithData;
+// };
 
 
-  
-  
 
   
 
@@ -328,16 +366,17 @@ const fetchQuestions = async () => {
     console.log("Questions from API:", questionsFromAPI);
     setQuestions(questionsFromAPI);
     
-    
-    const questionRep = await Promise.all(questionsFromAPI.map(async(item) => {
-      try {
-        const response = await axios.get(`http://localhost:3002/api/reponse/${item.id}`);
-        return { question: item, response: response.data };
-      } catch (error) {
-        
-        console.error(`Error fetching response for question ${item.id}:`, error);
-        return { question: item, response: null };
-      }
+      
+      const questionRep = await Promise.all(questionsFromAPI.map(async(item) => {
+        try {
+          const response = await axios.get(`http://localhost:3002/api/reponse/${item.id}`);
+         let responseData=response.data
+          return { question: item, responseData };
+        } catch (error) {
+          
+          console.error(`Error fetching response for question ${item.id}:`, error);
+          return { question: item, response: null };
+        }
     }));
     
     console.log('R2ponse',questionRep);
@@ -535,26 +574,28 @@ const columns = [
     <div>
 
 
-{/* <ol>
+<ol>
   {getSelectedQuestions().map(question => {
-    console.log("Question:", question);
+    console.log("Question ID:", question.id);
+    console.log("Question Text:", question.text);
+    
     return (
       <li key={question.id}>
         {question.text}
         <ul>
-          {responses
-            .filter(response => {
-              console.log("Response:", response);
-              return response.idQuestion === question.id;
-            })
-            .map((response, index) => {
-              console.log("Response index:", index);
-              return (
-                <li key={response._id}>
-                  {index + 1}. {response.answer_fr}
-                </li>
-              );
-            })}
+          {response.filter(res => {
+            console.log("Response ID:", res.id);
+            console.log("Response Text:", res.text);
+            return res.idQuestion === question.id;
+          }).map(answer => {
+            console.log("Filtered Answer ID:", answer.id);
+            console.log("Filtered Answer Text:", answer.text);
+            return (
+              <li key={answer.id}>
+                {selectedLanguage === "fr" ? answer.answer_fr : answer.answer_en}
+              </li>
+            );
+          })}
         </ul>
       </li>
     );
@@ -562,7 +603,7 @@ const columns = [
 </ol>
 
 
-<p>/////////////////</p> */}
+<p>/////////////////</p>
 
 
 
