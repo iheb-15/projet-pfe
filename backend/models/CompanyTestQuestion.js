@@ -2,11 +2,7 @@ const mongoose = require('mongoose');
 
 const companyTestQuestionSchema = new mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
-  idQuestions: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-    ref: 'Company' 
-}
+idQuestions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Company' }]
 },{collection:'companytestquestions', timestamps: true}
 );
 

@@ -1,13 +1,14 @@
-import { Button, message, Steps,Table  } from 'antd';
+import { Button,  Steps,Table  } from 'antd';
 import React, { useState,useEffect } from 'react';
 import './CreateTest.css';
-import { Input, Select } from 'antd';
+import { Input, Select,Modal } from 'antd';
 import 'antd/dist/antd.css'; 
 import axios from 'axios';
 import { Typography,  Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import {   Select as AntdSelect  } from 'antd';
 import { useParams } from 'react-router-dom';
+import Snackbar from '@mui/material/Snackbar';
 const { Step } = Steps;
 const { Option } = Select;
 const useStyles = makeStyles((theme) => ({
@@ -82,24 +83,75 @@ function CréerTest() {
   const [domaines, setDomaines] = useState([]);
   const [classifiedData, setClassifiedData] = useState({});
   const [selectedDomaine, setSelectedDomaine] = useState(null);
-  const [selectedLanguage, setSelectedLanguage] = useState('fr');
-  const [formData, setFormData] = useState({});
+  const [selectedLanguage, setSelectedLanguage] = useState('');
   const [firstContent, setFirstContent] = useState('');
   const [secondContent, setSecondContent] = useState('');
   const [timeLeft, setTimeLeft] = useState(300); 
   const [isQuizStarted,setIsQuizStarted]=useState(false);
   const [idFromUrl, setIdFromUrl] = useState(null);
   const {id}=useParams();
-  const [reponse, setReponse] = useState('');
-  const [question, setQuestion] = useState(null);
   const [response, setResponse] = useState([]);
-  const [questionResponses, setQuestionResponses] = useState([]);
-  // const [questions, setQuestions] = useState([]);
-const [responses, setResponses] = useState([]); 
-const [responseData,setReponseData]=useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [questionAll,setQuestionAll]=useState([]);
+  const[recupQuestion,setRecupQuestion]=useState(false);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+ 
+  //******pour snacker */
+  const handleOpenSnackbar = () => {
+    setOpenSnackbar(true);
+  };
+
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpenSnackbar(false);
+  };
+  
+  //*****fin sancker*********** */
+ 
+  // *********** relation axios*********
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    
+    const questionIds = getSelectedQuestions();
+
+    try {
+        const response = await axios.post('http://localhost:3002/api/company',{
+
+       
+            title: title,
+            description: description,
+            languages: [language],
+            level: experience === "beginner" ? 0 : experience === "intermediate" ? 1 : experience === "advanced" ? 2 : 3,
+            idQuestions: questionIds
+            
+        });
+        handleOpenSnackbar();
+        console.log('Company created:', response.data);
+        
+    } catch (error) {
+        console.error('Error creating company:', error);
+       
+    }
+};
+
+
+  // *************fin axios***************
+  
+ 
+  
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
+
   useEffect(() => {
     setIdFromUrl(id);
   }, [id]);
+
+  // *************Début quiz****************
   useEffect(() => {
     let interval = null;
 
@@ -117,7 +169,8 @@ const [responseData,setReponseData]=useState([]);
 
   const handleStartQuiz = () => {
     setIsQuizStarted(true);
-    setTimeLeft(300); // Reset timer each time the quiz is started
+    setTimeLeft(300); 
+    setIsModalVisible(true);
   };
 
   const formatTime = () => {
@@ -127,21 +180,24 @@ const [responseData,setReponseData]=useState([]);
   };
 
   const handleStopQuiz = () => {
-    setIsQuizStarted(false); // Reset quiz start state
-    setTimeLeft(300);  // Optionally reset the timer to initial state
-    // Any additional cleanup can be done here
+    setIsQuizStarted(false); 
+    setTimeLeft(300);  
+    
   };
+
+  ///////////********Fin quiz************* */
   const onSelectChange = selectedRowKeys => {
     setSelectedRowKeys(selectedRowKeys);
   };
 
   // Fonction pour récupérer les questions sélectionnées
- 
+  
   const getSelectedQuestions = () => {
     // Filtrer les questions en fonction des clés des lignes sélectionnées
     const selectedQuestions = questions.filter(question =>
       selectedRowKeys.includes(question.id)
     );
+    
     console.log(selectedQuestions)
     
     // Vérifier la langue sélectionnée et récupérer le texte approprié de la question
@@ -150,55 +206,11 @@ const [responseData,setReponseData]=useState([]);
       text: language === 'fr' ? question.question.fr : question.question.en
       
     }));
-    
     console.log(selectedQuestionsText)
-
+    
     return selectedQuestionsText;
   };
-
-//   const getSelectedQuestions = () => {
-//     // Filtrer les questions en fonction des clés des lignes sélectionnées
-//     const selectedQuestions = questions.filter(question =>
-//         selectedRowKeys.includes(question.id)
-//     );
-//     console.log("Questions sélectionnées :", selectedQuestions);
-
-//     // Vérifier la langue sélectionnée et récupérer le texte approprié de la question
-//     const selectedQuestionsText = selectedQuestions.map(question => ({
-//         id: question.id,
-//         text: language === 'fr' ? question.question.fr : question.question.en
-//     }));
-
-//     console.log("Texte des questions sélectionnées :", selectedQuestionsText);
-
-//     // Maintenant, récupérez les données appropriées de responseData pour chaque question
-//     const selectedQuestionsWithData = selectedQuestionsText.map(question => {
-//         try {
-//             const responseDataItem = responseData.find(responseDataItem => responseDataItem.idQuestion === question.id);
-//             return {
-//                 ...question,
-//                 responseData: responseDataItem ? responseDataItem.data.map(responseData => ({
-//                     id: responseData.idQuestion,
-//                     text: language === 'fr' ? responseData.answer.fr : responseData.answer.en
-//                 })) : null
-//             };
-//         } catch (error) {
-//             console.error("Erreur lors de la recherche dans responseData :", error);
-//             return {
-//                 ...question,
-//                 responseData: null
-//             };
-//         }
-//     });
-
-//     console.log("Questions sélectionnées avec données :", selectedQuestionsWithData);
-
-//     return selectedQuestionsWithData;
-// };
-
-
-
-  
+ 
 
   const onChangeFirstContent = (e) => {
     setFirstContent(e.target.value);
@@ -315,10 +327,12 @@ if (domainesStorage) {
     console.log(filteredObjects);
       //******************récupération du question**************** */   
   
-      // Fonction pour récupérer la question    
+      // Fonction pour récupérer la question  
+
 const fetchQuestions = async () => {
   try {
     let endpoint = `http://localhost:3002/api/questions`;
+  
     console.log("Endpoint:", endpoint);
     
     if (selectedDomaine === null) {
@@ -378,7 +392,7 @@ const fetchQuestions = async () => {
           return { question: item, response: null };
         }
     }));
-    
+    setQuestionAll(questionRep)
     console.log('R2ponse',questionRep);
     localStorage.setItem('questions', JSON.stringify(questionsFromAPI));
     console.log("Questions set and stored in local storage.");
@@ -396,11 +410,6 @@ useEffect(() => {
 }, []);
 
 
-
-
-  const onChange = (value) => {
-    console.log(`selected ${value}`);
-  };
   const onSearch = (value) => {
     console.log('search:', value);
   };
@@ -452,10 +461,7 @@ const columns = [
       setLoading(false);
     }, 1000);
   };
-  // const onSelectChange = (newSelectedRowKeys) => {
-  //   console.log('selectedRowKeys changed: ', newSelectedRowKeys);
-  //   setSelectedRowKeys(newSelectedRowKeys);
-  // };
+  
   const rowSelection = {
     selectedRowKeys,
     onChange: onSelectChange,
@@ -485,9 +491,9 @@ const columns = [
       onChange={(value) => setLanguage(value)}
       style={{ width: '100%', marginBottom: '1rem' }}
     >
-      <Select.Option value="fr">Français</Select.Option>
-      <Select.Option value="en">Anglais</Select.Option>
-      <Select.Option value="es">Espagnol</Select.Option>
+      <Select.Option value="francais">Français</Select.Option>
+      <Select.Option value="anglais">Anglais</Select.Option>
+      <Select.Option value="arabe"disabled>Arabe</Select.Option>
     </Select>
     <Select
       placeholder="Expérience"
@@ -572,87 +578,124 @@ const columns = [
 
   const previewContent = () => (
     <div>
+ <p>Language: {language}</p>
+  <p>Experience: {experience}</p>
+  <p>Title: {title}</p>
+  <p>Description: {description}</p>
 
+  <ol>
+    {getSelectedQuestions().map((question, index) => {
+      console.log("Question ID:", question.id);
+      console.log("Question Text:", question.text);
+      const questionTrouver = questionAll.find(item => item.question.id === question.id);
+      console.log(questionTrouver);
 
-<ol>
-  {getSelectedQuestions().map(question => {
-    console.log("Question ID:", question.id);
-    console.log("Question Text:", question.text);
-    
-    return (
-      <li key={question.id}>
-        {question.text}
-        <ul>
-          {response.filter(res => {
-            console.log("Response ID:", res.id);
-            console.log("Response Text:", res.text);
-            return res.idQuestion === question.id;
-          }).map(answer => {
-            console.log("Filtered Answer ID:", answer.id);
-            console.log("Filtered Answer Text:", answer.text);
-            return (
-              <li key={answer.id}>
-                {selectedLanguage === "fr" ? answer.answer_fr : answer.answer_en}
-              </li>
-            );
-          })}
-        </ul>
-      </li>
-    );
-  })}
-</ol>
+      return (
+        <li key={question.id}>
+          <h3>{index + 1}. {question.text}</h3>
+          {questionTrouver && (
+            <ul>
+              {questionTrouver.responseData.map(item => {
+                return (
+                  <li key={item.id} style={{ backgroundColor: item.isCorrect ? 'green' : 'inherit' }}>
+                    {selectedLanguage === "fr" ? item.answer_fr : item.answer_en}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
 
-
-<p>/////////////////</p>
-
-
-
-
-
-          <ol>
-            {getSelectedQuestions().map(question => (
-              <li key={question.id}>{question.text}</li>
-              
-            ))}
-          </ol>
-
-
-      <p>Title: {title}</p>
-      <p>Description: {description}</p>
-      <p>Language: {language}</p>
-      <p>Experience: {experience}</p>
-        <ol>
-            {getSelectedQuestions().map(question => (
-              <li key={question.id}>{question.text}</li>
-              
-            ))}
-          </ol>
-
-    
+          <ul>
+            {response.filter(res => res.idQuestion === question.id).map(answer => {
+              console.log("Filtered Answer ID:", answer.id);
+              console.log("Filtered Answer Text:", answer.text);
+              return (
+                <li key={answer.id} style={{ backgroundColor: answer.isCorrect ? 'green' : 'inherit' }}>
+                  {selectedLanguage === "fr" ? answer.answer_fr : answer.answer_en}
+                </li>
+              );
+            })}
+          </ul>
+        </li>
+      );
+    })}
+  </ol>
           
-      <Button type="primary" onClick={handleStartQuiz} disabled={isQuizStarted}>
+      <Button type="primary" 
+      onClick={handleStartQuiz} 
+      disabled={isQuizStarted}
+      style={{ position: 'absolute', top: '20%', right: 50 }}>
         Start Quiz
       </Button>
+      <Modal
+        title="Quiz Preview"
+        visible={isModalVisible}
+        onCancel={handleCancel}
+        footer={[
+          <Button key="cancel" onClick={handleCancel}>
+            Cancel
+          </Button>, 
+        ]}
+        width={1500} 
+        height={600} 
+      >
       {isQuizStarted && (
         <div>
-          <p>Title: {title}</p>
-           <p>Description: {description}</p>
-      <p>Language: {language}</p>
-      <p>Experience: {experience}</p>
+          
           <h3>Timer: {formatTime()}</h3>
+          <p>Title: {title}</p>
+          <p>Description: {description}</p>
+          <p>Language: {language}</p>
+          <p>Experience: {experience}</p>
           <h3>Quiz Questions:</h3>
-          <ol>
-            {getSelectedQuestions().map(question => (
-              <li key={question.id}>{question.text}</li>
-            ))}
-          </ol>
+            <ol>
+              {getSelectedQuestions().map((question, index) => {
+                console.log("Question ID:", question.id);
+                console.log("Question Text:", question.text);
+                const questionTrouver = questionAll.find(item => item.question.id === question.id);
+                console.log(questionTrouver);
+
+                return (
+                  <li key={question.id}>
+                    <h3>{index + 1}. {question.text}</h3>
+                    {questionTrouver && (
+                      <ul>
+                        {questionTrouver.responseData.map(item => {
+                          return (
+                            <li key={item.id} style={{ backgroundColor: item.isCorrect ? 'green' : 'inherit' }}>
+                              {selectedLanguage === "fr" ? item.answer_fr : item.answer_en}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    )}
+
+                    <ul>
+                      {response.filter(res => res.idQuestion === question.id).map(answer => {
+                        console.log("Filtered Answer ID:", answer.id);
+                        console.log("Filtered Answer Text:", answer.text);
+                        return (
+                          <li key={answer.id} style={{ backgroundColor: answer.isCorrect ? 'green' : 'inherit' }}>
+                            {selectedLanguage === "fr" ? answer.answer_fr : answer.answer_en}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </li>
+                );
+              })}
+            </ol>
           
           <Button type="danger" onClick={handleStopQuiz}>
             Stop Quiz
           </Button>
         </div>
       )}
+      </Modal>
+
+     
     </div>
+    
   );
   
   const steps = [
@@ -665,6 +708,7 @@ const columns = [
     
   ];
   const next = () => {
+    setRecupQuestion(true)
     setCurrent(current + 1);
   };
 
@@ -681,25 +725,42 @@ const columns = [
   return (
     <>
      <div>
-      <Steps current={current}>
-        {steps.map(item => (
-          <Step key={item.title} title={item.title} />
-        ))}
-      </Steps>
-      <div className="steps-content">{steps[current].content}</div>
-      <div className="steps-action">
-        {current < steps.length - 1 && (
-          <Button type="primary" onClick={() => next()}>
-            Next
-          </Button>
-        )}
-        {current > 0 && (
-          <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
-            Previous
-          </Button>
-        )}
-      </div>
-    </div>
+  <Steps current={current}>
+    {steps.map(item => (
+      <Step key={item.title} title={item.title} />
+    ))}
+  </Steps>
+  <div className="steps-content">{steps[current].content}</div>
+  <div className="steps-action">
+    {current < steps.length - 1 && (
+      <Button type="primary" onClick={() => next()}>
+        Next
+      </Button>
+    )}
+    {current > 0 && (
+      <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
+        Previous
+      </Button>
+    )}
+    {current === steps.length - 1 && (
+        <div>
+      <Button type="primary"
+      style={{ position: 'relative', top: '90%', right: '-80%' }}
+      onClick={handleSubmit}
+      >
+        Enregistrer
+      </Button>
+      <Snackbar
+      anchorOrigin={{ vertical: 'top', horizontal: 'centre' }}
+      open={openSnackbar}
+      autoHideDuration={6000}
+      onClose={handleCloseSnackbar}
+      message="Test enregistrer avec succès!"
+    />
+     </div>
+    )}
+  </div>
+</div>
     </>
   );
 }

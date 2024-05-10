@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Steps, Button, message } from 'antd';
 import { Input, Select ,Pagination, InputNumber} from 'antd';
 import { Container, Typography, Grid, Paper } from '@material-ui/core';
@@ -12,6 +12,11 @@ import {     Dialog, DialogContent,
 import { useHistory } from 'react-router-dom';
 import moment from 'moment';
 import CloseIcon from '@material-ui/icons/Close';
+import { Select as AntdSelect, Space } from 'antd';
+import { Upload } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
+import axios from 'axios';
+import DeleteIcon from '@material-ui/icons/Delete';
 const { TextArea } = Input;
 const { Step } = Steps;
 const { Option } = Select;
@@ -74,30 +79,149 @@ const useStyles = makeStyles((theme) => ({
 
 
 const TestFormulaire = () => {
-  const [currentStep, setCurrentStep] = useState(0);
-  const [language, setLanguage] = useState('');
-  const [experience, setExperience] = useState('');
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');;
-  const [formData, setFormData] = useState({});
-  const [current, setCurrent] = React.useState(0);
-  const [selectedLanguage, setSelectedLanguage] = useState('');
+    const [currentStep, setCurrentStep] = useState(0);
+    const [language, setLanguage] = useState('');
+    const [experience, setExperience] = useState('');
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');;
+    const [current, setCurrent] = React.useState(0);
+    const [selectedLanguage, setSelectedLanguage] = useState('');
     const [dateDialogOpen, setDateDialogOpen] = useState(false); 
     const classes = useStyles();
     const history = useHistory();
     const [question, setQuestion] = useState('');
     const [reponses, setReponses] = useState([{ text: '', isCorrect: false }]);
-    const theme = useTheme();
-    const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const [level, setLevel] = useState('');
     const[competence,setCompetence]=useState('');
     const [selectedCompetence, setSelectedCompetence] = useState(null);
     const [formulaires, setFormulaires] = useState([[1]]);
     const [currentPage, setCurrentPage] = useState(0); 
     const [selectedResponseType, setSelectedResponseType] = useState('Texte');
-    
-      
+    const [timeLeft, setTimeLeft] = useState(300); 
+    const [isQuizStarted,setIsQuizStarted]=useState(false);
+   
+    const [formData, setFormData] = useState({
+      class: '',
+      skill: '',
+      question_en: '',
+      question_fr: '',
+      level: '',
+      points: '',
+      time: '',
+      answers: [{ answer_en: '', answer_fr: '', isCorrect: false },
+      { answer_en: '', answer_fr: '', isCorrect: false }] 
+    });
+   
 
+  //   //***********paramètre de quiz************
+
+    useEffect(() => {
+      let interval = null;
+  
+      if (isQuizStarted && timeLeft > 0) {
+        interval = setInterval(() => {
+          setTimeLeft(timeLeft - 1);
+        }, 1000);
+      } else if (timeLeft === 0) {
+        clearInterval(interval);
+        alert('Time is up!');
+      }
+  
+      return () => clearInterval(interval);
+    }, [isQuizStarted, timeLeft]);
+  
+    const handleStartQuiz = () => {
+      setIsQuizStarted(true);
+      setTimeLeft(300); // Reset timer each time the quiz is started
+    };
+  
+    const formatTime = () => {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+      return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    };
+  
+    const handleStopQuiz = () => {
+      setIsQuizStarted(false); // Reset quiz start state
+      setTimeLeft(300);  // Optionally reset the timer to initial state
+      // Any additional cleanup can be done here
+    };
+
+    ///*******fin paramètre quiz **************/
+
+
+    //********relation avec axios***************/
+
+
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+
+      const updatedFormData = {
+        ...formData,
+        question_en: selectedLanguage === 'Anglais' ? formData.question : formData.question_en,
+        question_fr: selectedLanguage === 'Francais' ? formData.question : formData.question_fr,
+        answers: formData.answers.map(answer => ({
+          answer_en: selectedLanguage === 'Anglais' ? answer.answer_en : answer.answer_en,
+          answer_fr: selectedLanguage === 'Francais' ? answer.answer_fr : answer.answer_fr,
+          isCorrect: answer.isCorrect
+        }))
+      };
+      try {
+          const response = await axios.post('http://localhost:3002/api/company',{
+
+         
+              title: title,
+              description: description,
+              languages: [language],
+              level: experience === "beginner" ? 0 : experience === "intermediate" ? 1 : experience === "advanced" ? 2 : 3,
+              // idQuestion:
+              
+          });
+          console.log('Company created:', response.data);
+          // Optionally, you can redirect to another page or show a success message
+      } catch (error) {
+          console.error('Error creating company:', error);
+          // Optionally, you can show an error message to the user
+      }
+  };
+
+  ////************fin axios ***********/
+
+
+
+    const handleSelectChanges = (value) => {
+    
+      setFormData({
+        ...formData,
+        level: value
+      });
+    };
+ 
+    const onChangePoints = (value) => {
+      setFormData({
+        ...formData,
+        points: value
+      });
+    };
+    const handleChangeTime = (time, timeString) => {
+      // Convertir le temps en secondes
+      const timeParts = timeString.split(':');
+      const seconds = parseInt(timeParts[0], 10) * 3600 + parseInt(timeParts[1], 10) * 60;
+      // Mettre à jour le state avec le temps en secondes
+      setFormData({ ...formData, time: seconds });
+    };
+    
+    const handleCompetenceChange = (event) => {
+      setFormData({
+        ...formData,
+        skill: event.target.value
+      });
+    };
+    
+    const handleQuestionTypeChange = (value) => {
+      setSelectedResponseType(value);
+    };
+    
     const handleQuestionChanges = (e) => {
         const { value } = e.target;
         setFormData(prevState => ({
@@ -148,31 +272,54 @@ const TestFormulaire = () => {
     const [selectedType, setSelectedType] = useState('');
     const handleTypeChange = (e) => setSelectedType(e.target.value);
   const handleQuestionChange = (e) => setQuestion(e.target.value);
+  
   const handleReponseChange = (index, e) => {
-    const newReponses = [...reponses];
-    newReponses[index].text = e.target.value;
-    setReponses(newReponses);
+    const updatedAnswers = formData.answers.map((answer, idx) => {
+      if (idx === index) {
+        return selectedLanguage === 'Anglais'
+          ? { ...answer, answer_en: e.target.value }
+          : { ...answer, answer_fr: e.target.value };
+      }
+      return answer;
+    });
+  
+    setFormData({ ...formData, answers: updatedAnswers });
   };
+
   const handleCorrectChange = (index) => {
-    const newReponses = [...reponses];
-    newReponses[index].isCorrect = !newReponses[index].isCorrect;
-    setReponses(newReponses);
+    const updatedAnswers = [...formData.answers];
+    updatedAnswers[index].isCorrect = !updatedAnswers[index].isCorrect;
+    setFormData({
+      ...formData,
+      answers: updatedAnswers
+    });
   };
+
   const onChange = (value) => {
     setSelectedType(value);
   };
   const supprimerReponse = (index) => {
-    const newReponses = [...reponses];
-    newReponses.splice(index, 1);
-    setReponses(newReponses);
+    const updatedAnswers = [...formData.answers];
+    updatedAnswers.splice(index, 1);
+    setFormData({
+      ...formData,
+      answers: updatedAnswers
+    });
   };
+
+
   const handleAjouterReponse = () => {
-    const newReponses = [...reponses, { text: '', isCorrect: false }];
-    setReponses(newReponses);
+    setFormData({
+      ...formData,
+      answers: [
+        ...formData.answers,
+        { answer_en: '', answer_fr: '', isCorrect: false } 
+      ]
+    });
   };
 
   
-  
+ 
 
 const onSearch = (value) => {
   console.log('Searched:', value);
@@ -181,8 +328,17 @@ const filterOption = (input, option) => {
   return option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0;
 };
  
-
-
+const handleSelectChange = (value) => {
+  setSelectedLanguage(value);
+};
+const supprimerQuestion = (index) => {
+  
+  const nouvellesQuestions = [...formulaires[currentPage]];
+  nouvellesQuestions.splice(index, 1);
+  const nouvellesFormulaires = [...formulaires];
+  nouvellesFormulaires[currentPage] = nouvellesQuestions;
+  setFormulaires(nouvellesFormulaires);
+};
 
   ////******paramètres de affichage content************ */
   const renderStep1 = () => (
@@ -212,6 +368,7 @@ const filterOption = (input, option) => {
             placeholder="Langue"
             value={language}
             onChange={(value) => setLanguage(value)}
+            
             style={{ width: '100%', marginBottom: '1rem' }}
           >
             <Option value="" disabled>Choisir Langue</Option>
@@ -230,139 +387,260 @@ const filterOption = (input, option) => {
             <Option value="beginner">Débutant</Option>
             <Option value="intermediate">Intermédiaire</Option>
             <Option value="advanced">Avancé</Option>
+            <Option value="Expert">Expert</Option>
           </Select>
          </Paper>
         </Container>
             </>
       );
-      const renderStep2 = () => (
-        <Container maxWidth="lg">
-    <Paper elevation={3} className={`${classes.paper} ${classes.spacing}`} style={{marginTop:80}}>
-        {formulaires[currentPage].map((num, index) => (
-            <div key={index}>
-                <h4 style={{textAlign:'center'}}>Formulaire numéro {num}</h4>
-              
-                <Grid container spacing={2}>
-                    <Grid item xs={12} sm={4}>
-                        <FormControl fullWidth>
-                        <Typography variant="h8" className={`${classes.label}`} >Niveau<span className={classes.redAsterisk}>*</span></Typography>
-                            <Select
-                              placeholder="choisir Niveau"
-                                value={level}
-                                onChange={(e) => setLevel(e.target.value)}
-                                fullWidth
-                                style={{width:200}}
-                            >
-                               <MenuItem value="" disabled>Choisissez un Niveau</MenuItem>
-                                <MenuItem value="beginner">Débutant</MenuItem>
-                                <MenuItem value="intermediate">Intermédiaire</MenuItem>
-                                <MenuItem value="advanced">Avancé</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={12} sm={4}>
-                        <FormControl fullWidth>
-                        <Typography variant="h8" className={`${classes.label}`} >Points<span className={classes.redAsterisk}>*</span></Typography>
-                            <InputNumber 
-                                min={1} max={100000}
-                                defaultValue={1} 
-                                onChange={onChange}  
-                                style={{width:200}}
-                            />
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={12} sm={4}>
-                        <FormControl fullWidth>
-                        <Typography variant="h8" className={`${classes.label}`} >Temps<span className={classes.redAsterisk}>*</span></Typography>
-                            <TimePicker 
-                                onChange={onChanges}
-                                defaultOpenValue={moment('00:00:00', 'HH:mm:ss')} 
-                                format='HH:mm:ss'
-                                style={{width:200}}
-                            />
-                        </FormControl>
-                    </Grid>
-                    <Grid item xs={12} sm={4}>
-                        <Typography variant="h8" className={`${classes.label}`} >Compétence<span className={classes.redAsterisk}>*</span></Typography>
-                        <Select
-                            showSearch
-                            style={{ width: "250px" }}
-                            placeholder="Choisir Compétence"
-                            optionFilterProp="children"
-                            onChange={""}
-                            onSearch={""}
-                            filterOption={(input, option) => (option?.label ?? "").includes(input)}
-                            filterSort={(optionA, optionB) =>
-                                (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
-                            }
-                        >
-                        </Select>
-                    </Grid>
-                    
-                    <Grid container spacing={2} className={classes.spacing}>
-                        <Grid item xs={12}>
-                            <FormControl className={`${classes.formControl} ${classes.expandedTextField}`} fullWidth>
-                                <Typography variant="subtitle1" className={classes.label}>
-                                    Type de Question<span className={classes.redAsterisk}>*</span>
-                                </Typography>
-                                <Select
-                                    value={selectedType}
-                                    onChange={handleTypeChange}
-                                    displayEmpty
-                                    style={{ width: "250px" }}
-                                    inputProps={{ 'aria-label': 'Type de Question' }}
-                                    className={`${classes.select} ${classes.spacing}`}
-                                >
-                                    <MenuItem value="" disabled>Choisissez un type</MenuItem>
-                                    <MenuItem value="vrai-faux">Vrai/Faux</MenuItem>
-                                    <MenuItem value="qcm">QCM</MenuItem>
-                                    <MenuItem value="image">Image</MenuItem> 
-                                    <MenuItem value="text">Texte</MenuItem>
-                                </Select>
-                            </FormControl>
-                            
-                        </Grid>
+  const renderStep2 = () => (
+  <Container maxWidth="lg">
+           {formulaires[currentPage].map((num, index) => (
+              <Paper elevation={3} className={`${classes.paper} ${classes.spacing}`} style={{marginTop:80}}>
+            
+                  <div key={index}>
+                      <h4 style={{textAlign:'center'}}>Question N°: {num}</h4>
+                      <IconButton onClick={() => supprimerQuestion(index)} style={{float: 'right', marginTop: '-40px',color: 'red'}}>
+                        <DeleteIcon />
+                      </IconButton>
+                      <Grid container spacing={2}>
+                        <Grid item xs={12} sm={4}>
+                              <FormControl fullWidth>
+                              <Typography variant="h8" className={`${classes.label}`} >Points<span className={classes.redAsterisk}>*</span></Typography>
+                              <Space wrap> 
+                                  <InputNumber min={1}
+                                  max={100000}
+                                  value={formData.points}
+                                  onChange={onChangePoints} 
+                                  style={{width:"100%"}}/>
+                                  </Space>
+                              </FormControl>
+                          </Grid>
+                          <Grid item xs={12} sm={4}>
+                              <FormControl fullWidth>
+                              <Typography variant="h8" className={`${classes.label}`} >Temps<span className={classes.redAsterisk}>*</span></Typography>
+                                    <TimePicker 
+                                    value={formData.time ? moment.utc(formData.time * 1000) : null} // Utiliser moment pour formater la valeur
+                                    onChange={handleChangeTime} 
+                                    style={{width:"100%"}} />
+                              </FormControl>
+                          </Grid>
+                          <Grid item xs={12} sm={4}>
+                              <Typography variant="h8" className={`${classes.label}`} >Compétence<span className={classes.redAsterisk}>*</span></Typography>
                         
-                    </Grid>
+                             
+                              <Select
+                                  showSearch
+                                  style={{ width: "250px" }}
+                                  placeholder="Choisir Compétence"
+                                  optionFilterProp="children"
+                                  value={formData.skill}
+                                  onChange={handleCompetenceChange}                                  
+                                   onSearch={""}
+                                  filterOption={(input, option) => (option?.label ?? "").includes(input)}
+                                  filterSort={(optionA, optionB) =>
+                                      (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
+                                  }
+                              >
+                              </Select>
+                          </Grid>
+                          
+                          <Grid container spacing={2} className={classes.spacing}>
+                              <Grid item xs={12}>
+                                  <FormControl className={`${classes.formControl} ${classes.expandedTextField}`} fullWidth>
+                                      <Typography variant="subtitle1" className={classes.label}>
+                                          Type de Question<span className={classes.redAsterisk}>*</span>
+                                      </Typography>
+                                      <Select
+                                          value={selectedType}
+                                          onChange={handleTypeChange}
+                                          displayEmpty
+                                          style={{ width: "250px" }}
+                                          inputProps={{ 'aria-label': 'Type de Question' }}
+                                          className={`${classes.select} ${classes.spacing}`}
+                                      >
+                                          <MenuItem value="" disabled>Choisissez un type</MenuItem>
+                                          <MenuItem value="vrai-faux">Vrai/Faux</MenuItem>
+                                          <MenuItem value="qcm">QCM</MenuItem>
+                                          <MenuItem value="image">Image</MenuItem> 
+                                          <MenuItem value="text">Texte</MenuItem>
+                                      </Select>
+                                  </FormControl>
+                                  
+                              </Grid>
+                              
+                          </Grid>
+
+                        <Paper elevation={5} className={`${classes.paper} ${classes.spacing}`} style={{marginTop:80}}>
+                                <Grid container spacing={2} className={classes.spacing}>
+                                      {/* Zone de saisie de la question */}
+                                      <Grid item xs={12}>
+                                          <Typography
+                                            variant="subtitle1"
+                                            className={`${classes.label}`}
+                                            style={{ display: selectedResponseType === 'Image' ? 'none' : 'block' }}
+                                          >
+                                            Question<span className={classes.redAsterisk}>*</span>
+                                          </Typography>
+                                                <Input.TextArea
+                                                      rows={3}
+                                                      placeholder="Question"
+                                                      value={formData.question}
+                                                      onChange={handleQuestionChange}
+                                                      aria-label="Question"
+                                                      style={{ display: 'block', width: "100%" }}
+                                                />
+                                      </Grid>
+                                  {/* **************Zone de saisir réponse***************** */}
+                                {formData.answers.map((answer, index) => (
+                                  <Paper key={index} elevation={3} className={`${classes.responseCard} ${classes.spacing}`} style={{ width: '100%' }}>
+                                    
+                                      <Typography variant="subtitle1" className={`${classes.label}`}>
+                                        Réponse {index + 1}
+                                      </Typography>
+                                      <Typography variant="subtitle1" className={`${classes.label}`}>
+                                        Type de Réponse <span className={classes.redAsterisk}>*</span>
+                                      </Typography>
+                                      <AntdSelect
+                                        placeholder="Choisir Type"
+                                        optionFilterProp="children"
+                                        onChange={handleQuestionTypeChange}
+                                        style={{width:"30%"}} 
+                                        options={[
+                                          { value: 'Texte', label: 'Texte' },
+                                          { value: 'Image', label: 'Image' },
+                                        ]}
+                                      />
+                                      <div className={classes.responseContainer}>
+                                        <TextArea
+                                          rows={2}
+                                          multiline
+                                          variant="outlined"
+                                          placeholder={`Réponse ${index + 1}*`}
+                                          fullWidth
+                                          value={selectedLanguage === 'Anglais' ? answer.answer_en : answer.answer_fr}
+                                          onChange={(e) => handleReponseChange(index, e)}
+                                          className={`${classes.formControl} ${classes.spacing}`}
+                                          aria-label={`Réponse ${index + 1}`}
+                                          style={{ display: selectedResponseType === 'Image' ? 'none' : 'block', width: "100%" }} 
+                                        />
+                                        <Switch
+                                          checked={answer.isCorrect}
+                                          onChange={() => handleCorrectChange(index)}
+                                          color="primary"
+                                          inputProps={{ 'aria-label': `Réponse correcte ${index + 1}` }}
+                                        />
+                                        <IconButton onClick={() => supprimerReponse(index)} aria-label={`Supprimer réponse ${index + 1}`}>
+                                          <CloseIcon />
+                                        </IconButton>
+                                      </div>
+                                    </Paper>
+                                    
+                                  ))}
+
+                                  {formData.answers.every(answer => !answer.isCorrect) && (
+                                    <Typography variant="subtitle1" className={`${classes.label}`} style={{ color: 'red' }}>
+                                      Veuillez sélectionner au moins une réponse correcte.
+                                    </Typography>
+                                  )}
+
+                                  <Button variant="contained" style={{ color: '#fff', backgroundColor: '#3987ee', width: 180 }}
+                                    className={classes.addButton} aria-label="Ajouter réponse" onClick={handleAjouterReponse} >
+                                    Ajouter Réponse
+                                  </Button>
+                            </Grid>
+                        </Paper>
+                      </Grid>
+                      
+                      <div style={{ textAlign: 'center', marginTop: '20px' }}>
+                          <Button
+                              variant="contained"
+                              style={{ color: '#fff', backgroundColor: '#3987ee', width: 200 }}
+                              onClick={ajouterFormulaire}
+                          >
+                              Nouvelle Question 
+                          </Button>
+                      </div>
                     
-                </Grid>
-                <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                    <Button
-                        variant="contained"
-                        style={{ color: '#fff', backgroundColor: '#3987ee', width: 200 }}
-                    >
-                        Nouvelle Question 
-                    </Button>
-                </div>
-              
-            </div>
-           
-        ))}
-      </Paper>
-    <Pagination count={formulaires.length} page={currentPage + 1} onChange={(event, value) => setCurrentPage(value - 1)} />
-    <Button
-        variant="contained"
-        style={{ color: '#fff', backgroundColor: '#3987ee', float: 'right', marginTop: '10px', width: 100,textAlign: 'center' }}
-        onClick={ajouterFormulaire}
-    >
-        Ajouter
-    </Button>
+                  </div>
+              </Paper>
+      
+           ))}
+
+          {/* <Pagination count={formulaires.length} page={currentPage + 1} onChange={(event, value) => setCurrentPage(value - 1)} /> */}
+          <Button
+              variant="contained"
+              style={{ color: '#fff', backgroundColor: '#3987ee', float: 'right', marginTop: '10px', width: 100,textAlign: 'center' }}
+              onClick={handleSubmit}
+          >
+              Ajouter
+          </Button>
+    
 </Container>
 
     );  
+
+    const previewContent = () => (
+      <div>
+  
+  
+  
+  
+  
+  <p>/////////////////</p>
+  
+  
+  
+  
+  
+            
+  
+  
+        <p>Title: {title}</p>
+        <p>Description: {description}</p>
+        <p>Language: {language}</p>
+        <p>Experience: {experience}</p>
+        <p>level: {level}</p>
+        <p>compétence: {competence}</p>
+        <p>question: {formData.question}</p>
+        {/* <p>answers: {formData.answers}</p> */}
+            
+        <Button type="primary" onClick={handleStartQuiz} disabled={isQuizStarted}>
+          Start Quiz
+        </Button>
+        {isQuizStarted && (
+          <div>
+            <p>Title: {title}</p>
+             <p>Description: {description}</p>
+        <p>Language: {language}</p>
+        <p>Experience: {experience}</p>
+        <p>Experience: {experience}</p>
+        <p>level: {level}</p>
+        <p>compétence: {competence}</p>
+        <p>question: {formData.question}</p>
+        <p>answers: {formData.answers}</p>
+            <h3>Timer: {formatTime()}</h3>
+            <h3>Quiz Questions:</h3>
+            {/* <ol>
+              {getSelectedQuestions().map(question => (
+                <li key={question.id}>{question.text}</li>
+              ))}
+            </ol> */}
+            
+            <Button type="danger" onClick={handleStopQuiz}>
+              Stop Quiz
+            </Button>
+          </div>
+        )}
+      </div>
+    );
   const steps = [
     { title: 'Paramètre du test', content: renderStep1() },
     { title: 'Ajouter test', content: renderStep2() },
     {
-      title: 'Aperçu Test',
-      content: (""
-        // <div>
-        //   
-        //   <p>Contenu de l'étape 1: {steps[0].content}</p>
-        //   <p>Contenu de l'étape 2: {steps[1].content}</p>
-        // </div>
-      ),
-    }
+      title: 'apreçu_test',
+      content: ( previewContent()),
+    },
   ];
 
   const handleNext = () => {
