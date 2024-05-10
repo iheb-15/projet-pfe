@@ -153,38 +153,76 @@ const TestFormulaire = () => {
     //********relation avec axios***************/
 
 
-    const handleSubmit = async (e) => {
-      e.preventDefault();
+  //   const handleSubmit = async (e) => {
+  //     e.preventDefault();
 
-      const updatedFormData = {
-        ...formData,
-        question_en: selectedLanguage === 'Anglais' ? formData.question : formData.question_en,
-        question_fr: selectedLanguage === 'Francais' ? formData.question : formData.question_fr,
-        answers: formData.answers.map(answer => ({
-          answer_en: selectedLanguage === 'Anglais' ? answer.answer_en : answer.answer_en,
-          answer_fr: selectedLanguage === 'Francais' ? answer.answer_fr : answer.answer_fr,
-          isCorrect: answer.isCorrect
-        }))
-      };
-      try {
-          const response = await axios.post('http://localhost:3002/api/company',{
+  //     const updatedFormData = {
+  //       ...formData,
+  //       question_en: selectedLanguage === 'Anglais' ? formData.question : formData.question_en,
+  //       question_fr: selectedLanguage === 'Francais' ? formData.question : formData.question_fr,
+  //       answers: formData.answers.map(answer => ({
+  //         answer_en: selectedLanguage === 'Anglais' ? answer.answer_en : answer.answer_en,
+  //         answer_fr: selectedLanguage === 'Francais' ? answer.answer_fr : answer.answer_fr,
+  //         isCorrect: answer.isCorrect
+  //       }))
+  //     };
+  //     try {
+  //         const response = await axios.post('http://localhost:3002/api/company',{
 
          
-              title: title,
-              description: description,
-              languages: [language],
-              level: experience === "beginner" ? 0 : experience === "intermediate" ? 1 : experience === "advanced" ? 2 : 3,
-              // idQuestion:
+  //             title: title,
+  //             description: description,
+  //             languages: [language],
+  //             level: experience === "beginner" ? 0 : experience === "intermediate" ? 1 : experience === "advanced" ? 2 : 3,
               
-          });
-          console.log('Company created:', response.data);
-          // Optionally, you can redirect to another page or show a success message
-      } catch (error) {
-          console.error('Error creating company:', error);
-          // Optionally, you can show an error message to the user
-      }
+              
+  //         });
+  //         console.log('Company created:', response.data);
+  //         // Optionally, you can redirect to another page or show a success message
+  //     } catch (error) {
+  //         console.error('Error creating company:', error);
+  //         // Optionally, you can show an error message to the user
+  //     }
+  // };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    const updatedFormData = {
+      ...formData,
+      question_en: selectedLanguage === 'Anglais' ? formData.question : formData.question_en,
+      question_fr: selectedLanguage === 'Francais' ? formData.question : formData.question_fr,
+      answers: formData.answers.map(answer => ({
+        answer_en: selectedLanguage === 'Anglais' ? answer.answer : answer.answer_en,
+        answer_fr: selectedLanguage === 'Francais' ? answer.answer : answer.answer_fr,
+        isCorrect: answer.isCorrect
+      }))
+    };
+  
+    const companyData = {
+      title: title,
+      description: description,
+      // languages: [language],
+      level: experience === "beginner" ? 0 : experience === "intermediate" ? 1 : experience === "advanced" ? 2 : 3,
+    };
+  
+    try {
+      // Use Promise.all to handle both requests
+      const [featureResponse, companyResponse] = await Promise.all([
+        axios.post('http://localhost:3002/api/companytest', updatedFormData),
+        axios.post('http://localhost:3002/api/company', companyData)
+      ]);
+  
+      console.log('Feature Response:', featureResponse.data);
+      console.log('Company Response:', companyResponse.data);
+      alert('Feature, Question and Company added successfully!');
+    } catch (error) {
+      console.error('Error:', error.response ? error.response.data : error);
+      alert('Failed to add feature, question, or company.');
+    }
   };
 
+ 
   ////************fin axios ***********/
 
 
@@ -271,8 +309,13 @@ const TestFormulaire = () => {
   };
     const [selectedType, setSelectedType] = useState('');
     const handleTypeChange = (e) => setSelectedType(e.target.value);
-  const handleQuestionChange = (e) => setQuestion(e.target.value);
-  
+  // const handleQuestionChange = (e) => setQuestion(e.target.value);
+  const handleQuestionChange = (e) => {
+    setFormData({
+      ...formData,
+      question: e.target.value
+    });
+  };
   const handleReponseChange = (index, e) => {
     const updatedAnswers = formData.answers.map((answer, idx) => {
       if (idx === index) {
@@ -363,19 +406,6 @@ const supprimerQuestion = (index) => {
             autoSize={{ minRows: 4 }}
             style={{ marginBottom: '1rem' }}
           />
-           <Typography variant="h8" className={`${classes.label}`} >Langue<span className={classes.redAsterisk}>*</span></Typography>
-          <Select
-            placeholder="Langue"
-            value={language}
-            onChange={(value) => setLanguage(value)}
-            
-            style={{ width: '100%', marginBottom: '1rem' }}
-          >
-            <Option value="" disabled>Choisir Langue</Option>
-            <Option value="fr">Français</Option>
-            <Option value="en">Anglais</Option>
-            <Option value="es">Espagnol</Option>
-          </Select>
           <Typography variant="h8" className={`${classes.label}`} >Expérience<span className={classes.redAsterisk}>*</span></Typography>
           <Select
             placeholder="Expérience"
@@ -420,32 +450,33 @@ const supprimerQuestion = (index) => {
                               <FormControl fullWidth>
                               <Typography variant="h8" className={`${classes.label}`} >Temps<span className={classes.redAsterisk}>*</span></Typography>
                                     <TimePicker 
-                                    value={formData.time ? moment.utc(formData.time * 1000) : null} // Utiliser moment pour formater la valeur
+                                    value={formData.time ? moment.utc(formData.time * 1000) : null} 
                                     onChange={handleChangeTime} 
                                     style={{width:"100%"}} />
                               </FormControl>
                           </Grid>
-                          <Grid item xs={12} sm={4}>
-                              <Typography variant="h8" className={`${classes.label}`} >Compétence<span className={classes.redAsterisk}>*</span></Typography>
-                        
-                             
-                              <Select
-                                  showSearch
-                                  style={{ width: "250px" }}
-                                  placeholder="Choisir Compétence"
-                                  optionFilterProp="children"
-                                  value={formData.skill}
-                                  onChange={handleCompetenceChange}                                  
-                                   onSearch={""}
-                                  filterOption={(input, option) => (option?.label ?? "").includes(input)}
-                                  filterSort={(optionA, optionB) =>
-                                      (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
-                                  }
-                              >
-                              </Select>
-                          </Grid>
-                          
+                           <Grid item xs={12} sm={4}>
+                            <Typography variant="h8" className={`${classes.label}`} >Compétence<span className={classes.redAsterisk}>*</span></Typography>
+                               <Input 
+                                  placeholder="Choisir Compétence" 
+                                  style={{ width: "100%" }} 
+                                  value={formData.skill} 
+                                  onChange={handleCompetenceChange} 
+                                />
+                            </Grid>
                           <Grid container spacing={2} className={classes.spacing}>
+                          <Grid item xs={12} sm={4}>
+                            <Typography variant="h8" className={`${classes.label}`} >Langue<span className={classes.redAsterisk}>*</span></Typography>
+                            <AntdSelect
+                                placeholder="Choisir une Langue"
+                                onChange={handleSelectChange}
+                                style={{ width: "100%" }}
+                              >
+                                <Option value="Francais">Francais</Option>
+                                <Option value="Anglais">Anglais</Option>
+                                <Option value="Arabe"disabled>Arabe</Option>
+                              </AntdSelect>
+                            </Grid>
                               <Grid item xs={12}>
                                   <FormControl className={`${classes.formControl} ${classes.expandedTextField}`} fullWidth>
                                       <Typography variant="subtitle1" className={classes.label}>
@@ -518,8 +549,10 @@ const supprimerQuestion = (index) => {
                                           variant="outlined"
                                           placeholder={`Réponse ${index + 1}*`}
                                           fullWidth
-                                          value={selectedLanguage === 'Anglais' ? answer.answer_en : answer.answer_fr}
-                                          onChange={(e) => handleReponseChange(index, e)}
+                                          value={selectedLanguage === 'Anglais' ? formData.answers[index].answer_en : formData.answers[index].answer_fr}
+                  onChange={(e) => handleReponseChange(index, e)}
+                                          // value={selectedLanguage === 'Anglais' ? answer.answer_en : answer.answer_fr}
+                                          // onChange={(e) => handleReponseChange(index, e)}
                                           className={`${classes.formControl} ${classes.spacing}`}
                                           aria-label={`Réponse ${index + 1}`}
                                           style={{ display: selectedResponseType === 'Image' ? 'none' : 'block', width: "100%" }} 
