@@ -3,9 +3,9 @@ import { Link, Route, BrowserRouter as Router, Switch, useHistory,Redirect } fro
 import { Container, Row, Col, Form } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios'; // Import Axios
+import axios from 'axios'; 
 import { Select} from 'antd';
-import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons'; // Import des icônes pour afficher/masquer le mot de passe
+import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons'; 
 import 'antd/dist/antd.css';
 import './Authentification.css'; // Import local styles
 import Logo from './media/logo.png'; // Import logo image
@@ -13,6 +13,8 @@ import MotPasseOublie from './MotPasseOublie'; // Import le composant Mot Passe 
 import Gest from './pages/gest_utilisateur';
 import PrivateRoute from './pages/privetroute';
 import Dashboard from './pages/Dashboard';
+import AjoutQuestion from './AjoutQuestion';
+import ListeQuest from './ListeQuest';
 
 // Main Authentification Component
 function Authentification() {
@@ -193,6 +195,30 @@ function Authentification() {
               // Vérifier si l'utilisateur a un rôle de "Super Admin"
               if (userRole === '0') { // Super Admin
                 return <Gest />;
+              } else {
+                // Rediriger vers une autre page si l'utilisateur n'a pas les autorisations nécessaires
+                return <Redirect to="/Dashboard" />;
+              }
+            }}
+          />
+          <PrivateRoute
+            path="/AjoutQuestion"
+            render={() => {
+              // Vérifier si l'utilisateur a un rôle de "Super Admin"
+              if (userRole === '0') { // Super Admin
+                return <AjoutQuestion />;
+              } else {
+                // Rediriger vers une autre page si l'utilisateur n'a pas les autorisations nécessaires
+                return <Redirect to="/Dashboard" />;
+              }
+            }}
+          />
+          <PrivateRoute
+            path="/liste_question"
+            render={() => {
+              // Vérifier si l'utilisateur a un rôle de "Super Admin"
+              if (userRole === '0') { // Super Admin
+                return <ListeQuest />;
               } else {
                 // Rediriger vers une autre page si l'utilisateur n'a pas les autorisations nécessaires
                 return <Redirect to="/Dashboard" />;

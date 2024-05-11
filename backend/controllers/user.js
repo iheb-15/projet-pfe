@@ -110,48 +110,45 @@ exports.update = async (req, res) => {
         return res.status(400).json({ error: errors.array()[0].msg });
     }
 
-    // Nettoyer l'ID utilisateur pour s'assurer qu'il est correctement formaté
+    
     let userId = req.params.userId;
     userId = userId.replace(/^:/, ''); // Supprime un deux-points au début s'il existe
 
     const { name, lastname, email, password, role } = req.body;
 
     try {
-        // Trouver l'utilisateur par ID dans la base de données
+        
         const user = await User.findById(userId);
 
-        // Vérifier si l'utilisateur existe
+        
         if (!user) {
             return res.status(404).json({ error: 'Utilisateur non trouvé.' });
         }
 
-        // Si la méthode de la requête est "add", ne pas modifier le mot de passe
+        
         if (req.method === 'add') {
-            // Mise à jour des champs basée sur le rôle fourni
+            
             user.name = name;
             user.lastname = lastname;
             user.email = email;
             user.role = role;
             user.password=password;
         } else {
-            // Mise à jour des champs basée sur le rôle fourni
+            
             user.name = name;
             user.lastname = lastname;
             user.email = email;
             user.role = role;
             
         }
-
-        // Enregistrer l'utilisateur mis à jour dans la base de données
         await user.save();
-
-        // Répondre avec succès
         res.json({ message: 'Utilisateur mis à jour avec succès.', user: { id: user._id, name: user.name, lastname: user.lastname, email: user.email, role: user.role } });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Erreur interne du serveur.' });
     }
 };
+
 // Fonction de contrôleur pour supprimer un utilisateur
 exports.deleteUser = async (req, res) => {
     // Assurez-vous que l'ID est correctement formaté

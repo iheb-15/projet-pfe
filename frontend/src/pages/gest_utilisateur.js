@@ -3,7 +3,7 @@ import { Table, Modal, Input, Select, Button } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
-
+import { toast } from 'react-toastify';
 import './gest.css';
 import { Link } from 'react-router-dom/cjs/react-router-dom.min';
 import Dashboard from './Dashboard';
@@ -114,6 +114,20 @@ function Gest() {
 
       setDataSource(updatedDataSource);
       setIsEditing(false);
+      toast.success('Utilisateur Modifier avec succès!', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    
+      // Rafraîchir la page après un court délai
+      setTimeout(() => {
+        window.location.reload();
+      }, 5000); 
     } catch (error) {
       console.error("Failed to save edit", error);
       alert('Failed to save edit');
@@ -149,6 +163,20 @@ function Gest() {
       setDataSource((prevDataSource) => [...prevDataSource, utilisateurToAdd]);
       setIsAdding(false);
       setNewUtilisateur({ name: '', lastname: '', password: '', email: '', role: '' });
+      toast.success('Utilisateur ajouter avec succès!', {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    
+      // Rafraîchir la page après un court délai
+      setTimeout(() => {
+        window.location.reload();
+      }, 5000); 
     } catch (error) {
       // Handle the error if needed
     }
@@ -211,6 +239,7 @@ function Gest() {
 
   const onAddUtilisateur = () => {
     setIsAdding(true);
+   
   };
 
   const filteredDataSource = dataSource.filter(user => {
