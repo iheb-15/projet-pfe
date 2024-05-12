@@ -264,7 +264,9 @@ exports.Name = (req, res) => {
 
 // Créer un transporteur nodemailer pour l'envoi d'e-mails
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
     auth: {
         user: process.env.EMAIL_USER,
 
