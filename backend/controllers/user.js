@@ -1,4 +1,3 @@
-
 const User = require("../models/user")
 const {validationResult, check} = require('express-validator')
 var jwt = require('jsonwebtoken')
@@ -387,3 +386,4 @@ exports.resetPasswordWithOTP = (req, res) => {
 function generateOTP() {
     return Math.floor(100000 + Math.random() * 900000).toString();// pour générer code entre 0 et 899999 avec l'ajout de 100000 pour le code
 };
+
