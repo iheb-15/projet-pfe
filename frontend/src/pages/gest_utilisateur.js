@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Modal, Input, Select, Button } from 'antd';
-import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
+import { Table, Modal, Input, Select,Tag, Button,message } from 'antd';
+import { EditOutlined, DeleteOutlined, PlusOutlined  } from '@ant-design/icons';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import './gest.css';
-import { Link } from 'react-router-dom/cjs/react-router-dom.min';
-import Dashboard from './Dashboard';
-
+// import { Link } from 'react-router-dom/cjs/react-router-dom.min';
+// import Dashboard from './Dashboard';
+// import { ExclamationCircleOutlined } from '@ant-design/icons';
 const { Option } = Select;
-
+// const ArchiveIcon = () => <span>Archive</span>; 
 function Gest() {
   const [isEditing, setIsEditing] = useState(false);
   const [editingUtilisateur, setEditingUtilisateur] = useState(null);
@@ -17,9 +17,65 @@ function Gest() {
   const [newUtilisateur, setNewUtilisateur] = useState({ name: '', lastname: '', password: '', email: '', role: '' });
   const [dataSource, setDataSource] = useState([]);
   const [searchValue, setSearchValue] = useState('');
+  // const [users, setUsers] = useState([]);
+  // const [archiveVisible, setArchiveVisible] = useState(false);
+  // const [visible, setVisible] = useState(false);
+  // const [users, setUsers] = useState([]);
+  // const [selectedUserId, setSelectedUserId] = useState(null);
   const history = useHistory();
+
+ 
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [utilisateurs, setUtilisateurs] = useState([]);
+  const [selectedUtilisateur, setSelectedUtilisateur] = useState(null);
+
   useEffect(() => {
-    // Redirect if not authorized
+    fetchArchiver();
+  }, []);
+
+  const fetchArchiver = async () => {
+    try {
+      const response = await axios.get('http://localhost:3002/api/affichage');
+
+      const utilisateursData = response.data
+        .filter(utilisateur => utilisateur.isArchived) // Filtrer les utilisateurs archivés
+        .map((utilisateur) => ({
+          id: utilisateur._id,
+          name: utilisateur.name,
+          lastname: utilisateur.lastname,
+          email: utilisateur.email,
+          password: utilisateur.encry_password,
+          role: utilisateur.role == 0 ? "Super Admin" : utilisateur.role == 1 ? "Simple Admin" : "inconnu"
+        }));
+      setUtilisateurs(utilisateursData);
+    } catch (error) {
+      console.error("Failed to fetch users", error);
+    }
+  };
+
+  const onDesarchiver = async (userId) => {
+    try {
+      await axios.put(`http://localhost:3002/api/unarchive/${userId}`);
+      fetchArchiver();
+      setSelectedUtilisateur(null);
+      message.success('Utilisateur désarchivé avec succès', {
+        duration: 3, 
+        style: {
+          marginTop: '20px', 
+        },
+      });
+      setTimeout(() => {
+        window.location.reload(); 
+      }, 3000);
+    } catch (error) {
+      console.error("Failed to unarchive user", error);
+      // Gérer l'erreur si nécessaire
+    }
+  };
+
+
+  useEffect(() => { 
     const userRole = localStorage.getItem('userRole');
     if (userRole === '1') { // Vérifie si le rôle de l'utilisateur n'est pas '0' (super admin)
       alert("Vous n'avez pas les autorisations nécessaires pour accéder à cette page.");
@@ -32,22 +88,23 @@ function Gest() {
 
   const fetchUtilisateurs = async () => {
     try {
-      const response = await axios.get('http://localhost:3002/api/affichage');
+        const response = await axios.get('http://localhost:3002/api/affichage');
 
-      const utilisateurs = response.data.map((utilisateur) => ({
-        id: utilisateur._id,
-        name: utilisateur.name,
-        lastname: utilisateur.lastname,
-        email: utilisateur.email,
-        password: utilisateur.encry_password,
-        role: utilisateur.role
-      }));
-      setDataSource(utilisateurs);
+        const utilisateurs = response.data
+            .filter(utilisateur => !utilisateur.isArchived) 
+            .map((utilisateur) => ({
+                id: utilisateur._id,
+                name: utilisateur.name,
+                lastname: utilisateur.lastname,
+                email: utilisateur.email,
+                password: utilisateur.encry_password,
+                role: utilisateur.role == 0 ? "Super Admin" : utilisateur.role == 1 ? "Simple Admin" : "inconnu"
+            }));
+        setDataSource(utilisateurs);
     } catch (error) {
-      console.error("Failed to fetch users", error);
-      // Gérer l'erreur si nécessaire
+        console.error("Failed to fetch users", error);
     }
-  }
+}
 
   const deleteUtilisateurFromBackend = async (id) => {
     try {
@@ -62,12 +119,25 @@ function Gest() {
   const onDeleteUtilisateur = (record) => {
     Modal.confirm({
       title: 'Êtes-vous sûr de vouloir supprimer cet enregistrement utilisateur ?',
-      okText: 'Yes',
+      okText: 'OUI',
       okType: 'danger',
       onOk: async () => {
         try {
           await deleteUtilisateurFromBackend(record.id);
           setDataSource(prevDataSource => prevDataSource.filter((utilisateur) => utilisateur.id !== record.id));
+          toast.success('Utilisateur supprimer avec succès!', {
+            position: "top-center",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
+          setTimeout(() => {
+            window.location.reload();
+          }, 3000); 
+        
         } catch (error) {
           console.error("Failed to delete utilisateur", error);
         }
@@ -93,7 +163,7 @@ function Gest() {
   const updateUtilisateurToBackend = async (utilisateur) => {
     try {
       const response = await axios.put(`http://localhost:3002/api/update/${utilisateur.id}`, utilisateur);
-      return response.data; // Retourne les données mises à jour de l'utilisateur
+      return response.data; 
     } catch (error) {
       console.error("Failed to update utilisateur", error);
       throw error;
@@ -123,8 +193,6 @@ function Gest() {
         draggable: true,
         progress: undefined,
       });
-    
-      // Rafraîchir la page après un court délai
       setTimeout(() => {
         window.location.reload();
       }, 5000); 
@@ -199,11 +267,6 @@ function Gest() {
       dataIndex: 'email',
     },
     {
-      key: '5',
-      title: 'password',
-      dataIndex: 'password',
-    },
-    {
       key: '6',
       title: 'role',
       dataIndex: 'role',
@@ -232,10 +295,45 @@ function Gest() {
           >
             Delete
           </Button>
+        
         </>
       ),
     },
+  
+    
   ];
+ 
+  const columns2 = [
+    {
+      title: 'Nom',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: 'Prénom',
+      dataIndex: 'lastname',
+      key: 'lastname',
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
+    },
+    {
+      title: 'Rôle',
+      dataIndex: 'role',
+      key: 'role',
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (_, record) => (
+        <Button type="primary" onClick={() => onDesarchiver(record.id)}>Désarchiver</Button>
+      ),
+    },
+  ];
+ 
+
 
   const onAddUtilisateur = () => {
     setIsAdding(true);
@@ -245,7 +343,7 @@ function Gest() {
   const filteredDataSource = dataSource.filter(user => {
     return user.name.toLowerCase().includes(searchValue.toLowerCase());
   });
-
+  
   return (
     <div className="gestion">
       <header className="gestion-header">
@@ -264,13 +362,45 @@ function Gest() {
           type="primary"
           icon={<PlusOutlined />}
           onClick={onAddUtilisateur}
-          style={{width:200 }}
+          style={{ width: 200, marginRight: 20 }} 
         >
           Ajouter Utilisateur
         </Button>
-
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={() => setModalVisible(true)}
+          style={{ width: 200, marginLeft: 20 }} 
+        >
+          Utilisateurs Archivés
+        </Button>
+      <Modal
+        title="Utilisateurs Archivés"
+        visible={modalVisible}
+        onCancel={() => setModalVisible(false)}
+        footer={[
+          <Button key="back" onClick={() => setModalVisible(false)}>
+            Fermer
+          </Button>,
+        ]}
+        width={800}
+      >
+        <Table
+          dataSource={utilisateurs}
+          columns={columns2}
+          rowKey="id"
+          onRow={(record, rowIndex) => ({
+            onClick: () => setSelectedUtilisateur(record),
+          })}
+        />
+        {selectedUtilisateur && (
+          <Button type="primary" onClick={onDesarchiver}>
+            Désarchiver {selectedUtilisateur.name} {selectedUtilisateur.lastname}
+          </Button>
+        )}
+      </Modal>
+    
         <Table columns={columns} dataSource={filteredDataSource} className="responsive-table"></Table>
-
         <Modal
           title="Modifier Utilisateur"
           visible={isEditing}
@@ -376,7 +506,9 @@ function Gest() {
             </div>
           </div>
         </Modal>
+   
       </header>
+    
     </div>
   );
 }

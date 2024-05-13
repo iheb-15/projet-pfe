@@ -532,9 +532,9 @@ const handleLevelChange = (event) => {
           </Paper>
           </Paper>
           {/* Sélection du domaine */}
-        <Paper className={classes.section}>
-          <Grid container spacing={2} className={`${classes.spacing}`}>
-          <Grid item xs={12} sm={4}>
+        {/* <Paper className={classes.section}> */}
+          {/* <Grid container spacing={2} className={`${classes.spacing}`}> */}
+          {/* <Grid item xs={12} sm={4}>
                 <Typography variant="h8" className={`${classes.label}`} >Domaine<span className={classes.redAsterisk}>*</span></Typography>
                 <Select
                     showSearch
@@ -557,9 +557,9 @@ const handleLevelChange = (event) => {
                                     
                                   ))}
                   </Select>
-                 </Grid>
+          </Grid> */}
             {/* Sélection de la compétence */}
-            <Grid item xs={12} sm={4}>
+            {/* <Grid item xs={12} sm={4}>
                 <Typography variant="h8" className={`${classes.label}`} >Compétence<span className={classes.redAsterisk}>*</span></Typography>
                 <Select
                   showSearch
@@ -582,9 +582,9 @@ const handleLevelChange = (event) => {
                     </Option>
                   ))}
                   </Select>
-                </Grid>
-            </Grid>
-          </Paper>
+                </Grid> */}
+            {/* </Grid> */}
+          {/* </Paper> */}
           {/* Type de Question */}
           <Paper className={classes.section}>
             <Grid container spacing={2} className={classes.spacing}>
