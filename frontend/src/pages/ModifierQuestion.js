@@ -531,85 +531,17 @@ const handleLevelChange = (event) => {
             </Grid>
           </Paper>
           </Paper>
-          {/* Sélection du domaine */}
-        {/* <Paper className={classes.section}> */}
-          {/* <Grid container spacing={2} className={`${classes.spacing}`}> */}
-          {/* <Grid item xs={12} sm={4}>
-                <Typography variant="h8" className={`${classes.label}`} >Domaine<span className={classes.redAsterisk}>*</span></Typography>
-                <Select
-                    showSearch
-                    style={{ width: "250px" }}
-                    placeholder="Choisir Domaine"
-                    optionFilterProp="children"
-                    onChange={handleDomaineChange}
-                    onSearch={onSearch}
-                    filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
-                  >
-                    <Option key="null" value={null} onClick={handleCancelSelection}>
-                      Aucun domaines
-                    </Option>
-                    
-                                {Object.keys(classifiedData).map(name => (
-                                    <div key={name}>
-                                      <strong>{name}</strong>
-                                      
-                                    </div>
-                                    
-                                  ))}
-                  </Select>
-          </Grid> */}
-            {/* Sélection de la compétence */}
-            {/* <Grid item xs={12} sm={4}>
-                <Typography variant="h8" className={`${classes.label}`} >Compétence<span className={classes.redAsterisk}>*</span></Typography>
-                <Select
-                  showSearch
-                  style={{ width: "250px" }}
-                  placeholder="Choisir Compétence"
-                  optionFilterProp="children"
-                  onChange={handleCompetenceChange}
-                  onSearch={onSearch}
-                  filterOption={(input, option) => (option?.label ?? "").includes(input)}
-                  filterSort={(optionA, optionB) =>
-                    (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
-                  }
-                >
-                  <Option key="null" value={null} onClick={handleCancelSelections}>
-                    Aucune compétence 
-                  </Option>
-                  {skillOptions.map(option => (
-                    <Option key={option.value} value={option.value} label={option.label}>
-                      {option.label}
-                    </Option>
-                  ))}
-                  </Select>
-                </Grid> */}
-            {/* </Grid> */}
-          {/* </Paper> */}
-          {/* Type de Question */}
+       
           <Paper className={classes.section}>
             <Grid container spacing={2} className={classes.spacing}>
                 <Grid item xs={12}>
                     <FormControl className={`${classes.formControl} ${classes.expandedTextField}`} fullWidth>
-                        <Typography variant="subtitle1" className={classes.label}>
-                            Type de Question<span className={classes.redAsterisk}>*</span>
-                        </Typography>
-                        <Select
-                            value={selectedType}
-                            onChange={handleTypeChange}
-                            displayEmpty
-                            style={{ width: "200px" }}
-                            inputProps={{ 'aria-label': 'Type de Question' }}
-                            className={`${classes.select} ${classes.spacing}`}
-                        >
-                            <MenuItem value="" disabled>Choisissez un type</MenuItem>
-                            <MenuItem value="vrai-faux">Vrai/Faux</MenuItem>
-                            <MenuItem value="qcm">QCM</MenuItem>
-                            <MenuItem value="image">Image</MenuItem> 
-                            <MenuItem value="text">Texte</MenuItem>
-                        </Select>
+                    <Typography variant="h7" className={`${classes.label}`} style={{ color: "#3987ee" }} gutterBottom>
+                     Affichage des Questions<span className={classes.redAsterisk}>*</span></Typography>
+                        
                     </FormControl>
                 </Grid>
-                {selectedType !== "image" && (
+                
                     <>
                        
                     <Grid item xs={12}>
@@ -636,41 +568,21 @@ const handleLevelChange = (event) => {
                                 variant="outlined"
                                 fullWidth
                                 value={question.question_en}
-                                // onChange={(event) => handleQuestionChange(event, 'question')}
+                                
                                 onChange={(event) => handleChanges('question_en', event.target.value)}
                                 className={`${classes.formControl} ${classes.spacing}`}
                                 aria-label="Question en anglais"
                             />
                         </Grid>
                     </>
-                )}
-                {selectedType === "image" && (
-                    <Grid item xs={12}>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleImageUpload}
-                        />
-                    </Grid>
-                )}
+                
             </Grid>
         </Paper>
               {/* Section pour les réponses */}
               <Paper elevation={3} className={`${classes.responseCard} ${classes.spacing}`}>
-              <Typography variant="subtitle1" gutterBottom>Type de Réponse</Typography>
-              <Select
-                value={selectedResponseType} 
-                onChange={handleResponseTypeChange} 
-                displayEmpty
-                inputProps={{ 'aria-label': 'Type de Réponse' }}
-                className={`${classes.select} ${classes.spacing}`}
-              >
-                <MenuItem value="" disabled>Choisissez un type</MenuItem>
-                <MenuItem value="vrai-faux">Vrai/Faux</MenuItem>
-                <MenuItem value="qcm">QCM</MenuItem>
-                <MenuItem value="image">Image</MenuItem>
-                <MenuItem value="text">text</MenuItem>
-              </Select>
+              <Typography variant="h7" className={`${classes.label}`} style={{ color: "#3987ee" }} gutterBottom>
+                Affichage des Réponses<span className={classes.redAsterisk}>*</span></Typography>
+              
                {/* Afficher les champs de réponse en fonction du type sélectionné */}
                {reponse && selectedResponseType !== "image" && (
                               <>

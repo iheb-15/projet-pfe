@@ -68,7 +68,7 @@ function AjoutQuestion() {
   
   const [selectedLanguage, setSelectedLanguage] = useState('');
   const classes = useStyles();
-  const [selectedResponseType, setSelectedResponseType] = useState('Texte'); //  pour suivre le type de réponse sélectionné
+  const [selectedResponseType, setSelectedResponseType] = useState('Texte'); 
   const [formData, setFormData] = useState({
     class: '',
     skill: '',
@@ -172,7 +172,7 @@ function AjoutQuestion() {
     // Attendre que le toast disparaisse avant de rafraîchir la page
     setTimeout(() => {
         window.location.reload();
-        // history.push("/Dashboard");
+        
     }, 3000); // Temps d'attente pour 'autoClose'
 };
 const onChange = (value) => {

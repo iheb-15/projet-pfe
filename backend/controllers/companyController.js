@@ -4,6 +4,7 @@ const CompanyTestQuestion = require('../models/CompanyTestQuestion');
 const Feature = require('../models/Feature');
 const Question = require('../models/Questioncompany');
 const Answer = require('../models/answercompany');
+const CompanyE = require('../models/Entreprise');
 
 exports.createCompany = async (req, res) => {
 
@@ -80,26 +81,42 @@ exports.CompanyTestQuestion = async (req, res) => {
 };
 
 
+  
 
+exports.getAllCompanyNames = async (req, res) => {
+  try {
+    const companies = await CompanyE.find({}).select('name'); // Sélectionne uniquement le champ "name"
+    const companiesWithTitles = await Promise.all(companies.map(async (company) => {
+      const tests = await Company.find({ idCompany: company._id }, 'title'); // Récupère les titres de la société
+      return { name: company.name, titles: tests.map(test => test.title) }; // Retourne le nom de la société et ses titres
+    }));
+    res.send(companiesWithTitles);
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// exports.getAllCompanyNames = async (req, res) => {
+//   try {
+//     const companies = await CompanyE.find({}).select('name'); // Sélectionne uniquement le champ "name"
+//     const companiesWithTitles = await Promise.all(companies.map(async (company) => {
+//       const tests = await Company.find({ idCompany: company._id }, 'title description languages permission level'); // Récupère les titres de la société avec les autres champs requis
+//       console.log(tests)
+//       return { 
+//         name: company.name, 
+//         tests: tests.map(test => ({
+//           title: test.title,
+//           description: test.description,
+//           languages: test.languages,
+//           // permission: test.permission  ,
+//           level: test.level
+//         })) 
+        
+//       }; 
+//       // Retourne le nom de la société et ses titres avec les autres champs
+//     }));
+//     res.send(companiesWithTitles);
+//   } catch (error) {
+//     res.status(500).send(error);
+//   }
+// };
