@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-   
+    isArchived: { type: Boolean, default: false },
     
    
     salt:String,// sécurité mot pass

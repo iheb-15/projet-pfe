@@ -266,12 +266,29 @@ const TestFormulaire = () => {
         }));
       };
 
-    const ajouterFormulaire = () => {
-      const nouvellePage = [...formulaires[currentPage], formulaires[currentPage].length + 1];
-      const nouvellesFormulaires = [...formulaires];
-      nouvellesFormulaires[currentPage] = nouvellePage;
-      setFormulaires(nouvellesFormulaires);
-      console.log(setFormulaires)
+  //   const ajouterFormulaire = () => {
+  //     const nouvellePage = [...formulaires[currentPage], formulaires[currentPage].length + 1];
+  //     const nouvellesFormulaires = [...formulaires];
+  //     nouvellesFormulaires[currentPage] = nouvellePage;
+  //     setFormulaires(nouvellesFormulaires);
+  //     console.log(setFormulaires)
+  // };
+  const ajouterFormulaire = () => {
+    setFormData({
+      class: '',
+      skill: '',
+      question_en: '',
+      question_fr: '',
+      level: '',
+      points: '',
+      time: '',
+      answers: [{ answer_en: '', answer_fr: '', isCorrect: false },
+      { answer_en: '', answer_fr: '', isCorrect: false }] 
+    });
+    const nouvellePage = [...formulaires[currentPage], formulaires[currentPage].length + 1];
+    const nouvellesFormulaires = [...formulaires];
+    nouvellesFormulaires[currentPage] = nouvellePage;
+    setFormulaires(nouvellesFormulaires);
   };
 
 

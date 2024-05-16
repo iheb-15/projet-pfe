@@ -16,11 +16,11 @@ import HomeIcon from '@material-ui/icons/Home';
 import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import CreateIcon from '@material-ui/icons/Create';
 import PersonIcon from '@material-ui/icons/Person';
-
 import CréerTest from './CréerTest';
 import testFormulaire from './pages/testviaformulaire';
 import { HighlightOutlined, RightOutlined, LeftOutlined } from '@ant-design/icons';
 import TemplateHeader from "./components/TemlplateHeader";
+import Entreprise from './gestionEntreprise';
 const { Header, Sider, Content } = Layout;
 const { SubMenu } = Menu;
 
@@ -72,6 +72,9 @@ const Template = () => {
                 <Link to="/test_formulaire" style={{ color: 'white', fontSize:"13px" }}> via formulaire</Link>
               </Menu.Item>
             </SubMenu>
+            <Menu.Item key="2" icon={<PersonIcon   style={{ color: 'white' }} />} style={{ background: '#3987ee'  }}>
+              <Link to="/gestionEntreprise" style={{ color: 'white', fontSize:"14px" }}>Gestion Entreprise</Link>
+            </Menu.Item> 
 
           </Menu>
           <Button className="btn" onClick={handleCollapse} style={{ border: "none", backgroundColor: "#1271ec" }}>
@@ -93,6 +96,7 @@ const Template = () => {
               <Route path="/dashboard"  style={{ background: '#3987ee' }} component={Dashboard} />
               <Route path="/creer_test"  style={{ background: '#3987ee' }} component={CréerTest} />
               <Route path="/test_formulaire"  style={{ background: '#3987ee' }} component={testFormulaire} />
+              <Route path="/gestionEntreprise"  style={{ background: '#3987ee' }} component={Entreprise} />
           </Content>
         </Layout>
       </Layout>

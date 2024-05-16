@@ -149,13 +149,39 @@ exports.update = async (req, res) => {
 };
 
 // Fonction de contrôleur pour supprimer un utilisateur
+// exports.deleteUser = async (req, res) => {
+//     // Assurez-vous que l'ID est correctement formaté
+//     let userId = req.params.userId;
+//     userId = userId.replace(/^:/, ''); // Supprime un deux-points au début s'il existe
+
+//     try {
+//         console.log(`Tentative de suppression de l'utilisateur avec l'ID : ${userId}`);
+//         const user = await User.findById(userId);
+
+//         // Vérifier si l'utilisateur existe
+//         if (!user) {
+//             console.log('Utilisateur non trouvé avec cet ID');
+//             return res.status(404).json({ error: 'Utilisateur non trouvé.' });
+//         }
+
+//         // Supprimer l'utilisateur
+//         await User.deleteOne({ _id: userId });
+
+//         // Réponse de succès
+//         res.json({ message: 'Utilisateur supprimé avec succès.' });
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ error: 'Erreur Interne du Serveur' });
+//     }
+// };
+
 exports.deleteUser = async (req, res) => {
     // Assurez-vous que l'ID est correctement formaté
     let userId = req.params.userId;
     userId = userId.replace(/^:/, ''); // Supprime un deux-points au début s'il existe
 
     try {
-        console.log(`Tentative de suppression de l'utilisateur avec l'ID : ${userId}`);
+        console.log(`Tentative d'archivage de l'utilisateur avec l'ID : ${userId}`);
         const user = await User.findById(userId);
 
         // Vérifier si l'utilisateur existe
@@ -164,16 +190,28 @@ exports.deleteUser = async (req, res) => {
             return res.status(404).json({ error: 'Utilisateur non trouvé.' });
         }
 
-        // Supprimer l'utilisateur
-        await User.deleteOne({ _id: userId });
+        // Archiver l'utilisateur au lieu de le supprimer
+        await User.findByIdAndUpdate(userId, { isArchived: true });
 
         // Réponse de succès
-        res.json({ message: 'Utilisateur supprimé avec succès.' });
+        res.json({ message: 'Utilisateur archivé avec succès.' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Erreur Interne du Serveur' });
     }
 };
+
+exports.getArchivedUsers = async (req, res) => {
+    try {
+        const archivedUsers = await User.find({ isArchived: true });
+        res.json(archivedUsers);
+    } catch (error) {
+        console.error("Failed to fetch archived users", error);
+        res.status(500).json({ error: 'Erreur interne du serveur' });
+    }
+};
+
+
 
 // Fonction de contrôleur pour gérer la connexion de l'utilisateur
 exports.signin = (req, res) => {

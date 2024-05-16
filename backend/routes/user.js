@@ -11,7 +11,7 @@ const router = express.Router();
 const authController = require('../controllers/user'); 
 const {deleteUser} =require("../controllers/user");
 const { Name } = require("../controllers/user"); 
-
+const{getArchivedUsers}=require("../controllers/user")
 
 
 
@@ -54,9 +54,31 @@ router.get('/affichage', async (req, res) => {
   });
   router.get('/name', authController.Name);
 
-
+  router.get('/archived', getArchivedUsers);
   
-
+  router.put('/unarchive/:userId', async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      
+      // Recherchez l'utilisateur dans la base de données
+      const user = await User.findById(userId);
+  
+      // Vérifiez si l'utilisateur existe
+      if (!user) {
+        return res.status(404).json({ error: 'Utilisateur non trouvé.' });
+      }
+  
+      // Mettez à jour le champ isArchived de l'utilisateur
+      user.isArchived = false;
+      await user.save();
+  
+      // Réponse de succès
+      res.json({ message: 'Utilisateur désarchivé avec succès.' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Erreur Interne du Serveur' });
+    }
+  });
 
 module.exports=router;
  
