@@ -10,7 +10,7 @@ import { Container, Typography, Button, FormControl, Grid, IconButton, Paper, Sw
 import { Select } from 'antd';
 import moment from 'moment'; 
 import { toast } from 'react-toastify';
-
+import * as XLSX from 'xlsx'
 const { Option } = Select;
 const { TextArea } = Input;
 const useStyles = makeStyles((theme) => ({
@@ -69,6 +69,7 @@ function AjoutQuestion() {
   const [selectedLanguage, setSelectedLanguage] = useState('');
   const classes = useStyles();
   const [selectedResponseType, setSelectedResponseType] = useState('Texte'); 
+  const [data, setData] = useState([]);
   const [formData, setFormData] = useState({
     class: '',
     skill: '',
@@ -79,7 +80,43 @@ function AjoutQuestion() {
     time: '',
     answers: [{ answer_en: '', answer_fr: '', isCorrect: false }] 
   });
-  
+  ////////////
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    
+    reader.onload = (event) => {
+      const binaryStr = event.target.result;
+      const workbook = XLSX.read(binaryStr, { type: 'binary' });
+      const sheetName = workbook.SheetNames[0];
+      const sheet = workbook.Sheets[sheetName];
+      const json = XLSX.utils.sheet_to_json(sheet);
+
+      // Define your attribute mapping here
+      const mapping = {
+        'ExcelColumn1': 'attribute1',
+        'ExcelColumn2': 'attribute2',
+        'ExcelColumn3': 'attribute3',
+        // Add more mappings as needed
+      };
+
+      // Map the Excel data to your attributes
+      const mappedData = json.map(row => {
+        const mappedRow = {};
+        Object.keys(mapping).forEach(key => {
+          if (row[key] !== undefined) {
+            mappedRow[mapping[key]] = row[key];
+          }
+        });
+        return mappedRow;
+      });
+
+      setData(mappedData);
+    };
+
+    reader.readAsBinaryString(file);
+  };
+  /////////
   
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -600,6 +637,13 @@ const CustomUpload = () => (
          Nouvelle Question 
         </Button>
       </div>
+      <div>
+      <input type="file" onChange={handleFileChange} accept=".xlsx, .xls" />
+      <div>
+        <h3>Uploaded Data</h3>
+        <pre>{JSON.stringify(data, null, 2)}</pre>
+      </div>
+    </div>
     </Container>
     
   );

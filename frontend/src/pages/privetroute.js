@@ -8,7 +8,7 @@ const PrivateRoute = ({ component: Component, userRole, ...rest }) => {
       {...rest}
       render={(props) => {
         if (userRole === '1' && (props.location.pathname === '/gest_utilisateur' || props.location.pathname === '/liste_question' 
-        || props.location.pathname === '/AjoutQuestion')) {
+        )) {
           toast.error('Vous n\'êtes pas autorisé à accéder à cette page.',{
             position: "top-center",
             autoClose: 5000,
@@ -18,7 +18,7 @@ const PrivateRoute = ({ component: Component, userRole, ...rest }) => {
             draggable: true,
             progress: undefined,
           });
-          return <Redirect to="/Dashboard" />;
+          return <Redirect to="/creer_test" />;
         } 
         else {
           
