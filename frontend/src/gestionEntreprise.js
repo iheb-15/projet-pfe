@@ -1,155 +1,113 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Table, Modal } from 'antd';
-import { EyeOutlined } from '@ant-design/icons';
-import { PlusCircleOutlined } from '@ant-design/icons';
 import axios from 'axios';
+
 function Entreprise() {
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [selectedUser, setSelectedUser] = useState(null);
-    const [isSecondModalVisible, setSecondModalVisible] = useState(false);
+    const [selectedTitle, setSelectedTitle] = useState(null); 
     const [companies, setCompanies] = useState([]);
-    const [modalVisible, setModalVisible] = useState(false); // état pour gérer la visibilité du modal
-    const [selectedTitle, setSelectedTitle] = useState(null); // état pour stocker le titre sélectionné
-
+    
     const handleTitleClick = (title) => {
         setSelectedTitle(title);
-        setModalVisible(true); // Afficher le modal lorsque le titre est cliqué
+        setIsModalVisible(true); 
     };
 
     useEffect(() => {
-        // Fonction pour charger les noms des entreprises depuis le backend
+        
         const fetchCompanies = async () => {
-          try {
-            const response = await axios.get('http://localhost:3002/api/companies/names/all');
-            setCompanies(response.data);
-          } catch (error) {
-            console.error('Erreur lors de la récupération des données:', error);
-          }
+            try {
+                const response = await axios.get('http://localhost:3002/api/companies/names/all');
+                setCompanies(response.data);
+            } catch (error) {
+                console.error('Erreur lors de la récupération des données:', error);
+            }
         };
-    
+
         fetchCompanies();
-      }, []); 
+    }, []);
 
-
-
-
-
-    const showModal = (record) => {
-        setSelectedUser(record);
-        setIsModalVisible(true);
-    };
-
-    
-    const handleOk = () => {
+    const handleModalCancel = () => {
         setIsModalVisible(false);
     };
-
-    
-    const handleCancel = () => {
-        setIsModalVisible(false);
-    };
-    const showSecondModal = () => {
-        setSecondModalVisible(true);
-    };
-
-    const handleSecondModalOk = () => {
-        setSecondModalVisible(false);
-    };
-
-    const handleSecondModalCancel = () => {
-        setSecondModalVisible(false);
-    };
-   
-    const titlesStyle = {
-        margin: '5px 0',
-        fontSize: '1.2em', 
-    };
-
-    const h3Style = {
-        textAlign: 'center',
-        color: 'red', 
-    }
 
     const expandedRowRender = (record) => (
         <div>
             <ul>
-                <h3 style={h3Style}>Cliquer sur le nom de test pour afficher leur contenu</h3>
+                <h3 style={{ textAlign: 'center', color: 'red' }}>Cliquer sur le nom de test pour afficher leur contenu</h3>
                 {record.titles.map((title, index) => (
-                    <li key={index} style={titlesStyle} onClick={() => handleTitleClick(title)}>
-                        {title}
+                    <li key={index} style={{ margin: '5px 0', fontSize: '1.2em', cursor: 'pointer' }} onClick={() => handleTitleClick(title)}>
+                        {title.title}
                     </li>
                 ))}
             </ul>
-            {/* Modal */}
-            <Modal
-                title={selectedTitle}
-                visible={modalVisible}
-                onCancel={() => setModalVisible(false)}
-                footer={null}
-                width={800}
-            >
-                Contenu du modal pour {selectedTitle}
-            </Modal>
         </div>
     );
-    const rowExpandable = (record) => record.name !== 'Not Expandable';
+
     const columns = [
         {
-          key: '2',
-          title: 'nom entreprise',
-          dataIndex: 'nomentreprise',
+            key: 'nomentreprise',
+            title: 'Nom entreprise',
+            dataIndex: 'nomentreprise',
         },
         {
-          key: '3',
-          title: 'nombre test',
-          dataIndex: 'nombretest',
+            key: 'nombretest',
+            title: 'Nombre de test',
+            dataIndex: 'nombretest',
         },
-        {
-          key: '4',
-          title: 'nombre candidat',
-          dataIndex: 'nombrecandidat',
-        },
-    //     {
-    //       key: '6',
-    //       title: 'role',
-    //       dataIndex: 'role',
-    //     },
-    //     {
-    //       key: '7',
-    //       title: 'Actions',
-    //       render: (_, record) => (
-    //         <EyeOutlined
-    //         onClick={() => showModal(record)}
-    //         style={{ color: 'blue', cursor: 'pointer' }}
-    //     />
-    // ),
-    //     },
-    ]    
-    const data = companies.map((company, indx) => ({ 
-        key: indx.toString(),
+        // {
+        //     key: 'nbcandidat',
+        //     title: 'Nombre de candidat passé test',
+        //     dataIndex: 'nbcandidat',
+        // },
+        // {
+        //     key: 'scormax',
+        //     title: 'Scort max',
+        //     dataIndex: 'scormax',
+        // },
+        // {
+        //     key: 'scormin',
+        //     title: 'Scort Min',
+        //     dataIndex: 'scormin',
+        // }
+    ];
+
+    const data = companies.map((company, index) => ({
+        key: index.toString(),
         nomentreprise: company.name,
-        titles:company.titles ,
-        nombretest: company.titles.length
-      }));
-      
- 
-    return(
+        titles: company.titles,
+        nombretest: company.titles.length,
+        nbcandidat:'12',
+        scormax:'80%',
+        scormin:'25%'
+    }));
+
+    return (
         <>
-        <h1>Gestion D'entreprise</h1>
-    
-             <Table
+            <h1>Gestion D'entreprise</h1>
+            <Table
                 dataSource={data}
-                
-                columns={columns} 
+                columns={columns}
                 expandable={{
                     expandedRowRender: expandedRowRender,
-                    rowExpandable: rowExpandable,
-                   
                 }}
-                
             />
-            
-  </>
-   );
-};
-export default Entreprise; 
+            <Modal
+                title={selectedTitle ? selectedTitle.title : ''}
+                visible={isModalVisible}
+                onCancel={handleModalCancel}
+                footer={null}
+                width={1000}
+            >
+                {selectedTitle && (
+                    <div>
+                        <p>Description: {selectedTitle.description}</p>
+                        <p>Niveau: {selectedTitle.level}</p>
+                        <p>languages: {selectedTitle.languages}</p>
+                    </div>
+                )}
+            </Modal>
+        </>
+    );
+}
+
+export default Entreprise;
