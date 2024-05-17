@@ -28,7 +28,7 @@ const { SubMenu } = Menu;
 const Template = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [connected, setConnected] = useState(localStorage.getItem("userrole") || '3');
-
+  const disabledStyle = { color: 'grey', cursor: 'not-allowed', pointerEvents: 'none' };
   const history = useHistory();
 
   useEffect(() => {
@@ -42,7 +42,7 @@ const Template = () => {
   
   return (
     <Router>
-      <Layout style={{ minHeight: '100vh' }}>
+       <Layout style={{ minHeight: '100vh' }}>
           {/* {(connected ==='0' || connected==='1') && <Redirect to="/Dashboard"/>}  */}
         <Sider trigger={null} collapsible collapsed={collapsed} style={{ background: '#3987ee' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column'  }}>
@@ -50,16 +50,22 @@ const Template = () => {
             <Link to="/" style={{ color: 'white', marginBottom: '20px', textDecoration: 'none' }}>Rec-inov</Link>
           </div>
           <Menu style={{ backgroundColor: '#3987ee'}} mode="inline" defaultSelectedKeys={['1']}>
+          {connected !== '1' && (
             <Menu.Item key="1" icon={<HomeIcon    style={{ color: 'white' }} />} style={{ background: '#3987ee'  }}>
-              <Link to="/dashboard" style={{ color: 'white', fontSize:"14px" }}>Tableau de Bord </Link>
-            </Menu.Item> 
+              <Link to="/dashboard" style={connected === '1' ? disabledStyle : { color: 'white', fontSize: '14px' }} >Tableau de Bord </Link>
+           </Menu.Item> 
+            )}
+            {connected !== '1' && (
             <Menu.Item key="2" icon={<PersonIcon   style={{ color: 'white' }} />} style={{ background: '#3987ee'  }}>
-              <Link to="/gest_utilisateur" style={{ color: 'white', fontSize:"14px" }}>Gestion utilisateur</Link>
+              <Link to="/gest_utilisateur" style={connected === '1' ? disabledStyle : { color: 'white', fontSize: '14px' }}>Gestion utilisateur</Link>
             </Menu.Item> 
+             )}
             <SubMenu  icon={<HighlightOutlined style={{ color: 'white' }} />} title={<span style={{ color: 'white', fontSize:"13px" }}>Gestion de Questions</span>}>
+            {connected !== '1' && (
               <Menu.Item key="3" icon={<FormatListBulletedIcon  style={{ color: 'white' }} />} style={{ background: '#3987ee' }} >
-                <Link to="/liste_question" style={{ color: 'white', backgroundColor: '#3987ee' , fontSize:"13px"}}> Liste Question </Link>
+                <Link to="/liste_question" style={connected === '1' ? disabledStyle : { color: 'white', fontSize: '14px' }}> Liste Question </Link>
               </Menu.Item>  
+            )}
               <Menu.Item key="4" icon={<CreateIcon  style={{ color: 'white' }} />} style={{backgroundColor: '#3987ee'}} >
                 <Link to="/AjoutQuestion" style={{ color: 'white', fontSize:"13px" }}> Créer Question</Link>
               </Menu.Item>
@@ -87,9 +93,13 @@ const Template = () => {
 
 
           <Content className="site-layout-background" style={{ margin: '24px 16px', padding: 24, minHeight: 280,  }}>
-              <PrivateRoute path="/gest_utilisateur" style={{ background: '#3987ee' }} component={Gest} allowedRoles={['0']} userRole={connected} />
-              <PrivateRoute path="/AjoutQuestion" style={{ background: '#3987ee' }} component={AjoutQuestion}  allowedRoles={['0']} userRole={connected}/>
-              <PrivateRoute path="/liste_question"  style={{ background: '#3987ee' }} component={ListeQuest}  allowedRoles={['0']} userRole={connected}/>
+          {/* {connected == '1' && ( */}
+              {/* <> */}
+                <PrivateRoute path="/gest_utilisateur"   style={{ background: '#3987ee' }} component={Gest} allowedRoles={['0']} userRole={connected}  />
+                <PrivateRoute path="/AjoutQuestion" style={{ background: '#3987ee' }} component={AjoutQuestion} allowedRoles={['0']} userRole={connected} />
+                <PrivateRoute path="/liste_question" style={{ background: '#3987ee' }} component={ListeQuest} allowedRoles={['0']} userRole={connected} />
+              {/* </> */}
+            {/* )} */}
               <Route path="/ModifierQuestion/:id" style={{ background: '#3987ee' }} component={Question} />
               <Route path="/filtrer_Question" style={{ background: '#3987ee' }} component={Filter} />
               <Route path="/traduire_quest" component={TraduireQuest} />
@@ -99,7 +109,11 @@ const Template = () => {
               <Route path="/gestionEntreprise"  style={{ background: '#3987ee' }} component={Entreprise} />
           </Content>
         </Layout>
-      </Layout>
+      </Layout> 
+
+
+   
+
     </Router>
   );
 };

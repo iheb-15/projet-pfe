@@ -26,7 +26,7 @@ const App = () => {
     <Switch>
       {/* Route pour le composant 'App'  */}
       <Route exact  path="/" >
-       {(connected ==='0' || connected==='1')
+       {(connected ==='0' )
         ?<Redirect to="/login"/>
         :<Redirect to="/Dashboard"  />
       }
