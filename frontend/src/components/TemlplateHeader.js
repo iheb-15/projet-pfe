@@ -43,22 +43,8 @@ const userMenu = (
       </div>
 
       <Space>
-        <Badge count={comments.length} dot>
-          <MailOutlined
-            style={{ fontSize: 16, color: "white", marginRight: 10 }}
-            onClick={() => {
-              setCommentsOpen(true);
-            }}
-          />
-        </Badge>
-        <Badge count={orders.length}>
-          <BellFilled
-            style={{ fontSize: 16, color: "white", marginRight: 10 }}
-            onClick={() => {
-              setNotificationsOpen(true);
-            }}
-          />
-        </Badge>
+      
+      
         <Badge>
           <Dropdown overlay={userMenu} trigger={['click']}>
             <Link to="#" className='ant-dropdown-link' onClick={e => e.preventDefault()} style={{ color: 'white', cursor: 'pointer', textDecoration: 'none' }}>
@@ -83,26 +69,7 @@ const userMenu = (
           }}
         ></List>
       </Drawer>
-      <Drawer
-        title="Notifications"
-        open={notificationsOpen}
-        onClose={() => {
-          setNotificationsOpen(false);
-        }}
-        maskClosable
-      >
-        <List
-          dataSource={orders}
-          renderItem={(item) => {
-            return (
-              <List.Item>
-                <Typography.Text strong>{item.title}</Typography.Text> has been
-                ordered!
-              </List.Item>
-            );
-          }}
-        ></List>
-      </Drawer>
+   
     </div>
   );
 }

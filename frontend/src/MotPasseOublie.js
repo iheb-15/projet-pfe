@@ -72,11 +72,7 @@ function MotPasseOublie() {
               </button>
             </div>
 
-            <div>
-              <button variant="secondary" className="second-boutton" onClick={handleRetourClick}>
-                Retour 
-              </button>
-            </div>
+           
           </Form>
 
           <Modal show={showSuccessModal} onHide={handleSuccessModalClose}>

@@ -1,86 +1,79 @@
-import React from "react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
-import "./TempsMoyen.css";
+// Test.js
 
-const data = [
-  { name: 'Test 1', temps_moyen: 45 },
-  { name: 'Test 2', temps_moyen: 50 },
-  { name: 'Test 3', temps_moyen: 55 },
-  { name: 'Test 4', temps_moyen: 60 },
-  { name: 'Test 5', temps_moyen: 65 },
-];
+import React, { useState, useEffect, useRef } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './Test.css'; // Fichier CSS modifié
+import Chart from 'chart.js/auto';
+import { Container, Row, Col, Form } from 'react-bootstrap';
 
-const TestCompletionTimeChart = () => {
+const Test = () => {
+  const [numberOfCandidates, setNumberOfCandidates] = useState(0);
+  const chartRef = useRef(null);
 
-  const formatTooltipValue = (value) => {
-    return `${value} minutes`; // Ajout de "minutes" pour la clarification
+  // Fonction pour gérer le changement de valeur dans l'input
+  const handleInputChange = (e) => {
+    setNumberOfCandidates(e.target.value);
   };
 
-  const formatYAxisLabel = (value) => {
-    return `${value} min`; // Ajout de "min" pour la clarification
-  };
+  useEffect(() => {
+    // Détruit le graphique existant avant d'en créer un nouveau
+    if (chartRef.current !== null) {
+      chartRef.current.destroy();
+    }
 
-  const formatLegendValue = (value) => {
-    return value.charAt(0).toUpperCase() + value.slice(1);
-  };
+    // Crée un nouveau graphique avec les données mises à jour
+    const ctx = document.getElementById('myChart');
+    const newChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['January', 'February', 'March', 'April', 'May'],
+        datasets: [{
+          label: 'Number of Candidates',
+          data: [12, 19, 3, 5, numberOfCandidates],
+          fill: false,
+          backgroundColor: 'rgba(75,192,192,0.2)',
+          borderColor: 'rgba(75,192,192,1)',
+        }]
+      },
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true
+          }
+        }
+      }
+    });
+
+    chartRef.current = newChart;
+
+    // Nettoie le graphique lorsqu'il est supprimé du DOM
+    return () => {
+      newChart.destroy();
+    };
+  }, [numberOfCandidates]);
 
   return (
-    <div className="content-temps-moyen">
-      <div className="bar-chart-info">
-        <h5 className="bar-chart-title">Temps moyen de complétion </h5>
-        <div className="chart-info-data">
-          <p>Unité: minutes</p>
-        </div>
-      </div>
-      <div className="bar-chart-wrapper">
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart
-            data={data}
-            margin={{
-              top: 20,
-              right: 30,
-              left: 20,
-              bottom: 20,
-            }}
-          >
-            <XAxis dataKey="name" />
-            <YAxis
-              padding={{ bottom: 10, top: 10 }}
-              tickFormatter={formatYAxisLabel}
-              tickCount={6}
-              axisLine={false}
-              tickSize={0}
-            />
-            <Tooltip
-              formatter={formatTooltipValue}
-              cursor={{ fill: "transparent" }}
-            />
-            <Legend
-              iconType="circle"
-              iconSize={10}
-              verticalAlign="top"
-              align="right"
-              formatter={formatLegendValue}
-            />
-            <Bar
-              dataKey="temps_moyen"
-              fill="#475be8"
-              barSize={30}
-              radius={[4, 4, 4, 4]}
-            />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
+    <Container>
+      <Row className="justify-content-md-center mt-5">
+        <Col md={6} className="offset-md-3"> {/* Déplacement vers la droite avec offset */}
+          <div className="test-container">
+            <h2 className="test-title">Test des candidats</h2>
+            <Form.Group>
+              <Form.Label htmlFor="numberOfCandidates">Nombre de candidats ayant passé le test :</Form.Label>
+              <Form.Control
+                type="number"
+                id="numberOfCandidates"
+                value={numberOfCandidates}
+                onChange={handleInputChange}
+              />
+            </Form.Group>
+            <div className="result">
+              <canvas id="myChart"></canvas>
+            </div>
+          </div>
+        </Col>
+      </Row>
+    </Container>
   );
 };
-
-export default TestCompletionTimeChart;
+export default Test;

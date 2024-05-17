@@ -1,0 +1,28 @@
+/* Test.css */
+
+.test-container {
+  background-color: #f8f9fa;
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.test-title {
+  color: #007bff;
+  text-align: center;
+}
+
+.result {
+  margin-top: 20px;
+}
+
+canvas {
+  width: 100%;
+  height: 300px;
+}
+
+/* Ajout de la marge à droite */
+.offset-md-3 {
+  margin-right: 70%; /* Vous pouvez ajuster la valeur de la marge selon vos besoins */
+}

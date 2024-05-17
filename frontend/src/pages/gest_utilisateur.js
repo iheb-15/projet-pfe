@@ -118,14 +118,14 @@ function Gest() {
 
   const onDeleteUtilisateur = (record) => {
     Modal.confirm({
-      title: 'Êtes-vous sûr de vouloir supprimer cet enregistrement utilisateur ?',
+      title: 'Êtes-vous sûr de vouloir d"archiver cet enregistrement utilisateur ?',
       okText: 'OUI',
       okType: 'danger',
       onOk: async () => {
         try {
           await deleteUtilisateurFromBackend(record.id);
           setDataSource(prevDataSource => prevDataSource.filter((utilisateur) => utilisateur.id !== record.id));
-          toast.success('Utilisateur supprimer avec succès!', {
+          toast.success('Utilisateur Archiver avec succès!', {
             position: "top-center",
             autoClose: 3000,
             hideProgressBar: false,
@@ -293,7 +293,7 @@ function Gest() {
             }}
             style={{ marginLeft: 8 }}
           >
-            Delete
+            Archiver
           </Button>
         
         </>

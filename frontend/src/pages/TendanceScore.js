@@ -1,63 +1,34 @@
-// TendanceScore.js
-import React from "react";
-import "./TendanceScore.css";
+import React, { useState } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './TendanceScore.css'; // Ce fichier contiendra vos styles CSS personnalisés
 
-const data = [
-  {
-    id: 1,
-    name: "Hadir",
-    percentValues: 70,
-  },
-  {
-    id: 2,
-    name: "Iheb",
-    percentValues: 40,
-  },
-  {
-    id: 3,
-    name: "Aicha",
-    percentValues: 60,
-  },
-  {
-    id: 4,
-    name: "Syryne",
-    percentValues: 80,
-  },
-  {
-    id: 5,
-    name: "Others",
-    percentValues: 20,
-  },
-];
+function TestCand() {
+  const [nombreCandidats, setNombreCandidats] = useState(0);
 
-const TendanceScore = () => {
-  const totalPercentage = data.reduce((acc, item) => acc + item.percentValues, 0);
+  // Fonction pour simuler le chargement du nombre de candidats depuis une source de données
+  const fetchNombreCandidats = () => {
+    // Simuler une requête réseau ou tout autre moyen de récupérer les données
+    // Ici, nous utilisons setTimeout pour simuler un délai de chargement
+    setTimeout(() => {
+      // Supposons que vous avez récupéré le nombre de candidats de quelque part
+      const nombreDeCandidatsRecupere = 10; // Par exemple
+      setNombreCandidats(nombreDeCandidatsRecupere);
+    }, 2000); // Délai de 2 secondes pour simuler le chargement
+  };
+
+  // Appeler la fonction fetchNombreCandidats lorsque le composant est monté
+  useState(() => {
+    fetchNombreCandidats();
+  }, []);
 
   return (
-    <div className="tendance-score-container">
-      <h2 className="tendance-score-title">Tendance de Score</h2>
-      <div className="tendance-score-bars">
-        {data.map((progressbar) => {
-          const widthPercentage = (progressbar.percentValues / totalPercentage) * 100;
-
-          return (
-            <div className="tendance-score-bar" key={progressbar.id}>
-              <div className="tendance-score-label">{progressbar.name}</div>
-              <div className="tendance-score-progress">
-                <div
-                  className="tendance-score-progress-inner"
-                  style={{
-                    width: `${widthPercentage}%`,
-                  }}
-                ></div>
-              </div>
-              <div className="tendance-score-value">{progressbar.percentValues}%</div>
-            </div>
-          );
-        })}
+    <div className="container">
+      <h1>Liste des candidats</h1>
+      <div className="nombre-candidats">
+        <p>Nombre de candidats ayant passé le test : {nombreCandidats}</p>
       </div>
     </div>
   );
-};
+}
 
-export default TendanceScore;
+export default TestCand;

@@ -1,55 +1,7 @@
-/* TendanceScore.css */
-
-.tendance-score-container {
-  font-family: Arial, sans-serif;
-  width: 100%;
-  max-width: 500px;
-  margin: 10px auto;
-  padding: 20px;
-  background-color: var(--background-color);
-  border-radius: 5px;
-  box-shadow: var(--light-shadow);
-  flex-direction: column;
-  align-items: center;
-  margin-left: 18px;
-}
-.tendance-score-title {
-  font-size: 20px;
-  text-align: center;
-  font-weight: bold
-}
-
-.tendance-score-bars {
+.nombre-candidats {
   margin-top: 20px;
-}
-
-.tendance-score-bar {
-  display: flex;
-  align-items: center;
-  margin-bottom: 40px;
-}
-
-.tendance-score-label {
-  flex: 1;
-  font-weight: bold;
-}
-
-.tendance-score-progress {
-  width: 70%;
-  height: 16px;
-  background-color: #e0e0e0;
-  border-radius: 8px;
-  margin-right: 10px;
-}
-
-.tendance-score-progress-inner {
-  height: 100%;
-  border-radius: 8px;
-  background-color: #007bff;
-}
-
-.tendance-score-value {
-  font-size: 14px;
-  color: #666;
-  margin-left: 8px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
 }
