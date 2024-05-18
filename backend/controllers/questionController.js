@@ -222,11 +222,6 @@ exports.updateResponseById = async (req, res) => {
     }
 };
 
-
-
-
-
-
 exports.addQuestion = async (req, res) => {
     const {
       className,
@@ -328,13 +323,52 @@ exports.addQuestion = async (req, res) => {
   
   exports.deleteQuestion = async (req, res) => {
     try {
-      const result = await RecinovQuestion.findByIdAndRemove(req.params.id);
+      const result = await RecinovQuestion.findByIdAndUpdate(
+        req.params.id,
+        { isArchived: true },
+        { new: true }
+      );
       if (!result) {
         return res.status(404).send('No question found with that ID');
       }
-      res.send('Question deleted successfully');
+      res.send('Question archived successfully');
     } catch (error) {
-      res.status(500).send('Error deleting question: ' + error.message);
+      res.status(500).send('Error archiving question: ' + error.message);
     }
   };
-  
+
+
+
+
+
+
+exports.getArchivedQuestions = async (req, res) => {
+  try {
+      const archivedUsers = await RecinovQuestion.find({ isArchived: true });
+      res.json(archivedUsers);
+  } catch (error) {
+      console.error("Failed to fetch archived users", error);
+      res.status(500).json({ error: 'Erreur interne du serveur' });
+  }
+};
+
+exports.unarchiveQuestion = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const updatedQuestion = await RecinovQuestion.findByIdAndUpdate(
+      id,
+      { isArchived: false },
+      { new: true }
+    );
+
+    if (!updatedQuestion) {
+      return res.status(404).json({ error: 'Question non trouvée' });
+    }
+
+    res.json(updatedQuestion);
+  } catch (error) {
+    console.error("Failed to unarchive question", error);
+    res.status(500).json({ error: 'Erreur interne du serveur' });
+  }
+};
