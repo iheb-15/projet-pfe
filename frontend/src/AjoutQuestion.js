@@ -10,7 +10,7 @@ import { Container, Typography, Button, FormControl, Grid, IconButton, Paper, Sw
 import { Select } from 'antd';
 import moment from 'moment'; 
 import { toast } from 'react-toastify';
-import * as XLSX from 'xlsx'
+
 const { Option } = Select;
 const { TextArea } = Input;
 const useStyles = makeStyles((theme) => ({
@@ -65,7 +65,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function AjoutQuestion() {
-  
+  const [errors, setErrors] = useState({});
   const [selectedLanguage, setSelectedLanguage] = useState('');
   const classes = useStyles();
   const [selectedResponseType, setSelectedResponseType] = useState('Texte'); 
@@ -78,49 +78,34 @@ function AjoutQuestion() {
     level: '',
     points: '',
     time: '',
-    answers: [{ answer_en: '', answer_fr: '', isCorrect: false }] 
+    answers: [{ answer_en: '', answer_fr: '', isCorrect: false },
+              { answer_en: '', answer_fr: '', isCorrect: false }]  
   });
-  ////////////
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    
-    reader.onload = (event) => {
-      const binaryStr = event.target.result;
-      const workbook = XLSX.read(binaryStr, { type: 'binary' });
-      const sheetName = workbook.SheetNames[0];
-      const sheet = workbook.Sheets[sheetName];
-      const json = XLSX.utils.sheet_to_json(sheet);
 
-      // Define your attribute mapping here
-      const mapping = {
-        'ExcelColumn1': 'attribute1',
-        'ExcelColumn2': 'attribute2',
-        'ExcelColumn3': 'attribute3',
-        // Add more mappings as needed
-      };
-
-      // Map the Excel data to your attributes
-      const mappedData = json.map(row => {
-        const mappedRow = {};
-        Object.keys(mapping).forEach(key => {
-          if (row[key] !== undefined) {
-            mappedRow[mapping[key]] = row[key];
-          }
-        });
-        return mappedRow;
-      });
-
-      setData(mappedData);
-    };
-
-    reader.readAsBinaryString(file);
+  
+  // ******** Les controles pour les champs vides****************
+ 
+  const validateFields = () => {
+    let fieldErrors = {};
+    if (!formData.skill) fieldErrors.skill = "Le champ Compétence est obligatoire";
+    if (!formData.points) fieldErrors.points = "Le champ Points est obligatoire";
+    if (!formData.time) fieldErrors.time = "Le champ Temps est obligatoire";
+    if (!formData.question) fieldErrors.question = "Le champ Question est obligatoire";
+    if (formData.answers.some(answer => !answer.answer_fr && !answer.answer_en)) {
+      fieldErrors.answers = "Tous les champs de réponse sont obligatoires";
+    }
+    if (!formData.answers.some(answer => answer.isCorrect)) {
+      fieldErrors.answers = "Veuillez sélectionner au moins une réponse correcte.";
+    }
+    setErrors(fieldErrors);
+    return Object.keys(fieldErrors).length === 0;
   };
-  /////////
+
+  // **************Fin des controlles************
   
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+    if (validateFields()) {
     const updatedFormData = {
       ...formData,
       question_en: selectedLanguage === 'Anglais' ? formData.question : formData.question_en,
@@ -141,9 +126,8 @@ function AjoutQuestion() {
     } catch (error) {
       console.error('Error:', error.response.data);
     }
+  }
   };
- 
- 
 
   const handleReponseChange = (index, e) => {
   const updatedAnswers = formData.answers.map((answer, idx) => {
@@ -317,39 +301,42 @@ const CustomUpload = () => (
       <Paper elevation={3} className={`${classes.paper} ${classes.spacing}`}>
         <Typography variant="h7" className={`${classes.label}`} style={{ color: "#3987ee" }} gutterBottom>Paramètres de la Question<span className={classes.redAsterisk}>*</span></Typography>
         <Paper elevation={3} className={`${classes.responseCard} ${classes.spacing}`}>
-       <Grid container spacing={2} className={`${classes.spacing}`}>
+          <Grid container spacing={2} className={`${classes.spacing}`}>
             <Grid item xs={12}>
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={4}>
-                <Typography variant="h8" className={`${classes.label}`} >Langue<span className={classes.redAsterisk}>*</span></Typography>
-                <AntdSelect
+                  <Typography variant="h8" className={`${classes.label}`}>Langue<span className={classes.redAsterisk}>*</span></Typography>
+                  <AntdSelect
                     placeholder="Choisir une Langue"
                     onChange={handleSelectChange}
                     style={{ width: "100%" }}
                   >
                     <Option value="Francais">Francais</Option>
                     <Option value="Anglais">Anglais</Option>
-                    <Option value="Arabe"disabled>Arabe</Option>
+                    <Option value="Arabe" disabled>Arabe</Option>
                   </AntdSelect>
+                  {errors.language && <Typography color="error">{errors.language}</Typography>}
                 </Grid>
-                  <Grid item xs={12} sm={4}>
-                    <Typography variant="h8" className={`${classes.label}`} >Domaine<span className={classes.redAsterisk}>*</span></Typography>
-                      <Input 
-                            placeholder="Choisir Domaine" 
-                            style={{ width: "100%" }} 
-                            value={formData.className} 
-                            onChange={handleDomaineChange} 
-                          />
-                  </Grid>
                 <Grid item xs={12} sm={4}>
-                <Typography variant="h8" className={`${classes.label}`} >Compétence<span className={classes.redAsterisk}>*</span></Typography>
-                <Input 
-                      placeholder="Choisir Compétence" 
-                      style={{ width: "100%" }} 
-                      value={formData.skill} 
-                      onChange={handleCompetenceChange} 
-                    />
-              </Grid>
+                  <Typography variant="h8" className={`${classes.label}`}>Domaine<span className={classes.redAsterisk}>*</span></Typography>
+                  <Input 
+                    placeholder="Choisir Domaine" 
+                    style={{ width: "100%" }} 
+                    value={formData.className} 
+                    onChange={handleDomaineChange} 
+                  />
+                  {errors.className && <Typography color="error">{errors.className}</Typography>}
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <Typography variant="h8" className={`${classes.label}`}>Compétence<span className={classes.redAsterisk}>*</span></Typography>
+                  <Input 
+                    placeholder="Choisir Compétence" 
+                    style={{ width: "100%" }} 
+                    value={formData.skill} 
+                    onChange={handleCompetenceChange} 
+                  />
+                  {errors.skill && <Typography color="error">{errors.skill}</Typography>}
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
@@ -360,39 +347,44 @@ const CustomUpload = () => (
               <FormControl className={`${classes.formControl} ${classes.spacing}`} fullWidth>
                 <Typography variant="subtitle1" className={`${classes.label}`}>Niveau<span className={classes.redAsterisk}>*</span></Typography>
                 <AntdSelect
-                    placeholder="Choisissez un niveau"
-                    optionFilterProp="children"
-                    onChange={handleSelectChanges}
-                    style={{ width: "50%" }}
-                  >
-                    <Option value={0}>Débutant</Option>
-                    <Option value={1}>Intermédiare</Option>
-                    <Option value={2}>Avancé</Option>
-                    <Option value={3}>Expert</Option>
-                  </AntdSelect>
+                  placeholder="Choisissez un niveau"
+                  optionFilterProp="children"
+                  onChange={handleSelectChanges}
+                  style={{ width: "50%" }}
+                >
+                  <Option value={0}>Débutant</Option>
+                  <Option value={1}>Intermédiaire</Option>
+                  <Option value={2}>Avancé</Option>
+                  <Option value={3}>Expert</Option>
+                </AntdSelect>
               </FormControl>
             </Grid>
             <Grid item xs={12} sm={4}>
               <FormControl className={`${classes.formControl} ${classes.spacing}`} fullWidth>
                 <Typography variant="subtitle1" className={`${classes.label}`}>Points<span className={classes.redAsterisk}>*</span></Typography>
                 <Space wrap> 
-                    <InputNumber min={1}
-                     max={100000}
-                     value={formData.points}
-                     onChange={onChangePoints} 
-                     style={{width:"100%"}}/>
-                    </Space>
-         </FormControl>
+                  <InputNumber 
+                    min={1}
+                    max={100000}
+                    value={formData.points}
+                    onChange={onChangePoints} 
+                    style={{ width: "100%" }}
+                  />
+                  {errors.points && <Typography color="error">{errors.points}</Typography>}
+                </Space>
+              </FormControl>
             </Grid>
             <Grid item xs={12} sm={4}>
               <FormControl className={`${classes.formControl} ${classes.spacing}`} fullWidth>
                 <Typography variant="subtitle1" className={`${classes.label}`}>Temps<span className={classes.redAsterisk}>*</span></Typography>
                 <Grid container spacing={1}>
                   <Grid item xs={6}>
-                   <TimePicker 
-                   value={formData.time ? moment.utc(formData.time * 1000) : null} // Utiliser moment pour formater la valeur
-                   onChange={handleChangeTime} 
-                   style={{width:"100%"}} />
+                    <TimePicker 
+                      value={formData.time ? moment.utc(formData.time * 1000) : null}
+                      onChange={handleChangeTime}
+                      style={{ width: "100%" }}
+                    />
+                    {errors.time && <Typography color="error">{errors.time}</Typography>}
                   </Grid>
                 </Grid>
               </FormControl>
@@ -401,87 +393,66 @@ const CustomUpload = () => (
         </Paper>
         <Paper elevation={3} className={`${classes.responseCard} ${classes.spacing}`}>
           <Grid container spacing={2} className={`${classes.spacing}`}>
-            {/* Sélection du type de question */}
             <Grid item xs={12}>
-                <Typography variant="subtitle1" className={`${classes.label}`} >Type de Question<span className={classes.redAsterisk}>*</span></Typography>
-                <AntdSelect
+              <Typography variant="subtitle1" className={`${classes.label}`}>Type de Question<span className={classes.redAsterisk}>*</span></Typography>
+              <AntdSelect
                 placeholder="Choisir Type"
                 optionFilterProp="children"
                 onChange={handleQuestionTypeChange}
-                style={{width:"30%"}} 
+                style={{ width: "30%" }}
                 options={[
-                  {
-                    value: 'QCM',
-                    label: 'QCM',
-                  },
-                  {
-                    value: 'Vrai/Faux',
-                    label: 'Vrai/Faux',
-                  },
-                  {
-                    value: 'Texte',
-                    label: 'Texte',
-                  },
-
-                  {
-                    value: 'Image',
-                    label: 'Image',
-                  },
+                  { value: 'Texte', label: 'Texte' },
+                  { value: 'QCM', label: 'QCM', disabled: true },
+                  { value: 'Vrai/Faux', label: 'Vrai/Faux', disabled: true },
+                  { value: 'Image', label: 'Image', disabled: true },
                 ]}
               />
             </Grid>
-              {/* Affichage du champ de téléchargement si "Image" est sélectionné comme type de question */}
-              {selectedResponseType === 'Image' && (
-                <Paper elevation={3} className={`${classes.responseCard} ${classes.spacing}`}>
-                  <Typography variant="subtitle1" className={`${classes.label}`}>Télécharger une image<span className={classes.redAsterisk}>*</span></Typography>
-                  <CustomUpload />
-                </Paper>
-              )}
-            {/* Zone de saisie de la question */}
+            {selectedResponseType === 'Image' && (
+              <Paper elevation={3} className={`${classes.responseCard} ${classes.spacing}`}>
+                <Typography variant="subtitle1" className={`${classes.label}`}>Télécharger une image<span className={classes.redAsterisk}>*</span></Typography>
+                <CustomUpload />
+              </Paper>
+            )}
             <Grid item xs={12}>
-            <Typography
-              variant="subtitle1"
-              className={`${classes.label}`}
-              style={{ display: selectedResponseType === 'Image' ? 'none' : 'block' }}
-            >
-              Question<span className={classes.redAsterisk}>*</span>
-            </Typography>
-                  <Input.TextArea
-                        rows={3}
-                        placeholder="Question"
-                        value={formData.question}
-                        onChange={handleQuestionChange}
-                        aria-label="Question"
-                        style={{ display: 'block', width: "100%" }}
-                      />
-                </Grid>
-
+              <Typography
+                variant="subtitle1"
+                className={`${classes.label}`}
+                style={{ display: selectedResponseType === 'Image' ? 'none' : 'block' }}
+              >
+                Question<span className={classes.redAsterisk}>*</span>
+              </Typography>
+              <TextArea
+                rows={3}
+                placeholder="Question"
+                value={formData.question}
+                onChange={handleQuestionChange}
+                aria-label="Question"
+                style={{ display: 'block', width: "100%" }}
+              />
+              {errors.question && <Typography color="error">{errors.question}</Typography>}
+            </Grid>
           </Grid>
           {formData.answers.map((answer, index) => (
-              <Paper key={index} elevation={3} className={`${classes.responseCard} ${classes.spacing}`}>
-                  <Typography variant="subtitle1" className={`${classes.label}`} >
-                    Réponse {index + 1}
-                  </Typography>
-                  <Typography variant="subtitle1" className={`${classes.label}`} >
-                    Type de  Réponse <span className={classes.redAsterisk}>*</span>
-                  </Typography>
-                  <AntdSelect
-                    placeholder="Choisir Type"
-                    optionFilterProp="children"
-                    onChange={handleQuestionTypeChange}
-                    style={{width:"30%"}} 
-                    options={[
-                      { value: 'Texte', label: 'Texte' },
-                      { value: 'Image', label: 'Image' },
-                    ]}
-                  />  
+            <Paper key={index} elevation={3} className={`${classes.responseCard} ${classes.spacing}`}>
+              <Typography variant="subtitle1" className={`${classes.label}`}>Réponse {index + 1}</Typography>
+              <Typography variant="subtitle1" className={`${classes.label}`}>Type de Réponse <span className={classes.redAsterisk}>*</span></Typography>
+              <AntdSelect
+                placeholder="Choisir Type"
+                optionFilterProp="children"
+                onChange={handleQuestionTypeChange}
+                style={{ width: "30%" }}
+                options={[
+                  { value: 'Texte', label: 'Texte' },
+                  { value: 'Image', label: 'Image', disabled:true },
+                ]}
+              />
               {selectedResponseType === 'Image' && (
                 <Paper elevation={3} className={`${classes.responseCard} ${classes.spacing}`}>
                   <Typography variant="subtitle1" className={`${classes.label}`}>Télécharger une image<span className={classes.redAsterisk}>*</span></Typography>
                   <CustomUpload />
                 </Paper>
               )}
-              
               <div className={classes.responseContainer}>
                 <TextArea
                   rows={2}
@@ -493,10 +464,10 @@ const CustomUpload = () => (
                   onChange={(e) => handleReponseChange(index, e)}
                   className={`${classes.formControl} ${classes.spacing}`}
                   aria-label={`Réponse ${index + 1}`}
-                  style={{ display: selectedResponseType === 'Image' ? 'none' : 'block', width: "100%" }} 
+                  style={{ display: selectedResponseType === 'Image' ? 'none' : 'block', width: "100%" }}
                 />
                 <Switch
-                checked={formData.answers.isCorrect}
+                  checked={formData.answers[index].isCorrect}
                   onChange={() => handleCorrectChange(index)}
                   color="primary"
                   inputProps={{ 'aria-label': `Réponse correcte ${index + 1}` }}
@@ -505,21 +476,25 @@ const CustomUpload = () => (
                   <CloseIcon />
                 </IconButton>
               </div>
-              
-            </Paper>
-              ))}
+              {errors.answers && <Typography color="error">{errors.answers}</Typography>}
               {formData.answers.every(answer => !answer.isCorrect) && (
                 <Typography variant="subtitle1" className={`${classes.label}`} style={{ color: 'red' }}>
                   Veuillez sélectionner au moins une réponse correcte.
                 </Typography>
               )}
-              <Button variant="contained" style={{ color: '#fff', backgroundColor: '#3987ee',width:180  }} 
-               className={classes.addButton} aria-label="Ajouter réponse" onClick={handleAjouterReponse} >Ajouter Réponse
-               </Button>
-              
-              </Paper> 
-              
-       </Paper>
+            </Paper>
+          ))}
+          <Button
+            variant="contained"
+            style={{ color: '#fff', backgroundColor: '#3987ee', width: 180 }}
+            className={classes.addButton}
+            aria-label="Ajouter réponse"
+            onClick={handleAjouterReponse}
+          >
+            Ajouter Réponse
+          </Button>
+        </Paper>
+      </Paper>
                                 {/* ********** traduction question************** */}
       <Paper elevation={3} className={`${classes.paper} ${classes.spacing}`} style={{marginTop:50}}>
             <Typography variant="h7" className={`${classes.label}`} style={{ color: "#3987ee" }} gutterBottom>Traduire Question<span className={classes.redAsterisk}>*</span></Typography>
@@ -541,10 +516,12 @@ const CustomUpload = () => (
                   {
                     value: 'Code',
                     label: 'Code',
+                    disabled:true
                   },
                   {
                     value: 'Image',
                     label: 'Image',
+                    disabled:true
                   },
                 ]}
               />
@@ -578,7 +555,7 @@ const CustomUpload = () => (
                     style={{width:"30%"}} 
                     options={[
                       { value: 'Texte', label: 'Texte' },
-                      { value: 'Image', label: 'Image' },
+                      { value: 'Image', label: 'Image', disabled:true},
                     ]}
                   />  
               {selectedResponseType === 'Image' && (
@@ -611,16 +588,13 @@ const CustomUpload = () => (
                 </Typography>
               )}
               
-              
               <Button variant="contained" style={{ color: '#fff', backgroundColor: '#3987ee',width:180  }} 
                className={classes.addButton} aria-label="Ajouter réponse" onClick={ajouterReponses} >Ajouter Réponse
                </Button>
-               
             </Paper>
         ))}
-        
-</Paper>
-
+      </Paper>
+      
       <Button
           variant="contained"
           style={{ color: '#fff', backgroundColor: '#3987ee', float: 'right', marginTop: '10px' , width:100 }}
@@ -628,22 +602,6 @@ const CustomUpload = () => (
            >
           Ajouter
       </Button>
-    
-        <div style={{ textAlign: 'center', marginTop: '20px' }}>
-        <Button
-          variant="contained"
-          style={{ color: '#fff', backgroundColor: '#3987ee', width:200 }}
-        >
-         Nouvelle Question 
-        </Button>
-      </div>
-      <div>
-      <input type="file" onChange={handleFileChange} accept=".xlsx, .xls" />
-      <div>
-        <h3>Uploaded Data</h3>
-        <pre>{JSON.stringify(data, null, 2)}</pre>
-      </div>
-    </div>
     </Container>
     
   );
