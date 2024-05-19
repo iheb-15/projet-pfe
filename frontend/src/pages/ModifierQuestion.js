@@ -450,9 +450,7 @@ const handleLevelChange = (event) => {
                   <Typography variant="subtitle1" className={`${classes.label}`}>Niveau<span className={classes.redAsterisk}>*</span></Typography>
                   
                   <Select
-
-                    // value={level} 
-                    onChange={ (e)=> {
+                      onChange={ (e)=> {
                       console.log(e)
                       setQuestion(prevQuestion => ({
                         ...prevQuestion,
@@ -460,11 +458,10 @@ const handleLevelChange = (event) => {
                       }))
                     } }
                     value={question.level}
-                    
-                    
                     displayEmpty
                     inputProps={{ 'aria-label': 'Niveau' }}
                     variant="outlined"
+                    fullWidth
                   >
                     <MenuItem value="" disabled>Choisissez un niveau</MenuItem>
                     <MenuItem value={0}>Junior</MenuItem>
@@ -475,15 +472,13 @@ const handleLevelChange = (event) => {
                 </FormControl>
               </Grid>
              
-              <Grid item xs={4}>
+              <Grid item xs={4} >
                 <FormControl className={`${classes.formControl} ${classes.spacing}`} fullWidth>
                   <Typography variant="subtitle1" className={`${classes.label}`}>Points<span className={classes.redAsterisk}>*</span></Typography>
                   <TextField
                     type="number"
                     value={question.points}
-                    
                     onChange={(event) => handleChanges('points', event.target.value)}
-
                     variant="outlined"
                     fullWidth
                     inputProps={{ min: 0 }}
@@ -532,147 +527,115 @@ const handleLevelChange = (event) => {
           </Paper>
           </Paper>
        
-          <Paper className={classes.section}>
+          <Paper elevation={3} className={`${classes.responseCard} ${classes.spacing}`}>
             <Grid container spacing={2} className={classes.spacing}>
                 <Grid item xs={12}>
                     <FormControl className={`${classes.formControl} ${classes.expandedTextField}`} fullWidth>
-                    <Typography variant="h7" className={`${classes.label}`} style={{ color: "#3987ee" }} gutterBottom>
-                     Affichage des Questions<span className={classes.redAsterisk}>*</span></Typography>
-                        
+                        <Typography variant="h7" className={classes.label} style={{ color: "#3987ee" }} gutterBottom>
+                            Affichage des Questions<span className={classes.redAsterisk}>*</span>
+                        </Typography>
                     </FormControl>
                 </Grid>
-                
-                    <>
-                       
-                    <Grid item xs={12}>
-                        <TextField
-                            label={`Question en français*`}
-                            multiline
-                            rows={2}
-                            variant="outlined"
-                            fullWidth
-                            value={question.question_fr}
-                            
-                            onChange={(event) => handleChanges('question_fr', event.target.value)}
-                            className={`${classes.formControl} ${classes.spacing} `}
-                            aria-label="Question en français"
-                        />
-                    </Grid>
-                    
-                        {/* question_en */}
-                        <Grid item xs={12}>
-                            <TextField
-                                label="Question en anglais*"
-                                multiline
-                                rows={2}
-                                variant="outlined"
-                                fullWidth
-                                value={question.question_en}
-                                
-                                onChange={(event) => handleChanges('question_en', event.target.value)}
-                                className={`${classes.formControl} ${classes.spacing}`}
-                                aria-label="Question en anglais"
-                            />
-                        </Grid>
-                    </>
-                
+                {/* **question_fr*** */}
+                <Grid item xs={12}>
+                    <TextField
+                        label={`Question en français*`}
+                        multiline
+                        rows={2}
+                        variant="outlined"
+                        fullWidth
+                        value={question.question_fr}
+                        onChange={(event) => handleChanges('question_fr', event.target.value)}
+                        className={`${classes.formControl} ${classes.spacing}`}
+                        aria-label="Question en français"
+                        InputLabelProps={{ shrink: true }} 
+                    />
+                </Grid>
+                {/* ****question_en***** */}
+                <Grid item xs={12}>
+                    <TextField
+                        label={`Question en anglais*`}
+                        multiline
+                        rows={2}
+                        variant="outlined"
+                        fullWidth
+                        value={question.question_en}
+                        onChange={(event) => handleChanges('question_en', event.target.value)}
+                        className={`${classes.formControl} ${classes.spacing}`}
+                        aria-label={`Question en anglais`}
+                        InputLabelProps={{ shrink: true }} 
+                    />
+                </Grid>
             </Grid>
         </Paper>
               {/* Section pour les réponses */}
               <Paper elevation={3} className={`${classes.responseCard} ${classes.spacing}`}>
-              <Typography variant="h7" className={`${classes.label}`} style={{ color: "#3987ee" }} gutterBottom>
-                Affichage des Réponses<span className={classes.redAsterisk}>*</span></Typography>
-              
-               {/* Afficher les champs de réponse en fonction du type sélectionné */}
-               {reponse && selectedResponseType !== "image" && (
-                              <>
-                              {reponse.map((reponseItem, index) => (
-                                      <div key={reponseItem}>
-                                        <div className={classes.responseContainer}>
-                                          <TextField
-                                            label={`réponse ${index + 1} (français)*`}
-                                            multiline
-                                            rows={2}
-                                            variant="outlined"
-                                            fullWidth
-                                            value={reponseItem.answer_fr}
-                                            
-                                            onChange={(e) => handleChange(index, 'answer_fr', e.target.value)}
-                                            className={`${classes.formControl} ${classes.spacing}`}
-                                            aria-label={`réponse ${index + 1}`}
-                                          />
-                                          <Switch
-                                            checked={reponseItem.isCorrect}
-                                            onChange={() => handleCorrectChange(index)}
-                                            color="primary"
-                                            inputProps={{ 'aria-label': `Réponse correcte ${index + 1}` }}
-                                          />
-                                          <IconButton onClick={() => supprimerReponse(index)} aria-label={`Supprimer réponse ${index + 1}`}>
-                                            <CloseIcon />
-                                          </IconButton>
-                                        </div>
-                                        <br/>
-                                        <div className={classes.responseContainer}>
-                                          <TextField
-                                            label={`réponse ${index + 1} (anglais)*`}
-                                            multiline
-                                            rows={2}
-                                            variant="outlined"
-                                            fullWidth
-                                            value={reponseItem.answer_en}
-                                            
-                                            onChange={(e) => handleChange(index, 'answer_en', e.target.value)}
-                                            className={`${classes.formControl} ${classes.spacing}`}
-                                            aria-label={`réponse ${index + 1}`}
-                                          />
-                                          <Switch
-                                            checked={reponseItem.isCorrect}
-                                            onChange={() => handleCorrectChange(index)}
-                                            color="primary"
-                                            inputProps={{ 'aria-label': `Réponse correcte ${index + 1}` }}
-                                          />
-                                          <IconButton onClick={() => supprimerReponse(index)} aria-label={`Supprimer réponse ${index + 1}`}>
-                                            <CloseIcon />
-                                          </IconButton>
-                                        </div>
-                                      </div>
-                                    ))}
-                                {reponse.every(reponseItem => !reponseItem.isCorrect) && (
-                                  <Typography variant="body2" style={{ color: 'red' }}>Au moins une réponse doit être correcte.</Typography>
-                                )}
-                                <Button variant="contained" style={{ color: '#fff', backgroundColor: '#3987ee' }} onClick={ajouterReponse} className={classes.addButton} aria-label="Ajouter réponse">Ajouter Réponse</Button>
-                              </>
-                )}
-                            {reponse && selectedResponseType === "image" && (
-                              <>
-                                {reponse.map((reponseItem, index) => (
-                                  <div key={index} className={classes.responseContainer}>
-                                    <input
-                                      type="file"
-                                      accept="image/*"
-                                      onChange={(e) => handleImageUpload(index, e)} // Pass index to identify which image is being uploaded
-                                    />
-                                    <Switch
-                                      checked={reponseItem.isCorrect}
-                                      onChange={() => handleCorrectChange(index)}
-                                      color="primary"
-                                      inputProps={{ 'aria-label': `Réponse correcte ${index + 1}` }}
-                                    />
-                                    <IconButton onClick={() => supprimerReponse(index)} aria-label={`Supprimer réponse ${index + 1}`}>
-                                      <CloseIcon />
-                                    </IconButton>
-                                  </div>
-                                ))}
-                                {reponse.every(reponseItem => !reponseItem.isCorrect) && (
-                                  <Typography variant="body2" style={{ color: 'red' }}>Au moins une réponse doit être correcte.</Typography>
-                                )}
-                                <Button variant="contained" style={{ color: '#fff', backgroundColor: '#3987ee' }} onClick={ajouterReponse} className={classes.addButton} aria-label="Ajouter réponse">Ajouter Image</Button>
-                              </>
-                            )}
-             
+                <Typography variant="h7" className={`${classes.label}`} style={{ color: "#3987ee" }} gutterBottom>
+                  Affichage des Réponses<span className={classes.redAsterisk}>*</span>
+                </Typography>
+                  {/* Afficher les champs de réponse en fonction du type sélectionné */}
+                  {reponse && selectedResponseType !== "image" && (
+                    <>
+                      {reponse.map((reponseItem, index) => (
+                        <div key={reponseItem}>
+                          <Paper elevation={2} className={classes.responsePaper}>
+                            <div className={classes.responseContainer}>
+                              <TextField
+                                label={`Réponse ${index + 1} (français)*`}
+                                multiline
+                                rows={2}
+                                variant="outlined"
+                                fullWidth
+                                value={reponseItem.answer_fr}
+                                onChange={(e) => handleChange(index, 'answer_fr', e.target.value)}
+                                className={`${classes.formControl} ${classes.spacing}`}
+                                aria-label={`Réponse ${index + 1}`}
+                              />
+                              <Switch
+                                checked={reponseItem.isCorrect}
+                                onChange={() => handleCorrectChange(index)}
+                                color="primary"
+                                inputProps={{ 'aria-label': `Réponse correcte ${index + 1}` }}
+                              />
+                              <IconButton onClick={() => supprimerReponse(index)} aria-label={`Supprimer réponse ${index + 1}`}>
+                                <CloseIcon />
+                              </IconButton>
+                            </div>
+                            <br />
+                            <div className={classes.responseContainer}>
+                              <TextField
+                                label={`Réponse ${index + 1} (anglais)*`}
+                                multiline
+                                rows={2}
+                                variant="outlined"
+                                fullWidth
+                                value={reponseItem.answer_en}
+                                onChange={(e) => handleChange(index, 'answer_en', e.target.value)}
+                                className={`${classes.formControl} ${classes.spacing}`}
+                                aria-label={`Réponse ${index + 1}`}
+                              />
+                              <Switch
+                                checked={reponseItem.isCorrect}
+                                onChange={() => handleCorrectChange(index)}
+                                color="primary"
+                                inputProps={{ 'aria-label': `Réponse correcte ${index + 1}` }}
+                              />
+                              <IconButton onClick={() => supprimerReponse(index)} aria-label={`Supprimer réponse ${index + 1}`}>
+                                <CloseIcon />
+                              </IconButton>
+                            </div>
+                          </Paper>
+                        </div>
+                      ))}
+                      {reponse.every(reponseItem => !reponseItem.isCorrect) && (
+                        <Typography variant="body2" style={{ color: 'red' }}>Au moins une réponse doit être correcte.</Typography>
+                      )}
+                      <Button variant="contained" style={{ color: '#fff', backgroundColor: '#3987ee',fontSize: '13px' }} onClick={ajouterReponse}
+                      className={classes.addButton} aria-label="Ajouter réponse">Ajouter Réponse</Button>
+                    </>
+                  )}
+                </Paper>
 
-
-            </Paper>
          
         
           <Button

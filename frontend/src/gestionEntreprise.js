@@ -6,14 +6,13 @@ function Entreprise() {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedTitle, setSelectedTitle] = useState(null); 
     const [companies, setCompanies] = useState([]);
-    
+
     const handleTitleClick = (title) => {
         setSelectedTitle(title);
         setIsModalVisible(true); 
     };
 
     useEffect(() => {
-        
         const fetchCompanies = async () => {
             try {
                 const response = await axios.get('http://localhost:3002/api/companies/names/all');
@@ -54,21 +53,7 @@ function Entreprise() {
             title: 'Nombre de test',
             dataIndex: 'nombretest',
         },
-        // {
-        //     key: 'nbcandidat',
-        //     title: 'Nombre de candidat passé test',
-        //     dataIndex: 'nbcandidat',
-        // },
-        // {
-        //     key: 'scormax',
-        //     title: 'Scort max',
-        //     dataIndex: 'scormax',
-        // },
-        // {
-        //     key: 'scormin',
-        //     title: 'Scort Min',
-        //     dataIndex: 'scormin',
-        // }
+        
     ];
 
     const data = companies.map((company, index) => ({
@@ -76,9 +61,7 @@ function Entreprise() {
         nomentreprise: company.name,
         titles: company.titles,
         nombretest: company.titles.length,
-        nbcandidat:'12',
-        scormax:'80%',
-        scormin:'25%'
+        
     }));
 
     return (
@@ -102,7 +85,16 @@ function Entreprise() {
                     <div>
                         <p>Description: {selectedTitle.description}</p>
                         <p>Niveau: {selectedTitle.level}</p>
-                        <p>languages: {selectedTitle.languages}</p>
+                        <p>Languages: {selectedTitle.languages.join(', ')}</p>
+                        <h3>Questions:</h3>
+                        <ul>
+                            {selectedTitle.questions.map((question, index) => (
+                                <li key={index}>
+                                    <strong>FR:</strong> {question.question_fr}<br />
+                                    <strong>EN:</strong> {question.question_en}
+                                </li>
+                            ))}
+                        </ul>
                     </div>
                 )}
             </Modal>

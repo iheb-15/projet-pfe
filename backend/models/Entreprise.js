@@ -5,9 +5,6 @@ const companySchema = new mongoose.Schema({
   name: String,
 
 }, { collection: 'companies' });  
-
-
-
 const CompanyE = mongoose.model('CompanyE', companySchema);
 
 module.exports = CompanyE;

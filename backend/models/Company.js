@@ -4,7 +4,8 @@ const companySchema = new mongoose.Schema({
     _id: mongoose.Schema.Types.ObjectId,
     idCompany: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'CompanyE' // Référence au modèle CompanyE
+      ref: 'CompanyE',
+      required:true 
     },
     
       title: {
@@ -27,11 +28,9 @@ const companySchema = new mongoose.Schema({
       },
     idQuestions: [{
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'companytestquestions' 
+      ref: 'companytestquestions', 
   }]
 },{collection:'companytests', timestamps: true});
-
-
 const Company = mongoose.model('Company', companySchema);
 
 module.exports = Company;

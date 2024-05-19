@@ -20,7 +20,8 @@ const recinovQuestionSchema = new mongoose.Schema({
   },
   level: Number,
   points: Number,
-  time: Number
+  time: Number,
+  isArchived: { type: Boolean, default: false },
   
 }, { collection: 'recinovquestions', timestamps: true });
 
