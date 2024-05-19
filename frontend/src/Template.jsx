@@ -117,5 +117,4 @@ const Template = () => {
     </Router>
   );
 };
-
 export default Template;

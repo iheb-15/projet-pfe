@@ -11,11 +11,12 @@ function Dashboard() {
       <Taux /> 
       <div className="inline-elements">
         <div className="dashboard-item">
-          <Test />
+          <div className="inline-components"> {/* Ajout d'une classe pour afficher en ligne */}
+            <Test />
+            <TestCand />
+          </div>
         </div>
-        <div className="dashboard-item">
-          <TestCand />
-        </div>
+       
       </div>
       {/* Ajoutez d'autres composants de tableau de bord ici */}
     </div>

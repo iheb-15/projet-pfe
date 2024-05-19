@@ -1,6 +1,11 @@
 /* Test.css */
 
 .test-container {
+  /* Test.css */
+
+
+
+
   background-color: #f8f9fa;
   border: 1px solid #ced4da;
   border-radius: 5px;
@@ -25,4 +30,11 @@ canvas {
 /* Ajout de la marge à droite */
 .offset-md-3 {
   margin-right: 70%; /* Vous pouvez ajuster la valeur de la marge selon vos besoins */
+}
+
+
+/* Ajoutez ce code CSS pour agrandir le formulaire */
+.form-control-lg {
+  font-size: 1.5rem; /* Modifiez la taille de la police selon vos besoins */
+  padding: 1rem; /* Modifiez l'espacement intérieur selon vos besoins */
 }

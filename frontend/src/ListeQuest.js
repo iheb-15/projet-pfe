@@ -383,81 +383,118 @@ console.log(skillOptions);
       <Typography variant="h6" style={{ color: "#3987ee" }} align="center" gutterBottom>Liste de Question</Typography>
       <Paper elevation={3} className={`${classes.paper} ${classes.spacing}`}>
         <Typography variant="h7" className={`${classes.label}`} style={{ color: "#3987ee" }} gutterBottom>Paramètres de la Question<span className={classes.redAsterisk}>*</span></Typography>
+        <Grid container spacing={2}>
+      {/* First Paper Component */}
+      <Grid item xs={12} md={6}>
         <Paper elevation={3} className={`${classes.responseCard} ${classes.spacing}`}>
           <Grid container spacing={2} className={`${classes.spacing}`}>
             <Grid item xs={12}>
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={4}>
-                <Typography variant="h8" className={`${classes.label}`} >Langue<span className={classes.redAsterisk}>*</span></Typography>
-                <AntdSelect
-                showSearch
-                placeholder="Choisir une Langue"
-                optionFilterProp="children"
-                onChange={handleLangueChange}
-                onSearch={onSearch}
-                filterOption={filterOption}
-                style={{width:"250px"}}
-               
-                >
-                  <Option value="fr">Français</Option>
-                   <Option value="en">Anglais</Option>
-                </AntdSelect>
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                <Typography variant="h8" className={`${classes.label}`} >Domaine<span className={classes.redAsterisk}>*</span></Typography>
-                <Select
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="h8" className={`${classes.label}`}>
+                    Langue<span className={classes.redAsterisk}>*</span>
+                  </Typography>
+                  <AntdSelect
                     showSearch
-                    style={{ width: "250px" }}
+                    placeholder="Choisir une Langue"
+                    optionFilterProp="children"
+                    onChange={handleLangueChange}
+                    onSearch={onSearch}
+                    filterOption={filterOption}
+                    style={{ width: '100%' }}
+                  >
+                    <Option value="fr">Français</Option>
+                    <Option value="en">Anglais</Option>
+                  </AntdSelect>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="h8" className={`${classes.label}`}>
+                    Domaine<span className={classes.redAsterisk}>*</span>
+                  </Typography>
+                  <AntdSelect
+                    showSearch
                     placeholder="Choisir Domaine"
                     optionFilterProp="children"
                     onChange={handleDomaineChange}
                     onSearch={onSearch}
-                    filterOption={(input, option) => option.children.toLowerCase().includes(input.toLowerCase())}
+                    filterOption={(input, option) =>
+                      option.children.toLowerCase().includes(input.toLowerCase())
+                    }
+                    style={{ width: '100%' }}
                   >
                     <Option key="null" value={null} onClick={handleCancelSelection}>
                       Aucun domaines
                     </Option>
-                    
-                                {Object.keys(classifiedData).map(name => (
-                                    <div key={name}>
-                                      <strong>{name}</strong>
-                                      
-                                    </div>
-                                    
-                                  ))}
-                  </Select>
-                 </Grid>
-                 
-                <Grid item xs={12} sm={4}>
-                <Typography variant="h8" className={`${classes.label}`} >Compétence<span className={classes.redAsterisk}>*</span></Typography>
-                <Select
-                  showSearch
-                  style={{ width: "250px" }}
-                  placeholder="Choisir Compétence"
-                  optionFilterProp="children"
-                  onChange={handleCompetenceChange}
-                  onSearch={onSearch}
-                  filterOption={(input, option) => (option?.label ?? "").includes(input)}
-                  filterSort={(optionA, optionB) =>
-                    (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
-                  }
-                >
-                  <Option key="null" value={null} onClick={handleCancelSelections}>
-                    Aucune compétence 
-                  </Option>
-                  {skillOptions.map(option => (
-                    <Option key={option.value} value={option.value} label={option.label}>
-                      {option.label}
-                    </Option>
-                  ))}
-                  </Select>
-           
-              
+                    {Object.keys(classifiedData).map((name) => (
+                      <Option key={name} value={name}>
+                        <strong>{name}</strong>
+                      </Option>
+                    ))}
+                  </AntdSelect>
                 </Grid>
               </Grid>
             </Grid>
           </Grid>
         </Paper>
+      </Grid>
+
+      {/* Second Paper Component */}
+      <Grid item xs={12} md={6}>
+        <Paper elevation={3} className={`${classes.responseCard} ${classes.spacing}`}>
+          <Grid container spacing={2} className={`${classes.spacing}`}>
+            <Grid item xs={12}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="h8" className={`${classes.label}`}>
+                    Langue<span className={classes.redAsterisk}>*</span>
+                  </Typography>
+                  <AntdSelect
+                    showSearch
+                    placeholder="Choisir une Langue"
+                    optionFilterProp="children"
+                    onChange={handleLangueChange}
+                    onSearch={onSearch}
+                    filterOption={filterOption}
+                    style={{ width: '100%' }}
+                  >
+                    <Option value="fr">Français</Option>
+                    <Option value="en">Anglais</Option>
+                  </AntdSelect>
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <Typography variant="h8" className={`${classes.label}`}>
+                    Compétence<span className={classes.redAsterisk}>*</span>
+                  </Typography>
+                  <AntdSelect
+                    showSearch
+                    placeholder="Choisir Compétence"
+                    optionFilterProp="children"
+                    onChange={handleCompetenceChange}
+                    onSearch={onSearch}
+                    filterOption={(input, option) =>
+                      (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                    }
+                    filterSort={(optionA, optionB) =>
+                      (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())
+                    }
+                    style={{ width: '100%' }}
+                  >
+                    <Option key="null" value={null} onClick={handleCancelSelections}>
+                      Aucune compétence
+                    </Option>
+                    {skillOptions.map((option) => (
+                      <Option key={option.value} value={option.value} label={option.label}>
+                        {option.label}
+                      </Option>
+                    ))}
+                  </AntdSelect>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Paper>
+      </Grid>
+    </Grid>
         <div className={classes.tableContainer} style={{marginTop:"40px"}}>
           <Table
             dataSource={questions}

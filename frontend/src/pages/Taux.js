@@ -25,24 +25,32 @@ class Taux extends React.Component {
   render() {
     return (
       <Container className="containerTaux">
-        <div className="card-smoke">
-          <div className="smoke-border">
-            <h2 className='info-title'>Total Candidats</h2>
-            <p>{this.state.totalCandidates}</p>
-          </div>
-        </div>
-        <div className="card-smoke">
-          <div className="smoke-border">
-            <h2 className='info-title'>Total Tests</h2>
-            <p>{this.state.totalTests}</p>
-          </div>
-        </div>
-        <div className="card-smoke">
-          <div className="smoke-border">
-            <h2 className='info-title'>Total Questions</h2>
-            <p>{this.state.totalQuestions}</p>
-          </div>
-        </div>
+        <Row>
+          <Col md={4}>
+            <div className="card-smoke">
+              <div className="smoke-border">
+                <h2 className='info-title'>Total Candidats</h2>
+                <p>{this.state.totalCandidates}</p>
+              </div>
+            </div>
+          </Col>
+          <Col md={4}>
+            <div className="card-smoke">
+              <div className="smoke-border">
+                <h2 className='info-title'>Total Tests</h2>
+                <p>{this.state.totalTests}</p>
+              </div>
+            </div>
+          </Col>
+          <Col md={4}>
+            <div className="card-smoke">
+              <div className="smoke-border">
+                <h2 className='info-title'>Total Questions</h2>
+                <p>{this.state.totalQuestions}</p>
+              </div>
+            </div>
+          </Col>
+        </Row>
       </Container>
     );
   }
