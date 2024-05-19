@@ -60,21 +60,36 @@ const Template = () => {
               <Link to="/gest_utilisateur" style={connected === '1' ? disabledStyle : { color: 'white', fontSize: '14px' }}>Gestion utilisateur</Link>
             </Menu.Item> 
              )}
-            <SubMenu  icon={<HighlightOutlined style={{ color: 'white' }} />} title={<span style={{ color: 'white', fontSize:"13px" }}>Gestion de Questions</span>}>
-            {connected !== '1' && (
-              <Menu.Item key="3" icon={<FormatListBulletedIcon  style={{ color: 'white' }} />} style={{ background: '#3987ee' }} >
-                <Link to="/liste_question" style={connected === '1' ? disabledStyle : { color: 'white', fontSize: '14px' }}> Liste Question </Link>
-              </Menu.Item>  
-            )}
-              <Menu.Item key="4" icon={<CreateIcon  style={{ color: 'white' }} />} style={{backgroundColor: '#3987ee'}} >
-                <Link to="/AjoutQuestion" style={{ color: 'white', fontSize:"13px" }}> Créer Question</Link>
+            <SubMenu
+              icon={<HighlightOutlined style={{ color: 'white' }} />}
+              title={<span style={{ color: 'white', fontSize: "13px" }}>Gestion de Questions</span>}
+            >
+              {connected !== '1' && (
+                <Menu.Item
+                  key="3"
+                  icon={<FormatListBulletedIcon style={{ color: 'white' }} />}
+                  style={{ background: '#3987ee', margin: 0, padding: 25 }}
+                >
+                  <Link to="/liste_question" style={connected === '1' ? disabledStyle : { color: 'white', fontSize: '14px', margin: 0, padding: '8px 16px' }}>
+                    Liste Question
+                  </Link>
+                </Menu.Item>
+              )}
+              <Menu.Item
+                key="4"
+                icon={<CreateIcon style={{ color: 'white' }} />}
+                style={{ backgroundColor: '#3987ee', margin: 0, padding: 25 }}
+              >
+                <Link to="/AjoutQuestion" style={{ color: 'white', fontSize: "13px", margin: 0, padding: '8px 16px' }}>
+                  Créer Question
+                </Link>
               </Menu.Item>
             </SubMenu>
             <SubMenu  icon={<HighlightOutlined style={{ color: 'white' }} />} title={<span style={{ color: 'white', fontSize:"13px" }}>CréerTest</span>}>
-            <Menu.Item key="4" icon={<CreateIcon  style={{ color: 'white' }} />} style={{backgroundColor: '#3987ee'}} >
+            <Menu.Item key="4" icon={<CreateIcon  style={{ color: 'white' }} />} style={{backgroundColor: '#3987ee', margin: 0, padding: 25}} >
                 <Link to="/creer_test" style={{ color: 'white', fontSize:"13px" }}> VIA BD </Link>
               </Menu.Item>
-              <Menu.Item key="4" icon={<CreateIcon  style={{ color: 'white' }} />} style={{backgroundColor: '#3987ee'}} >
+              <Menu.Item key="4" icon={<CreateIcon  style={{ color: 'white' }} />} style={{backgroundColor: '#3987ee', margin: 0, padding: 25}} >
                 <Link to="/test_formulaire" style={{ color: 'white', fontSize:"13px" }}> via formulaire</Link>
               </Menu.Item>
             </SubMenu>
