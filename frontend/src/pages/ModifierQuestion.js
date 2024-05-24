@@ -142,9 +142,6 @@ function Modifier(props) {
     fetchData();
   }, [id]);
 
-  
-
-
 
 // pour data classified 
 useEffect(() => {
@@ -312,38 +309,57 @@ const filteredObjects = domaines.filter((obj, index, self) =>
  
 // pour update answer 
    
-  const handleUpdate = async () => {
-    try {
-        await Promise.all(
-            reponse.map(async (response) => {
-                
-                const updatedResponse = {
-                    ...response,
-                    isCorrect: response.isCorrect 
-                };
-               
-                // Envoyer une requête PUT pour mettre à jour la réponse
-                await axios.put(`http://localhost:3002/api/Reponseupdate/${response._id}`, updatedResponse);
-              })
-            );
-            console.log(minutes,secondes)
-            const tim = Number(minutes) * 60+ Number(secondes);
-            
-            console.log(tim)
-            setQuestion(prevState => ({
-              ...prevState,
-              time: tim
-          }));
-          
-            
-                      
-            await axios.put(`http://localhost:3002/api/questionsupdate/${id}`, question);
-            console.log(question);
-            setOpenSnackbar(true); 
-    } catch (error) {
-        console.error('Erreur lors de la mise à jour des réponses:', error);
-    }
+
+
+const handleUpdate = async () => {
+  try {
+      await Promise.all(
+          reponse.map(async (response) => {
+              if (!response._id) {
+                  // Si la réponse n'a pas d'ID, alors c'est une nouvelle réponse
+                  const updatedResponse = {
+                      ...response,
+                      isCorrect: response.isCorrect 
+                  };
+                  // Envoyer une requête POST pour ajouter une nouvelle réponse
+                  const newResponse = await axios.post(`http://localhost:3002/api/answers/${id}`, {
+                      answer_fr: updatedResponse.answer_fr,
+                      answer_en: updatedResponse.answer_en,
+                      isCorrect: updatedResponse.isCorrect
+                  });
+                  console.log('Nouvelle réponse ajoutée avec succès :', newResponse.data);
+              } else {
+                  // Si la réponse a déjà un ID, alors c'est une réponse existante qui doit être mise à jour
+                  const updatedResponse = {
+                      ...response,
+                      isCorrect: response.isCorrect 
+                  };
+                  // Envoyer une requête PUT pour mettre à jour la réponse
+                  await axios.put(`http://localhost:3002/api/Reponseupdate/${response._id}`, updatedResponse);
+              }
+          })
+      );
+
+      console.log(minutes, secondes);
+      const tim = Number(minutes) * 60 + Number(secondes);
+      console.log(tim);
+      setQuestion(prevState => ({
+          ...prevState,
+          time: tim
+      }));
+      await axios.put(`http://localhost:3002/api/questionsupdate/${id}`, question);
+      console.log(question);
+
+      // Réinitialisation des champs après l'ajout de la réponse
+      setReponse([]);
+
+      setOpenSnackbar(true); 
+  } catch (error) {
+      console.error('Erreur lors de la mise à jour des réponses :', error);
+  }
 };
+
+
 
 
 const handleCloseSnackbar = () => {
@@ -397,7 +413,7 @@ const onSearch = (value) => {
       {
         answer_fr: '',
         answer_en: '',
-        isCorrect: false // Initialiser avec isCorrect à false
+        isCorrect: false 
       }
     ]);
   };
@@ -444,7 +460,7 @@ const handleLevelChange = (event) => {
         
          <Paper className={classes.section}>
             <Grid container spacing={2} className={`${classes.spacing}`}>
-             
+             {/* saisie du niveau */}
               <Grid item xs={4}>
                 <FormControl className={`${classes.formControl} ${classes.spacing}`} fullWidth>
                   <Typography variant="subtitle1" className={`${classes.label}`}>Niveau<span className={classes.redAsterisk}>*</span></Typography>
@@ -462,6 +478,7 @@ const handleLevelChange = (event) => {
                     inputProps={{ 'aria-label': 'Niveau' }}
                     variant="outlined"
                     fullWidth
+                    
                   >
                     <MenuItem value="" disabled>Choisissez un niveau</MenuItem>
                     <MenuItem value={0}>Junior</MenuItem>

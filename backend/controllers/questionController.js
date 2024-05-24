@@ -204,23 +204,63 @@ exports.updateResponseById = async (req, res) => {
         if (typeof isCorrect === 'boolean') updatedFields.isCorrect = isCorrect;
         
         const updatedResponse = await RecinovAnswer.findOneAndUpdate(
-            { _id: req.params.id }, // Recherche par ID de réponse
+            { _id: req.params.id }, 
             { $set: updatedFields }, // Utilise $set pour mettre à jour les champs spécifiés
             { new: true } // Pour renvoyer la version mise à jour de l'objet
         );
 
-        // Vérifiez si la réponse a été mise à jour avec succès
+        
         if (!updatedResponse) {
             return res.status(404).json({ message: 'Response not found' });
         }
 
-        // Envoyer la réponse mise à jour au client
+        
         res.json(updatedResponse);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: error.message });
     }
 };
+
+//ajout de nouveau réponse en update
+exports.addResponseToQuestion = async (req, res) => {
+  try {
+      const { answer_fr, answer_en, isCorrect } = req.body;
+
+      // Vérifiez si tous les champs nécessaires sont fournis
+      if (!answer_fr || !answer_en || typeof isCorrect !== 'boolean') {
+          return res.status(400).json({ message: 'Please provide all required fields.' });
+      }
+
+      // Récupérer l'ID de la question de la requête
+      const idQuestion = req.params.idQuestion;
+
+      
+      const question = await RecinovAnswer.findOne({ idQuestion });
+
+      
+      if (!question) {
+          return res.status(404).json({ message: 'Question not found' });
+      }
+
+      
+      const newResponse = new RecinovAnswer({
+          answer_fr,
+          answer_en,
+          isCorrect,
+          idQuestion: question.idQuestion 
+      });
+
+      
+      const savedResponse = await newResponse.save();
+
+      res.status(201).json(savedResponse); 
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: error.message });
+  }
+};
+
 
 exports.addQuestion = async (req, res) => {
     const {
@@ -338,7 +378,7 @@ exports.addQuestion = async (req, res) => {
   };
 
 
-
+ 
 
 
 

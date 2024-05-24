@@ -5,7 +5,7 @@ const companySchema = new mongoose.Schema({
     idCompany: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'CompanyE',
-      required:true 
+      
     },
     
       title: {

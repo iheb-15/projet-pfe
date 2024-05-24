@@ -148,6 +148,7 @@ exports.update = async (req, res) => {
     }
 };
 
+
 // Fonction de contrôleur pour supprimer un utilisateur
 
 

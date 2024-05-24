@@ -203,7 +203,7 @@ function CréerTest() {
     // Vérifier la langue sélectionnée et récupérer le texte approprié de la question
     const selectedQuestionsText = selectedQuestions.map(question => ({
       id: question.id,
-      text: language === 'fr' ? question.question.fr : question.question.en
+      text: language ==='francais' ? question.question.fr : question.question.en
       
     }));
     console.log(selectedQuestionsText)
@@ -447,7 +447,7 @@ const columns = [
       key: 'question',
       render: text => <span dangerouslySetInnerHTML={{ __html: text }} />,
       render: (text, record) => {
-        return selectedLanguage === 'en' ? <span>{record.question.en}</span> : <span>{record.question.fr}</span>;
+        return selectedLanguage == 'anglais' ? <span>{record.question.en}</span> : <span>{record.question.fr}</span>;
       },
     },
     
@@ -485,16 +485,21 @@ const columns = [
       autoSize={{ minRows: 4 }}
       style={{ marginBottom: '1rem' }}
     />
-    <Select
-      placeholder="Langue"
-      value={language}
-      onChange={(value) => setLanguage(value)}
-      style={{ width: '100%', marginBottom: '1rem' }}
-    >
-      <Select.Option value="francais">Français</Select.Option>
-      <Select.Option value="anglais">Anglais</Select.Option>
-      <Select.Option value="arabe"disabled>Arabe</Select.Option>
-    </Select>
+   <div style={{ marginBottom: '1rem' }}>
+  <label style={{ marginBottom: '0.5rem' ,marginRight:'90%'}}> Choisir une Langue</label>
+  <Select
+    placeholder="Langue"
+    value={language}
+    onChange={(value) => setLanguage(value)}
+    style={{ width: '100%' }}
+  >
+    <Select.Option value="arabe" disabled>Arabe</Select.Option>
+    <Select.Option value="francais">Français</Select.Option>
+    <Select.Option value="anglais">Anglais</Select.Option>
+  </Select>
+</div>
+<div style={{ marginBottom: '1rem' }}>
+  <label style={{ marginBottom: '0.5rem' ,marginRight:'90%'}}> Choisir une Expérience</label>
     <Select
       placeholder="Expérience"
       value={experience}
@@ -505,6 +510,7 @@ const columns = [
       <Select.Option value="intermediate">Intermédiaire</Select.Option>
       <Select.Option value="advanced">Avancé</Select.Option>
     </Select>
+  </div>
   </div>
     
     
@@ -525,8 +531,8 @@ const columns = [
        style={{width:"250px"}}
       
        >
-         <Option value="fr">Français</Option>
-          <Option value="en">Anglais</Option>
+         <Option value="francais">Français</Option>
+          <Option value="anglais">Anglais</Option>
        </AntdSelect>
        </Grid>
   <Grid item xs={12} sm={4}>

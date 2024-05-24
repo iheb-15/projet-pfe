@@ -28,7 +28,7 @@ const App = () => {
       <Route exact  path="/" >
        {(connected ==='0' )
         ?<Redirect to="/login"/>
-        :<Redirect to="/Dashboard"  />
+        :<Redirect to="/login"  />
       }
       </Route>
       <Route path="/login" component={Authentification} />

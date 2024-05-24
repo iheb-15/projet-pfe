@@ -30,7 +30,7 @@ const Template = () => {
   const [connected, setConnected] = useState(localStorage.getItem("userrole") || '3');
   const disabledStyle = { color: 'grey', cursor: 'not-allowed', pointerEvents: 'none' };
   const history = useHistory();
-
+  const [isPrivate, setIsPrivate] = useState(false);
   useEffect(() => {
     setConnected(localStorage.getItem('userrole'));
   }, []);
@@ -39,7 +39,42 @@ const Template = () => {
     setCollapsed(!collapsed);
   };
 
-  
+//   useEffect(() => {
+//     const detectPrivateMode = (callback) => {
+//         let isPrivate;
+
+//         try {
+//             window.openDatabase(null, null, null, null);
+//         } catch (e) {
+//             isPrivate = true;
+//         }
+
+//         if (isPrivate === undefined) {
+//             try {
+//                 localStorage.setItem('test', 'test');
+//                 localStorage.removeItem('test');
+//             } catch (e) {
+//                 isPrivate = true;
+//             }
+//         }
+
+//         if (isPrivate === undefined) {
+//             isPrivate = false;
+//         }
+
+//         callback(isPrivate);
+//     };
+
+//     detectPrivateMode((result) => {
+//         setIsPrivate(result);
+//     });
+// }, []);
+
+// if (isPrivate) {
+//     return <div>Cette application ne fonctionne pas en mode navigation privée.</div>;
+// }
+
+
   return (
     <Router>
        <Layout style={{ minHeight: '100vh' }}>

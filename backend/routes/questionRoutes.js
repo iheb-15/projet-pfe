@@ -28,6 +28,7 @@ router.get('/questions/:id', questionController.getQuestionById);
 router.get('/reponse/:idQuestion', act.getReponseById);
 router.put('/questionsupdate/:id', questionController.updateQuestionById);
 router.put('/Reponseupdate/:id', questionController.updateResponseById);
+router.post('/answers/:idQuestion', questionController.addResponseToQuestion);
 
 router.post('/ajoutquestions', questionController.addQuestion);
 router.post('/features', tt.ajouterFeature);

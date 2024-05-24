@@ -98,7 +98,7 @@ function Gest() {
                 lastname: utilisateur.lastname,
                 email: utilisateur.email,
                 password: utilisateur.encry_password,
-                role: utilisateur.role == 0 ? "Super Admin" : utilisateur.role == 1 ? "Simple Admin" : "inconnu"
+                role: utilisateur.role == 0 ? "Super Admin" : utilisateur.role ==1 ? "Simple Admin" : "inconnu"
             }));
         setDataSource(utilisateurs);
     } catch (error) {
@@ -270,6 +270,16 @@ function Gest() {
       key: '6',
       title: 'role',
       dataIndex: 'role',
+      render: (text, record) => (
+        <span style={{ 
+            backgroundColor: 'transparent', 
+            padding: '5px 10px', 
+            borderRadius: '4px', 
+            color: record.role === 'Simple Admin' ? 'blue' : 'green',
+            boxShadow: record.role === 'Simple Admin' ? '2px 2px 5px #888888' : record.role === 'Super Admin' ? '2px 2px 5px #888888' : 'none' }}>
+            {record.role === 'Simple Admin' ? record.role : text}
+        </span>
+    ),
     },
     {
       key: '7',
