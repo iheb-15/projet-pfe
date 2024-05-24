@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import './gest.css';
+import {Buffer} from 'buffer'
 // import { Link } from 'react-router-dom/cjs/react-router-dom.min';
 // import Dashboard from './Dashboard';
 // import { ExclamationCircleOutlined } from '@ant-design/icons';
@@ -147,7 +148,10 @@ function Gest() {
 
   const onEditUtilisateur = (record) => {
     setIsEditing(true);
+    record.password=Buffer.from(record.password, 'base64').toString('utf-8');
+    // record.password=decrypte()
     setEditingUtilisateur({ ...record });
+    console.log(record)
   };
 
   const resetEditing = () => {
