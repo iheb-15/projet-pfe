@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Modal } from 'antd';
 import axios from 'axios';
-
+import'./Entreprise.css'
 function Entreprise() {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedTitle, setSelectedTitle] = useState(null); 
@@ -30,16 +30,16 @@ function Entreprise() {
     };
 
     const expandedRowRender = (record) => (
-        <div>
-            <ul>
-                <h3 style={{ textAlign: 'center', color: 'red' }}>Cliquer sur le nom de test pour afficher leur contenu</h3>
-                {record.titles.map((title, index) => (
-                    <li key={index} style={{ margin: '5px 0', fontSize: '1.2em', cursor: 'pointer' }} onClick={() => handleTitleClick(title)}>
-                        {title.title}
-                    </li>
-                ))}
-            </ul>
-        </div>
+        <div className="test-list-container">
+        <ul>
+            <h3>Cliquer sur le nom de test pour afficher leur contenu</h3>
+            {record.titles.map((title, index) => (
+                <li key={index} onClick={() => handleTitleClick(title)}>
+                    {title.title}
+                </li>
+            ))}
+        </ul>
+    </div>
     );
 
     const columns = [
@@ -66,7 +66,10 @@ function Entreprise() {
 
     return (
         <>
-            <h1>Gestion D'entreprise</h1>
+        <h1 style={{textAlign: 'center', color: '#007BFF',padding: '10px',backgroundColor: '#ffffff', borderRadius: '4px',
+         boxShadow: '0 2px 5px rgba(0,0,0,0.2)',width: '60%', margin: '10px auto'}}>
+            Gestion Entreprise
+        </h1>
             <Table
                 dataSource={data}
                 columns={columns}
@@ -81,22 +84,36 @@ function Entreprise() {
                 footer={null}
                 width={1000}
             >
-                {selectedTitle && (
-                    <div>
-                        <p>Description: {selectedTitle.description}</p>
-                        <p>Niveau: {selectedTitle.level}</p>
-                        <p>Languages: {selectedTitle.languages.join(', ')}</p>
-                        <h3>Questions:</h3>
-                        <ul>
-                            {selectedTitle.questions.map((question, index) => (
-                                <li key={index}>
-                                    <strong>FR:</strong> {question.question_fr}<br />
-                                    <strong>EN:</strong> {question.question_en}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                )}
+            <div className="container" style={{fontFamily: 'Arial, sans-serif', padding: '20px',backgroundColor: '#f9f9f9',
+                borderRadius: '8px',boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',maxWidth: '800px',margin: '20px auto'}}>
+                    {selectedTitle && (
+                        <div>
+                            <strong>Description:</strong> {selectedTitle.description}<br />
+                            <strong>Niveau:</strong> {selectedTitle.level}<br />
+                            <strong>Languages:</strong> {selectedTitle.languages.join(', ')}
+                            <h3>Questions:</h3>
+                            <ul>
+                                {selectedTitle.questions.map((question, index) => (
+                                    <li key={index}>
+                                        <strong>Question {index + 1}:</strong><br />
+                                        <strong>FR:</strong> {question.question_fr}<br />
+                                        <strong>EN:</strong> {question.question_en}
+                                        {question.answers && question.answers.length > 0 && (
+                                            <ul>
+                                                {question.answers.map((answer, answerIndex) => (
+                                                    <li key={answerIndex}>
+                                                        <strong>Answer FR:</strong> {answer.answer_fr}<br />
+                                                        <strong>Answer EN:</strong> {answer.answer_en}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        )}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
+                </div>
             </Modal>
         </>
     );

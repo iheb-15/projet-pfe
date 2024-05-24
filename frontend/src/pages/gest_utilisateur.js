@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import './gest.css';
+import {Buffer} from 'buffer'
 // import { Link } from 'react-router-dom/cjs/react-router-dom.min';
 // import Dashboard from './Dashboard';
 // import { ExclamationCircleOutlined } from '@ant-design/icons';
@@ -98,7 +99,7 @@ function Gest() {
                 lastname: utilisateur.lastname,
                 email: utilisateur.email,
                 password: utilisateur.encry_password,
-                role: utilisateur.role == 0 ? "Super Admin" : utilisateur.role == 1 ? "Simple Admin" : "inconnu"
+                role: utilisateur.role == 0 ? "Super Admin" : utilisateur.role ==1 ? "Simple Admin" : "inconnu"
             }));
         setDataSource(utilisateurs);
     } catch (error) {
@@ -147,7 +148,10 @@ function Gest() {
 
   const onEditUtilisateur = (record) => {
     setIsEditing(true);
+    record.password=Buffer.from(record.password, 'base64').toString('utf-8');
+    // record.password=decrypte()
     setEditingUtilisateur({ ...record });
+    console.log(record)
   };
 
   const resetEditing = () => {
@@ -270,6 +274,16 @@ function Gest() {
       key: '6',
       title: 'role',
       dataIndex: 'role',
+      render: (text, record) => (
+        <span style={{ 
+            backgroundColor: 'transparent', 
+            padding: '5px 10px', 
+            borderRadius: '4px', 
+            color: record.role === 'Simple Admin' ? 'blue' : 'green',
+            boxShadow: record.role === 'Simple Admin' ? '2px 2px 5px #888888' : record.role === 'Super Admin' ? '2px 2px 5px #888888' : 'none' }}>
+            {record.role === 'Simple Admin' ? record.role : text}
+        </span>
+    ),
     },
     {
       key: '7',

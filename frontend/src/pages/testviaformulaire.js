@@ -181,9 +181,9 @@ const TestFormulaire = () => {
       });
     
       // Rafraîchir la page après un court délai
-      setTimeout(() => {
-        window.location.reload();
-      }, 5000); 
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 5000); 
       console.log('Feature Response:', featureResponse.data);
       console.log('Company Response:', companyResponse.data);
       
@@ -212,11 +212,15 @@ const TestFormulaire = () => {
       });
     };
     const handleChangeTime = (time, timeString) => {
-      // Convertir le temps en secondes
+      // Convertir le temps en secondes, y compris les secondes
       const timeParts = timeString.split(':');
-      const seconds = parseInt(timeParts[0], 10) * 3600 + parseInt(timeParts[1], 10) * 60;
+      const hours = parseInt(timeParts[0], 10) || 0; 
+      const minutes = parseInt(timeParts[1], 10) || 0; 
+      const seconds = parseInt(timeParts[2], 10) || 0; 
+      const totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
+    
       // Mettre à jour le state avec le temps en secondes
-      setFormData({ ...formData, time: seconds });
+      setFormData({ ...formData, time: totalSeconds });
     };
     
     const handleCompetenceChange = (event) => {
@@ -266,13 +270,7 @@ const TestFormulaire = () => {
         }));
       };
 
-  //   const ajouterFormulaire = () => {
-  //     const nouvellePage = [...formulaires[currentPage], formulaires[currentPage].length + 1];
-  //     const nouvellesFormulaires = [...formulaires];
-  //     nouvellesFormulaires[currentPage] = nouvellePage;
-  //     setFormulaires(nouvellesFormulaires);
-  //     console.log(setFormulaires)
-  // };
+  
   const ajouterFormulaire = () => {
     setFormData({
       class: '',
@@ -449,34 +447,11 @@ const supprimerQuestion = (index) => {
                          onChange={handleSelectChange}
                          style={{ width: "100%" }}
                        >
+                        <Option value="Arabe"disabled>Arabe</Option>
                          <Option value="Francais">Francais</Option>
                          <Option value="Anglais">Anglais</Option>
-                         <Option value="Arabe"disabled>Arabe</Option>
-                       </AntdSelect>
-                     </Grid>
-                       <Grid item xs={12}>
-                           <FormControl className={`${classes.formControl} ${classes.expandedTextField}`} fullWidth>
-                               <Typography variant="subtitle1" className={classes.label}>
-                                   Type de Question<span className={classes.redAsterisk}>*</span>
-                               </Typography>
-                               <Select
-                                   value={selectedType}
-                                   onChange={handleTypeChange}
-                                   displayEmpty
-                                   style={{ width: "250px" }}
-                                   inputProps={{ 'aria-label': 'Type de Question' }}
-                                   className={`${classes.select} ${classes.spacing}`}
-                               >
-                                   <MenuItem value="" disabled>Choisissez un type</MenuItem>
-                                   <MenuItem value="vrai-faux">Vrai/Faux</MenuItem>
-                                   <MenuItem value="qcm">QCM</MenuItem>
-                                   <MenuItem value="image">Image</MenuItem> 
-                                   <MenuItem value="text">Texte</MenuItem>
-                               </Select>
-                           </FormControl>
-                           
-                       </Grid>
-                       
+                      </AntdSelect>
+                     </Grid>   
                    </Grid>
 
                  <Paper elevation={5} className={`${classes.paper} ${classes.spacing}`} style={{marginTop:80}}>
@@ -516,7 +491,7 @@ const supprimerQuestion = (index) => {
                                  style={{width:"30%"}} 
                                  options={[
                                    { value: 'Texte', label: 'Texte' },
-                                   { value: 'Image', label: 'Image' },
+                                   { value: 'Image', label: 'Image', disabled:true},
                                  ]}
                                />
                                <div className={classes.responseContainer}>
@@ -572,18 +547,7 @@ const supprimerQuestion = (index) => {
              
            </div>
        </Paper>
-
     ))}
-
-   {/* <Pagination count={formulaires.length} page={currentPage + 1} onChange={(event, value) => setCurrentPage(value - 1)} /> */}
-   {/* <Button
-       variant="contained"
-       style={{ color: '#fff', backgroundColor: '#3987ee', float: 'right', marginTop: '10px', width: 100,textAlign: 'center' }}
-       onClick={handleSubmit}
-   >
-       Ajouter
-   </Button> */}
-
 </Container>
 
     );  

@@ -114,7 +114,7 @@ exports.update = async (req, res) => {
     userId = userId.replace(/^:/, ''); // Supprime un deux-points au début s'il existe
 
     const { name, lastname, email, password, role } = req.body;
-
+console.log(req.body)
     try {
         
         const user = await User.findById(userId);
@@ -138,6 +138,7 @@ exports.update = async (req, res) => {
             user.lastname = lastname;
             user.email = email;
             user.role = role;
+            user.password=password;
             
         }
         await user.save();
@@ -147,6 +148,7 @@ exports.update = async (req, res) => {
         res.status(500).json({ error: 'Erreur interne du serveur.' });
     }
 };
+
 
 // Fonction de contrôleur pour supprimer un utilisateur
 

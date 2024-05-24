@@ -129,18 +129,7 @@ function AjoutQuestion() {
   }
   };
 
-  const handleReponseChange = (index, e) => {
-  const updatedAnswers = formData.answers.map((answer, idx) => {
-    if (idx === index) {
-      return selectedLanguage === 'Anglais'
-        ? { ...answer, answer_en: e.target.value }
-        : { ...answer, answer_fr: e.target.value };
-    }
-    return answer;
-  });
-
-  setFormData({ ...formData, answers: updatedAnswers });
-};
+ 
 
   // Gestionnaire pour le changement du type de réponse
   const handleQuestionTypeChange = (value) => {
@@ -191,10 +180,10 @@ function AjoutQuestion() {
     });
 
     // Attendre que le toast disparaisse avant de rafraîchir la page
-    setTimeout(() => {
-        window.location.reload();
+    // setTimeout(() => {
+    //     window.location.reload();
         
-    }, 3000); // Temps d'attente pour 'autoClose'
+    // }, 3000); // Temps d'attente pour 'autoClose'
 };
 const onChange = (value) => {
   console.log(`Selected: ${value}`);
@@ -238,7 +227,19 @@ const onChange = (value) => {
     }));
   };
   
+  const handleReponseChange = (index, e) => {
+    const updatedAnswers = formData.answers.map((answer, idx) => {
+      if (idx === index) {
+        return selectedLanguage === 'Anglais'
+          ? { ...answer, answer_en: e.target.value }
+          : { ...answer, answer_fr: e.target.value };
+      }
+      return answer;
+    });
   
+    setFormData({ ...formData, answers: updatedAnswers });
+  };
+  //***pour traduction  */
   const handleReponseChangess = (index, e) => {
     const { value } = e.target;
     setFormData(prevState => ({
@@ -264,11 +265,15 @@ const onChangePoints = (value) => {
   });
 };
 const handleChangeTime = (time, timeString) => {
-  // Convertir le temps en secondes
+  // Convertir le temps en secondes, y compris les secondes
   const timeParts = timeString.split(':');
-  const seconds = parseInt(timeParts[0], 10) * 3600 + parseInt(timeParts[1], 10) * 60;
+  const hours = parseInt(timeParts[0], 10) || 0; 
+  const minutes = parseInt(timeParts[1], 10) || 0; 
+  const seconds = parseInt(timeParts[2], 10) || 0; 
+  const totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
+
   // Mettre à jour le state avec le temps en secondes
-  setFormData({ ...formData, time: seconds });
+  setFormData({ ...formData, time: totalSeconds });
 };
 
 // Définir une fonction de traitement du téléchargement
@@ -572,7 +577,7 @@ const CustomUpload = () => (
                   variant="outlined"
                   placeholder={`Réponse ${index + 1}*`} 
                   fullWidth
-                  value={selectedLanguage === 'Francais' ? answer.answer_en : answer.answer_fr}
+                  value={selectedLanguage === 'Francais' ? formData.answer_en : formData.answer_fr}
                   onChange={(e) => handleReponseChangess(index, e)}
                   className={`${classes.formControl} ${classes.spacing}`}
                   aria-label={`Réponse ${index + 1}`}

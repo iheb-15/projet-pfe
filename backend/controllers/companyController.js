@@ -83,6 +83,60 @@ exports.CompanyTestQuestion = async (req, res) => {
 
   
 
+// exports.getAllCompanyNames = async (req, res) => {
+//   try {
+//     const companies = await CompanyE.find({}).select('name'); 
+//     if (!companies || companies.length === 0) {
+//       return res.status(404).send({ message: "No companies found" });
+//     }
+
+//     const companiesWithTitles = await Promise.all(companies.map(async (company) => {
+//       const tests = await Company.find({ idCompany: company._id }, 'title description level languages idQuestions');
+      
+//       if (!tests || tests.length === 0) {
+//         return { name: company.name, titles: [] };
+//       }
+
+//       const testsWithQuestions = await Promise.all(tests.map(async (test) => {
+//         const companyTestQuestions = await CompanyTestQuestion.find({ _id: { $in: test.idQuestions } }, 'idQuestions');
+        
+//         if (!companyTestQuestions || companyTestQuestions.length === 0) {
+//           return {
+//             title: test.title,
+//             description: test.description,
+//             level: test.level,
+//             languages: test.languages,
+//             questions: []
+//           };
+//         }
+
+//         const questionIds = companyTestQuestions.flatMap(ctq => ctq.idQuestions);
+//         const questions = await Question.find({ _id: { $in: questionIds } }, 'question_fr question_en');
+        
+//         return {
+//           title: test.title,
+//           description: test.description,
+//           level: test.level,
+//           languages: test.languages,
+//           questions: questions.map(question => ({
+//             question_fr: question.question_fr,
+//             question_en: question.question_en
+//           }))
+//         };
+//       }));
+
+//       return { 
+//         name: company.name, 
+//         titles: testsWithQuestions 
+//       }; 
+//     }));
+
+//     res.send(companiesWithTitles);
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send(error);
+//   }
+// };
 exports.getAllCompanyNames = async (req, res) => {
   try {
     const companies = await CompanyE.find({}).select('name'); 
@@ -111,17 +165,28 @@ exports.getAllCompanyNames = async (req, res) => {
         }
 
         const questionIds = companyTestQuestions.flatMap(ctq => ctq.idQuestions);
-        const questions = await Question.find({ _id: { $in: questionIds } }, 'question_fr question_en');
-        
+        const questions = await Question.find({ _id: { $in: questionIds } }, ' question_fr question_en');
+
+        const questionsWithAnswers = await Promise.all(questions.map(async (question) => {
+          const answers = await Answer.find({ idQuestion: question._id }, 'answer_fr answer_en');
+          
+          return {
+            _id: question._id,
+            question_fr: question.question_fr,
+            question_en: question.question_en,
+            answers: answers.map(answer => ({
+              answer_fr: answer.answer_fr,
+              answer_en: answer.answer_en
+            }))
+          };
+        }));
+
         return {
           title: test.title,
           description: test.description,
           level: test.level,
           languages: test.languages,
-          questions: questions.map(question => ({
-            question_fr: question.question_fr,
-            question_en: question.question_en
-          }))
+          questions: questionsWithAnswers
         };
       }));
 
