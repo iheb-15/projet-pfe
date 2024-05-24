@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser"); 
 const cors = require("cors"); 
 require("dotenv").config(); 
+const company2Routes = require('./routes/company2Routes');
 
 
 // Connect to the MongoDB database
@@ -47,3 +48,22 @@ const port = process.env.PORT || 3002;
 app.listen(port, () => {
     console.log(`App is running at http://localhost:${port}`);
 });
+app.use(express.json());
+app.use('/api/company2', company2Routes);
+
+const candidateRoutes = require('./routes/candidateRoutes');
+app.use('/api/candidates', candidateRoutes);
+
+const question2Routes = require('./routes/question2Routes');
+app.use('/api/question2', question2Routes);
+
+const testRoutes = require('./routes/testRoutes');
+app.use('/api/tests', testRoutes);
+
+const candidateTestRoutes = require('./routes/candidateTestRoutes');
+app.use('/api', candidateTestRoutes);
+
+const candidateTest2Routes = require('./routes/candidateTest2Routes');
+app.use('/api', candidateTest2Routes);
+
+

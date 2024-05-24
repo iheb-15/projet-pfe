@@ -1,0 +1,42 @@
+
+  
+  .header2 {
+    background-color: #f8f9fa;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin-right: 30px;
+    max-width: 450px;
+  }
+  
+  .title1 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  
+  .subtitle1 {
+    font-size: 1.25rem;
+    color: #555;
+    margin-bottom: 20px;
+  }
+  
+  .candidates-box1 p {
+    background-color: #ffffff;
+    color:red;
+    padding: 20px;
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.5rem;
+    font-weight: bold;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .candidate-count1 {
+    font-size: 3rem;
+  }

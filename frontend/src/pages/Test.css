@@ -5,12 +5,13 @@
 
 
 
-
+ width: 100%;
   background-color: #f8f9fa;
   border: 1px solid #ced4da;
   border-radius: 5px;
   padding: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-right: 500px;
 }
 
 .test-title {
@@ -27,10 +28,12 @@ canvas {
   height: 300px;
 }
 
-/* Ajout de la marge à droite */
-.offset-md-3 {
-  margin-right: 70%; /* Vous pouvez ajuster la valeur de la marge selon vos besoins */
+.form-control-lg {
+  font-size: 1.5rem;
+  padding: 1rem;
 }
+
+
 
 
 /* Ajoutez ce code CSS pour agrandir le formulaire */

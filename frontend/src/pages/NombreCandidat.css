@@ -1,0 +1,56 @@
+/* Styles pour le conteneur principal */
+.App.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 10px;
+}
+
+/* Styles pour l'en-tête */
+.App-header {
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Styles pour le titre principal */
+.App-header h2 {
+  font-size: 1.5rem;
+  color: #343a40;
+  margin-bottom: 8px;
+}
+
+/* Styles pour le texte de description */
+.App-header .lead {
+  font-size: 1rem;
+  color: #6c757d;
+  margin-bottom: 15px;
+}
+
+/* Styles pour la boîte contenant le nombre total de candidats avec un effet fumé */
+.total-candidates-box {
+  background-color: #007bff;
+  color: #fff;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4), 0 4px 15px rgba(0, 0, 0, 0.2);
+  display: inline-block;
+}
+
+/* Styles pour le nombre de candidats */
+.total-candidates-box h2 {
+  font-size: 2rem;
+  margin: 0;
+  color: white !important; /* Changer la couleur du texte en blanc avec une spécificité élevée */
+}
+.total-candidates-box h3{
+  font-size: 2rem;
+  margin: 0;
+  color: white !important;
+}
+
+.total-candidates-box p {
+  font-size: 2rem;
+  margin: 0;
+  color: white !important; /* Changer la couleur du texte en blanc avec une spécificité élevée */
+}

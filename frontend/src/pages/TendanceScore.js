@@ -53,7 +53,7 @@ const TestCand = () => {
 
   return (
     <Container>
-      <Row className="justify-content-md-center mt-5">
+      <Row className="row">
         <Col md={6} className="offset-md-3"> {/* Déplacement vers la droite avec offset */}
           <div className="test-container">
             <h2 className="test-title">Test des non-candidats</h2>

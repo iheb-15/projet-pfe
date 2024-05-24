@@ -471,14 +471,10 @@ const columns2 = [
     <Container maxWidth="lg">
       <Typography variant="h6" style={{ color: "#3987ee" }} align="center" gutterBottom>Liste de Question</Typography>
       <Paper elevation={3} className={`${classes.paper} ${classes.spacing}`}>
-<<<<<<< HEAD
         <Typography variant="h7" className={`${classes.label}`} style={{ color: "#3987ee" }} gutterBottom>Paramètres de la Question<span className={classes.redAsterisk}>*</span></Typography>
         <Grid container spacing={2}>
       {/* First Paper Component */}
       <Grid item xs={12} md={6}>
-=======
-        <Typography variant="h7" className={`${classes.label}`} style={{ color: "#3987ee" }} gutterBottom>Paramètres de la Question<span className={classes.redAsterisk}>*</span></Typography>    
->>>>>>> b47770581052eaa1d53854ad1de3e7e12daa1936
         <Paper elevation={3} className={`${classes.responseCard} ${classes.spacing}`}>
           <Grid container spacing={2} className={`${classes.spacing}`}>
             <Grid item xs={12}>
@@ -518,47 +514,12 @@ const columns2 = [
                     <Option key="null" value={null} onSelect={handleCancelSelection}>
                       Aucun domaines
                     </Option>
-<<<<<<< HEAD
                     {Object.keys(classifiedData).map((name) => (
                       <Option key={name} value={name}>
                         <strong>{name}</strong>
                       </Option>
                     ))}
                   </AntdSelect>
-=======
-                    
-                    {Object.keys(classifiedData).map(name => (
-                      <Option key={name} value={name}>
-                        {name}
-                      </Option>
-                    ))}
-                  </Select>
-                 </Grid>
-                 
-                <Grid item xs={12} sm={4}>
-                <Typography variant="h8" className={`${classes.label}`} >Compétence<span className={classes.redAsterisk}>*</span></Typography>
-                <Select
-                  showSearch
-                  style={{ width: "250px" }}
-                  placeholder="Choisir Compétence"
-                  optionFilterProp="children"
-                  onChange={handleCompetenceChange}
-                  onSearch={onSearch}
-                  filterOption={(input, option) => (option?.label ?? "").includes(input)}
-                  filterSort={(optionA, optionB) =>
-                    (optionA?.label ?? "").toLowerCase().localeCompare((optionB?.label ?? "").toLowerCase())
-                  }
-                >
-                  <Option key="null" value={null} onClick={handleCancelSelections}>
-                    Aucune compétence 
-                  </Option>
-                  {skillOptions.map(option => (
-                    <Option key={option.value} value={option.value} label={option.label}>
-                      {option.label}
-                    </Option>
-                  ))}
-                  </Select>
->>>>>>> b47770581052eaa1d53854ad1de3e7e12daa1936
                 </Grid>
               </Grid>
             </Grid>
