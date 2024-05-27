@@ -497,30 +497,32 @@ const columns2 = [
                   </AntdSelect>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                  <Typography variant="h8" className={`${classes.label}`}>
-                    Domaine<span className={classes.redAsterisk}>*</span>
-                  </Typography>
-                  <AntdSelect
-                    showSearch
-                    placeholder="Choisir Domaine"
-                    optionFilterProp="children"
-                    onChange={handleDomaineChange}
-                    onSearch={onSearch}
-                    filterOption={(input, option) =>
-                      option.children.toLowerCase().includes(input.toLowerCase())
-                    }
-                    style={{ width: '100%' }}
-                  >
-                    <Option key="null" value={null} onSelect={handleCancelSelection}>
-                      Aucun domaines
-                    </Option>
-                    {Object.keys(classifiedData).map((name) => (
-                      <Option key={name} value={name}>
+                <Typography variant="h8" className={`${classes.label}`}>
+                  Domaine<span className={classes.redAsterisk}>*</span>
+                </Typography>
+                <AntdSelect
+                  showSearch
+                  placeholder="Choisir Domaine"
+                  optionFilterProp="label"
+                  onChange={handleDomaineChange}
+                  onSearch={onSearch}
+                  filterOption={(input, option) =>
+                    option.label.toLowerCase().includes(input.toLowerCase())
+                  }
+                  style={{ width: '100%' }}
+                >
+                  <Option key="null" value={null} label="Aucun domaines" onSelect={handleCancelSelection}>
+                    Aucun domaines
+                  </Option>
+                  {Object.keys(classifiedData)
+                    .sort() // pour faire le trie
+                    .map((name) => (
+                      <Option key={name} value={name} label={name}>
                         <strong>{name}</strong>
                       </Option>
                     ))}
-                  </AntdSelect>
-                </Grid>
+                </AntdSelect>
+              </Grid>
               </Grid>
             </Grid>
           </Grid> 

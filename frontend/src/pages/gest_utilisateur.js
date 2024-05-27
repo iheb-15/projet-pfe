@@ -6,11 +6,7 @@ import { useHistory } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import './gest.css';
 import {Buffer} from 'buffer'
-// import { Link } from 'react-router-dom/cjs/react-router-dom.min';
-// import Dashboard from './Dashboard';
-// import { ExclamationCircleOutlined } from '@ant-design/icons';
 const { Option } = Select;
-// const ArchiveIcon = () => <span>Archive</span>; 
 function Gest() {
   const [isEditing, setIsEditing] = useState(false);
   const [editingUtilisateur, setEditingUtilisateur] = useState(null);
@@ -18,15 +14,7 @@ function Gest() {
   const [newUtilisateur, setNewUtilisateur] = useState({ name: '', lastname: '', password: '', email: '', role: '' });
   const [dataSource, setDataSource] = useState([]);
   const [searchValue, setSearchValue] = useState('');
-  // const [users, setUsers] = useState([]);
-  // const [archiveVisible, setArchiveVisible] = useState(false);
-  // const [visible, setVisible] = useState(false);
-  // const [users, setUsers] = useState([]);
-  // const [selectedUserId, setSelectedUserId] = useState(null);
   const history = useHistory();
-
- 
-
   const [modalVisible, setModalVisible] = useState(false);
   const [utilisateurs, setUtilisateurs] = useState([]);
   const [selectedUtilisateur, setSelectedUtilisateur] = useState(null);

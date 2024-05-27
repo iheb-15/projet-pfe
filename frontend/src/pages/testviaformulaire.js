@@ -534,18 +534,7 @@ const supprimerQuestion = (index) => {
                      </Grid>
                  </Paper>
                </Grid>
-               
-               <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                   <Button
-                       variant="contained"
-                       style={{ color: '#fff', backgroundColor: '#3987ee', width: 200 }}
-                       onClick={ajouterFormulaire}
-                   >
-                       Nouvelle Question 
-                   </Button>
-               </div>
-             
-           </div>
+              </div>
        </Paper>
     ))}
 </Container>
